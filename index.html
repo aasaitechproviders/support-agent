@@ -16,107 +16,81 @@
       --accent3: #43e97b;
       --text: #f0f0f8;
       --muted: #7a7a9a;
-      --radius: 14px;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'DM Sans', sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* ── NOISE OVERLAY ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ══════════════════════════════════
-       LOGIN PAGE
-    ══════════════════════════════════ */
-    #login-page {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      position: relative;
-      z-index: 1;
+      overflow: hidden;
     }
-
-    .login-bg-orb {
+    .orb {
       position: fixed;
       border-radius: 50%;
       filter: blur(120px);
       pointer-events: none;
+      animation: orbFloat 8s ease-in-out infinite;
     }
-    .orb1 { width: 600px; height: 600px; background: rgba(108,99,255,0.12); top: -200px; left: -200px; }
-    .orb2 { width: 400px; height: 400px; background: rgba(255,101,132,0.08); bottom: -100px; right: -100px; }
-
+    .orb1 { width: 600px; height: 600px; background: rgba(108,99,255,0.14); top: -200px; left: -200px; }
+    .orb2 { width: 400px; height: 400px; background: rgba(255,101,132,0.09); bottom: -100px; right: -100px; animation-delay: 3s; }
+    .orb3 { width: 300px; height: 300px; background: rgba(67,233,123,0.06); top: 40%; left: 50%; animation-delay: 6s; }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(20px, -20px); }
+    }
     .login-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 56px 48px;
+      border-radius: 28px;
+      padding: 52px 44px;
       width: 100%;
       max-width: 420px;
       position: relative;
       z-index: 1;
       animation: fadeUp 0.6s ease forwards;
     }
-
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
+      from { opacity: 0; transform: translateY(28px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
-    .login-logo {
+    .logo {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 40px;
     }
-
     .logo-mark {
       width: 40px; height: 40px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 10px;
+      border-radius: 11px;
       display: flex; align-items: center; justify-content: center;
       font-family: 'Syne', sans-serif;
       font-weight: 800;
       font-size: 18px;
       color: white;
     }
-
     .logo-text {
       font-family: 'Syne', sans-serif;
       font-size: 22px;
       font-weight: 700;
-      color: var(--text);
     }
-
-    .login-card h1 {
+    h1 {
       font-family: 'Syne', sans-serif;
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       line-height: 1.2;
     }
-
-    .login-card p {
+    .subtitle {
       color: var(--muted);
       font-size: 15px;
       margin-bottom: 36px;
-      line-height: 1.6;
+      line-height: 1.65;
     }
-
     .btn-google {
       display: flex;
       align-items: center;
@@ -126,7 +100,7 @@
       padding: 14px 20px;
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border-radius: 13px;
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
       font-size: 15px;
@@ -135,1419 +109,100 @@
       transition: all 0.2s ease;
       text-decoration: none;
     }
-
     .btn-google:hover {
-      background: var(--border);
+      background: #222234;
       border-color: var(--accent);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(108,99,255,0.15);
     }
-
-    .btn-google svg { flex-shrink: 0; }
-
-    .login-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 24px 0;
-      color: var(--muted);
+    .status-msg {
+      text-align: center;
+      margin-top: 14px;
       font-size: 13px;
+      color: var(--muted);
+      min-height: 20px;
     }
-
-    .login-divider::before,
-    .login-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    .login-features {
-      margin-top: 32px;
+    .status-msg.error { color: #ff6584; }
+    .features {
+      margin-top: 36px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 11px;
     }
-
-    .login-feature {
+    .feature {
       display: flex;
       align-items: center;
       gap: 10px;
       font-size: 13px;
       color: var(--muted);
     }
-
     .feature-dot {
       width: 6px; height: 6px;
       border-radius: 50%;
       background: var(--accent3);
       flex-shrink: 0;
     }
-
-    /* ══════════════════════════════════
-       MAIN APP (hidden until logged in)
-    ══════════════════════════════════ */
-    #app { display: none; }
-
-    /* ── SIDEBAR ── */
-    .sidebar {
-      position: fixed;
-      left: 0; top: 0; bottom: 0;
-      width: 240px;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 24px 0;
-      z-index: 100;
-    }
-
-    .sidebar-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 0 20px 28px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 16px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 11px 20px;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      border-radius: 0;
-      margin: 1px 8px;
-      border-radius: 8px;
-      text-decoration: none;
-    }
-
-    .nav-item:hover { background: var(--surface2); color: var(--text); }
-    .nav-item.active { background: rgba(108,99,255,0.15); color: var(--accent); }
-
-    .nav-item svg { flex-shrink: 0; }
-
-    .sidebar-bottom {
-      margin-top: auto;
-      padding: 16px 8px 0;
-      border-top: 1px solid var(--border);
-    }
-
-    .user-chip {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .user-avatar {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px;
-      font-weight: 600;
-      color: white;
-      flex-shrink: 0;
-    }
-
-    .user-info { flex: 1; min-width: 0; }
-    .user-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-plan {
-      font-size: 11px;
-      color: var(--accent3);
-      font-weight: 500;
-    }
-
-    /* ── MAIN CONTENT ── */
-    .main {
-      margin-left: 240px;
-      min-height: 100vh;
-      background: var(--bg);
-      position: relative;
-      z-index: 1;
-    }
-
-    .topbar {
-      padding: 20px 32px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-
-    .page-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .btn-primary {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-primary:hover { background: #5a52e0; transform: translateY(-1px); }
-
-    .content { padding: 32px; }
-
-    /* ── DASHBOARD ── */
-    #page-dashboard { display: block; }
-    #page-agents, #page-create-agent, #page-agent-detail { display: none; }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-    }
-
-    .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-    .stat-value { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 700; margin-bottom: 4px; }
-    .stat-sub { font-size: 12px; color: var(--muted); }
-
-    /* Token progress */
-    .token-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 32px;
-    }
-
-    .token-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .token-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 600; }
-
-    .badge {
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .badge-free { background: rgba(67,233,123,0.15); color: var(--accent3); }
-    .badge-pro { background: rgba(108,99,255,0.15); color: var(--accent); }
-
-    .token-bar-bg {
-      height: 8px;
-      background: var(--surface2);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 8px;
-    }
-
-    .token-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border-radius: 4px;
-      transition: width 1s ease;
-    }
-
-    .token-counts {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .btn-upgrade {
-      margin-top: 16px;
-      padding: 10px 20px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: none;
-      border-radius: var(--radius);
-      color: white;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    .btn-upgrade:hover { opacity: 0.85; }
-
-    /* ── AGENTS LIST ── */
-    .agents-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-    }
-
-    .agent-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .agent-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(108,99,255,0.1);
-    }
-
-    .agent-card-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .agent-avatar {
-      width: 44px; height: 44px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .agent-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 600; }
-    .agent-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-    .agent-stats {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .agent-stat { font-size: 12px; color: var(--muted); }
-    .agent-stat span { color: var(--text); font-weight: 500; }
-
-    .agent-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .status-dot {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 12px;
-      color: var(--accent3);
-    }
-
-    .status-dot::before {
-      content: '';
-      width: 6px; height: 6px;
-      background: var(--accent3);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .agent-menu-btn {
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 6px;
-      transition: all 0.15s;
-    }
-
-    .agent-menu-btn:hover { background: var(--surface2); color: var(--text); }
-
-    /* ── CREATE AGENT FORM ── */
-    .form-section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      margin-bottom: 20px;
-    }
-
-    .form-section-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .section-num {
-      width: 24px; height: 24px;
-      background: rgba(108,99,255,0.2);
-      color: var(--accent);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-group { margin-bottom: 16px; }
-
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="color"],
-    textarea,
-    select {
-      width: 100%;
-      padding: 11px 14px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    input[type="text"]:focus,
-    textarea:focus,
-    select:focus { border-color: var(--accent); }
-
-    input[type="color"] {
-      height: 44px;
-      padding: 4px 8px;
-      cursor: pointer;
-    }
-
-    textarea { resize: vertical; min-height: 100px; }
-
-    /* Sources */
-    .sources-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
-
-    .source-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 14px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      position: relative;
-    }
-
-    .source-type-badge {
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      flex-shrink: 0;
-    }
-
-    .type-text { background: rgba(108,99,255,0.15); color: var(--accent); }
-    .type-file { background: rgba(255,101,132,0.15); color: var(--accent2); }
-    .type-url { background: rgba(67,233,123,0.15); color: var(--accent3); }
-
-    .source-content { flex: 1; font-size: 13px; color: var(--muted); line-height: 1.5; }
-
-    .source-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
-    .btn-icon {
-      width: 28px; height: 28px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
-      background: transparent;
-      color: var(--muted);
-    }
-
-    .btn-icon:hover { background: var(--border); color: var(--text); }
-    .btn-icon.delete:hover { background: rgba(255,101,132,0.15); color: var(--accent2); }
-
-    .add-source-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .tab-btn {
-      padding: 7px 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .tab-btn.active {
-      background: rgba(108,99,255,0.15);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .source-input-area { display: none; }
-    .source-input-area.active { display: block; }
-
-    /* Token meter on create page */
-    .token-meter {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-top: 12px;
-    }
-
-    .token-meter-bar {
-      flex: 1;
-      height: 6px;
-      background: var(--border);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .token-meter-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent3), var(--accent));
-      border-radius: 3px;
-      width: 12%;
-      transition: width 0.5s ease;
-    }
-
-    .token-meter-text { font-size: 12px; color: var(--muted); white-space: nowrap; }
-
-    /* Publish section */
-    .publish-box {
-      background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(255,101,132,0.05));
-      border: 1px solid rgba(108,99,255,0.3);
-      border-radius: var(--radius);
-      padding: 28px;
-      text-align: center;
-    }
-
-    .publish-box h3 {
-      font-family: 'Syne', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .publish-box p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
-
-    .btn-publish {
-      padding: 13px 32px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: none;
-      border-radius: var(--radius);
-      color: white;
-      font-family: 'Syne', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-publish:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108,99,255,0.3); }
-
-    .published-url-box {
-      display: none;
-      margin-top: 16px;
-      padding: 14px 16px;
-      background: var(--surface2);
-      border: 1px solid var(--accent);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .published-url { flex: 1; font-size: 13px; color: var(--accent); word-break: break-all; }
-
-    .btn-copy {
-      padding: 6px 12px;
-      background: rgba(108,99,255,0.15);
-      border: none;
-      border-radius: 6px;
-      color: var(--accent);
-      font-size: 12px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.15s;
-    }
-
-    .btn-copy:hover { background: rgba(108,99,255,0.3); }
-
-    /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--muted);
-    }
-
-    .empty-icon {
-      width: 64px; height: 64px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 28px;
-    }
-
-    .empty-state h3 { font-family: 'Syne', sans-serif; font-size: 18px; color: var(--text); margin-bottom: 8px; }
-    .empty-state p { font-size: 14px; margin-bottom: 24px; }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      padding: 12px 20px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 14px;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s ease;
-    }
-
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.success { border-color: var(--accent3); }
-    .toast.error { border-color: var(--accent2); }
-
-    /* Modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(4px);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-overlay.open { display: flex; }
-
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px;
-      width: 100%;
-      max-width: 480px;
-      animation: fadeUp 0.3s ease;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
-
-    .btn-close {
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 20px;
-      line-height: 1;
-      padding: 4px;
-      border-radius: 6px;
-      transition: all 0.15s;
-    }
-
-    .btn-close:hover { background: var(--surface2); color: var(--text); }
-
-    .form-actions {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      margin-top: 24px;
-    }
-
-    .btn-secondary {
-      padding: 10px 18px;
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .btn-secondary:hover { border-color: var(--text); color: var(--text); }
-
-    /* File upload */
-    .file-drop {
-      border: 2px dashed var(--border);
-      border-radius: 10px;
-      padding: 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .file-drop:hover { border-color: var(--accent); color: var(--accent); }
-    .file-drop input { display: none; }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   </style>
 </head>
 <body>
-
-<!-- ══════════════════════════════════
-     LOGIN PAGE
-══════════════════════════════════ -->
-<div id="login-page">
-  <div class="login-bg-orb orb1"></div>
-  <div class="login-bg-orb orb2"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
 
   <div class="login-card">
-    <div class="login-logo">
+    <div class="logo">
       <div class="logo-mark">A</div>
       <span class="logo-text">Aasai</span>
     </div>
-
     <h1>Build AI agents<br>in minutes</h1>
-    <p>Turn your knowledge into a 24/7 conversational assistant. No code required.</p>
+    <p class="subtitle">Turn your knowledge into a 24/7 conversational assistant. No code required.</p>
 
-    <a href="https://apiv2.aasaitech.in/auth/google" class="btn-google" id="google-login-btn">
-      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
+    <a href="https://apiv2.aasaitech.in/auth/google" class="btn-google">
+      <svg width="18" height="18" viewBox="0 0 18 18">
+        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+        <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/>
+        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/>
+      </svg>
       Continue with Google
     </a>
 
-    <div class="login-features">
-      <div class="login-feature"><div class="feature-dot"></div> 1 million tokens free to start</div>
-      <div class="login-feature"><div class="feature-dot"></div> Upload docs, text, URLs as knowledge</div>
-      <div class="login-feature"><div class="feature-dot"></div> Publish a shareable chat link instantly</div>
+    <div class="status-msg" id="statusMsg"></div>
+
+    <div class="features">
+      <div class="feature"><div class="feature-dot"></div> 1 million tokens free to start</div>
+      <div class="feature"><div class="feature-dot"></div> Upload docs, text, URLs as knowledge</div>
+      <div class="feature"><div class="feature-dot"></div> Publish a shareable chat link instantly</div>
     </div>
   </div>
-</div>
 
-<!-- ══════════════════════════════════
-     MAIN APP
-══════════════════════════════════ -->
-<div id="app">
+  <script>
+    (function() {
+      const params = new URLSearchParams(window.location.search);
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-mark">A</div>
-      <span class="logo-text">Aasai</span>
-    </div>
-
-    <nav>
-      <a class="nav-item active" onclick="showPage('dashboard')" href="#">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Dashboard
-      </a>
-      <a class="nav-item" onclick="showPage('agents')" href="#">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        My Agents
-      </a>
-      <a class="nav-item" onclick="showPage('create-agent')" href="#">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        Create Agent
-      </a>
-    </nav>
-
-    <div class="sidebar-bottom">
-      <div class="user-chip" id="user-chip">
-        <div class="user-avatar" id="user-avatar">?</div>
-        <div class="user-info">
-          <div class="user-name" id="user-name">Loading...</div>
-          <div class="user-plan" id="user-plan">Free Plan</div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- DASHBOARD -->
-    <div id="page-dashboard">
-      <div class="topbar">
-        <div class="page-title">Dashboard</div>
-        <button class="btn-primary" onclick="showPage('create-agent')">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New Agent
-        </button>
-      </div>
-      <div class="content">
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-label">Total Agents</div>
-            <div class="stat-value" id="stat-agents">0</div>
-            <div class="stat-sub">Active agents</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Total Queries</div>
-            <div class="stat-value" id="stat-queries">0</div>
-            <div class="stat-sub">All time</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Tokens Used</div>
-            <div class="stat-value" id="stat-tokens">0</div>
-            <div class="stat-sub">This month</div>
-          </div>
-        </div>
-
-        <div class="token-card">
-          <div class="token-header">
-            <div class="token-title">Token Usage</div>
-            <span class="badge badge-free" id="plan-badge">Free Plan</span>
-          </div>
-          <div class="token-bar-bg">
-            <div class="token-bar-fill" id="token-bar" style="width:0%"></div>
-          </div>
-          <div class="token-counts">
-            <span id="tokens-used-label">0 used</span>
-            <span id="tokens-limit-label">1,000,000 total</span>
-          </div>
-          <button class="btn-upgrade" onclick="openUpgradeModal()">Upgrade Plan →</button>
-        </div>
-
-        <div style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-family:'Syne',sans-serif; font-size:16px; font-weight:600;">Recent Agents</div>
-          <a onclick="showPage('agents')" href="#" style="font-size:13px; color:var(--accent); text-decoration:none;">View all →</a>
-        </div>
-        <div class="agents-grid" id="dashboard-agents-list">
-          <div class="empty-state">
-            <div class="empty-icon">🤖</div>
-            <h3>No agents yet</h3>
-            <p>Create your first AI agent to get started</p>
-            <button class="btn-primary" onclick="showPage('create-agent')">Create Agent</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- AGENTS PAGE -->
-    <div id="page-agents">
-      <div class="topbar">
-        <div class="page-title">My Agents</div>
-        <button class="btn-primary" onclick="showPage('create-agent')">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New Agent
-        </button>
-      </div>
-      <div class="content">
-        <div class="agents-grid" id="agents-list">
-          <div class="empty-state">
-            <div class="empty-icon">🤖</div>
-            <h3>No agents yet</h3>
-            <p>Create your first AI agent to get started</p>
-            <button class="btn-primary" onclick="showPage('create-agent')">Create Agent</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CREATE AGENT -->
-    <div id="page-create-agent">
-      <div class="topbar">
-        <div class="page-title" id="create-agent-title">Create Agent</div>
-        <div style="display:flex; gap:10px;">
-          <button class="btn-secondary" onclick="showPage('agents')">Cancel</button>
-          <button class="btn-primary" onclick="saveAgent()">Save Agent</button>
-        </div>
-      </div>
-      <div class="content" style="max-width:800px;">
-
-        <!-- Step 1: Basic Info -->
-        <div class="form-section">
-          <div class="form-section-title">
-            <div class="section-num">1</div>
-            Basic Information
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Agent Name *</label>
-              <input type="text" id="agent-name" placeholder="e.g. Springfield School Bot" />
-            </div>
-            <div class="form-group">
-              <label>Brand Color</label>
-              <input type="color" id="agent-color" value="#6c63ff" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Welcome Message</label>
-            <input type="text" id="agent-welcome" placeholder="Hi! How can I help you today?" />
-          </div>
-          <div class="form-group">
-            <label>Logo URL (optional)</label>
-            <input type="text" id="agent-logo" placeholder="https://your-logo-url.com/logo.png" />
-          </div>
-        </div>
-
-        <!-- Step 2: System Prompt -->
-        <div class="form-section">
-          <div class="form-section-title">
-            <div class="section-num">2</div>
-            AI Behaviour
-          </div>
-          <div class="form-group">
-            <label>System Prompt</label>
-            <textarea id="agent-prompt" placeholder="You are a helpful assistant for [Organisation Name]. Answer only from the provided knowledge. Be friendly and concise."></textarea>
-          </div>
-        </div>
-
-        <!-- Step 3: Knowledge Sources -->
-        <div class="form-section">
-          <div class="form-section-title">
-            <div class="section-num">3</div>
-            Knowledge Sources
-          </div>
-
-          <div class="sources-list" id="sources-list">
-            <!-- sources rendered here -->
-          </div>
-
-          <div class="add-source-tabs">
-            <button class="tab-btn active" onclick="switchSourceTab('text', this)">📝 Text</button>
-            <button class="tab-btn" onclick="switchSourceTab('file', this)">📄 File</button>
-            <button class="tab-btn" onclick="switchSourceTab('url', this)">🔗 URL</button>
-          </div>
-
-          <!-- Text input -->
-          <div class="source-input-area active" id="source-text">
-            <textarea id="source-text-input" placeholder="Paste your knowledge here — fees, timings, FAQs, policies, anything..." style="min-height:120px;"></textarea>
-            <button class="btn-primary" style="margin-top:10px;" onclick="addSource('text')">Add Text</button>
-          </div>
-
-          <!-- File input -->
-          <div class="source-input-area" id="source-file">
-            <div class="file-drop" onclick="document.getElementById('file-input').click()">
-              <input type="file" id="file-input" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" onchange="handleFileSelect(this)" />
-              <div style="font-size:24px; margin-bottom:8px;">📎</div>
-              <div>Click to upload or drag and drop</div>
-              <div style="font-size:12px; margin-top:4px;">PDF, DOCX, TXT, PNG, JPG supported</div>
-            </div>
-          </div>
-
-          <!-- URL input -->
-          <div class="source-input-area" id="source-url">
-            <input type="text" id="source-url-input" placeholder="https://yourwebsite.com/about" />
-            <button class="btn-primary" style="margin-top:10px;" onclick="addSource('url')">Fetch & Add</button>
-          </div>
-
-          <!-- Token meter -->
-          <div class="token-meter">
-            <span style="font-size:12px; color:var(--muted);">Knowledge size</span>
-            <div class="token-meter-bar">
-              <div class="token-meter-fill" id="knowledge-meter"></div>
-            </div>
-            <span class="token-meter-text" id="knowledge-size">~0 / 18,000 tokens</span>
-          </div>
-        </div>
-
-        <!-- Step 4: Publish -->
-        <div class="publish-box">
-          <h3>Ready to go live?</h3>
-          <p>Publish your agent and get a shareable chat link instantly.</p>
-          <button class="btn-publish" onclick="publishAgent()">🚀 Publish Agent</button>
-          <div class="published-url-box" id="published-url-box" style="display:none;">
-            <span class="published-url" id="published-url"></span>
-            <button class="btn-copy" onclick="copyUrl()">Copy</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </main>
-</div>
-
-<!-- UPGRADE MODAL -->
-<div class="modal-overlay" id="upgrade-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">Upgrade Plan</div>
-      <button class="btn-close" onclick="closeModal('upgrade-modal')">✕</button>
-    </div>
-    <div style="display:flex; flex-direction:column; gap:10px;">
-      <div style="padding:16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; cursor:pointer;" onclick="selectPlan('starter')">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <span style="font-weight:600;">Starter</span>
-          <span style="color:var(--accent); font-weight:700;">$8</span>
-        </div>
-        <div style="font-size:13px; color:var(--muted);">2 million tokens</div>
-      </div>
-      <div style="padding:16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; cursor:pointer;" onclick="selectPlan('growth')">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <span style="font-weight:600;">Growth</span>
-          <span style="color:var(--accent); font-weight:700;">$35</span>
-        </div>
-        <div style="font-size:13px; color:var(--muted);">10 million tokens</div>
-      </div>
-      <div style="padding:16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; cursor:pointer;" onclick="selectPlan('pro')">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <span style="font-weight:600;">Pro</span>
-          <span style="color:var(--accent); font-weight:700;">$80</span>
-        </div>
-        <div style="font-size:13px; color:var(--muted);">25 million tokens</div>
-      </div>
-      <div style="padding:16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; cursor:pointer;" onclick="selectPlan('business')">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <span style="font-weight:600;">Business</span>
-          <span style="color:var(--accent); font-weight:700;">$299</span>
-        </div>
-        <div style="font-size:13px; color:var(--muted);">100 million tokens</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<script>
-  const API = 'https://apiv2.aasaitech.in'
-  let token = localStorage.getItem('aasai_token')
-  let currentUser = null
-  let agents = []
-  let sources = []
-  let editingAgentId = null
-
-  // ── INIT ──
-  async function init() {
-    if (token) {
-      try {
-        const res = await fetch(`${API}/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        if (res.ok) {
-          currentUser = await res.json()
-          showApp()
-          loadDashboard()
-          return
-        }
-      } catch(e) {}
-      localStorage.removeItem('aasai_token')
-      token = null
-    }
-
-    // Check if redirected with token
-    const params = new URLSearchParams(window.location.search)
-    const t = params.get('token')
-    if (t) {
-      token = t
-      localStorage.setItem('aasai_token', t)
-      window.history.replaceState({}, '', window.location.pathname)
-      init()
-      return
-    }
-
-    showLogin()
-  }
-
-  function showLogin() {
-    document.getElementById('login-page').style.display = 'flex'
-    document.getElementById('app').style.display = 'none'
-  }
-
-  function showApp() {
-    document.getElementById('login-page').style.display = 'none'
-    document.getElementById('app').style.display = 'block'
-
-    if (currentUser) {
-      const initials = currentUser.name ? currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2) : '?'
-      document.getElementById('user-avatar').textContent = initials
-      document.getElementById('user-name').textContent = currentUser.name || currentUser.email
-      document.getElementById('user-plan').textContent = currentUser.plan === 'pro' ? '⭐ Pro Plan' : 'Free Plan'
-    }
-  }
-
-  // ── NAVIGATION ──
-  function showPage(page) {
-    document.querySelectorAll('[id^="page-"]').forEach(p => p.style.display = 'none')
-    document.getElementById(`page-${page}`).style.display = 'block'
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
-
-    if (page === 'dashboard') { loadDashboard(); document.querySelectorAll('.nav-item')[0].classList.add('active') }
-    if (page === 'agents') { loadAgents(); document.querySelectorAll('.nav-item')[1].classList.add('active') }
-    if (page === 'create-agent') {
-      document.querySelectorAll('.nav-item')[2].classList.add('active')
-      if (!editingAgentId) resetCreateForm()
-    }
-  }
-
-  // ── DASHBOARD ──
-  async function loadDashboard() {
-    try {
-      const res = await fetch(`${API}/dashboard`, { headers: { Authorization: `Bearer ${token}` } })
-      const data = await res.json()
-
-      document.getElementById('stat-agents').textContent = data.agents_count || 0
-      document.getElementById('stat-queries').textContent = (data.total_queries || 0).toLocaleString()
-      document.getElementById('stat-tokens').textContent = formatTokens(data.tokens_used || 0)
-
-      const used = data.tokens_used || 0
-      const limit = data.token_limit
-      const pct = limit ? Math.min((used/limit)*100, 100).toFixed(1) : 0
-
-      document.getElementById('token-bar').style.width = `${pct}%`
-      document.getElementById('tokens-used-label').textContent = `${formatTokens(used)} used`
-      document.getElementById('tokens-limit-label').textContent = limit ? `${formatTokens(limit)} total` : 'Unlimited'
-      document.getElementById('plan-badge').textContent = getPlanLabel(currentUser?.plan)
-      document.getElementById('plan-badge').className = `badge ${currentUser?.plan === 'pro' ? 'badge-pro' : 'badge-free'}`
-
-      if (data.recent_agents?.length) renderAgentCards(data.recent_agents, 'dashboard-agents-list')
-    } catch(e) { console.error(e) }
-  }
-
-  // ── AGENTS ──
-  async function loadAgents() {
-    try {
-      const res = await fetch(`${API}/agents`, { headers: { Authorization: `Bearer ${token}` } })
-      agents = await res.json()
-      renderAgentCards(agents, 'agents-list')
-    } catch(e) {}
-  }
-
-  function renderAgentCards(list, containerId) {
-    const container = document.getElementById(containerId)
-    if (!list.length) {
-      container.innerHTML = `<div class="empty-state"><div class="empty-icon">🤖</div><h3>No agents yet</h3><p>Create your first AI agent</p><button class="btn-primary" onclick="showPage('create-agent')">Create Agent</button></div>`
-      return
-    }
-    container.innerHTML = list.map(a => `
-      <div class="agent-card" onclick="editAgent('${a._id}')">
-        <div class="agent-card-header">
-          <div class="agent-avatar" style="background:${a.brand_color || '#6c63ff'}22;">
-            ${a.logo_url ? `<img src="${a.logo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" />` : '🤖'}
-          </div>
-          <div>
-            <div class="agent-name">${a.name}</div>
-            <div class="agent-desc">${a.sources_count || 0} sources</div>
-          </div>
-        </div>
-        <div class="agent-stats">
-          <div class="agent-stat">Queries: <span>${(a.query_count||0).toLocaleString()}</span></div>
-          <div class="agent-stat">Tokens: <span>${formatTokens(a.tokens_consumed||0)}</span></div>
-        </div>
-        <div class="agent-footer">
-          <div class="status-dot">${a.published ? 'Live' : 'Draft'}</div>
-          <button class="agent-menu-btn" onclick="event.stopPropagation(); deleteAgent('${a._id}')">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-          </button>
-        </div>
-      </div>
-    `).join('')
-  }
-
-  // ── CREATE / EDIT AGENT ──
-  function resetCreateForm() {
-    editingAgentId = null
-    sources = []
-    document.getElementById('create-agent-title').textContent = 'Create Agent'
-    document.getElementById('agent-name').value = ''
-    document.getElementById('agent-color').value = '#6c63ff'
-    document.getElementById('agent-welcome').value = ''
-    document.getElementById('agent-logo').value = ''
-    document.getElementById('agent-prompt').value = ''
-    document.getElementById('published-url-box').style.display = 'none'
-    renderSources()
-  }
-
-  async function editAgent(id) {
-    try {
-      const res = await fetch(`${API}/agents/${id}`, { headers: { Authorization: `Bearer ${token}` } })
-      const agent = await res.json()
-      editingAgentId = id
-      document.getElementById('create-agent-title').textContent = 'Edit Agent'
-      document.getElementById('agent-name').value = agent.name || ''
-      document.getElementById('agent-color').value = agent.brand_color || '#6c63ff'
-      document.getElementById('agent-welcome').value = agent.welcome_message || ''
-      document.getElementById('agent-logo').value = agent.logo_url || ''
-      document.getElementById('agent-prompt').value = agent.system_prompt || ''
-
-      // load sources
-      const sRes = await fetch(`${API}/agents/${id}/sources`, { headers: { Authorization: `Bearer ${token}` } })
-      sources = await sRes.json()
-      renderSources()
-
-      if (agent.published_url) {
-        document.getElementById('published-url').textContent = agent.published_url
-        document.getElementById('published-url-box').style.display = 'flex'
+      // If OAuth callback lands here with ?token=..., save and redirect
+      const urlToken = params.get('token');
+      if (urlToken) {
+        localStorage.setItem('aasai_token', urlToken);
+        window.history.replaceState({}, '', window.location.pathname);
+        window.location.replace('home.html');
+        return;
       }
 
-      showPage('create-agent')
-    } catch(e) { showToast('Failed to load agent', 'error') }
-  }
+      // Already logged in? Go to dashboard
+      const existingToken = localStorage.getItem('aasai_token');
+      if (existingToken) {
+        window.location.replace('home.html');
+        return;
+      }
 
-  async function saveAgent() {
-    const name = document.getElementById('agent-name').value.trim()
-    if (!name) { showToast('Agent name is required', 'error'); return }
-
-    const body = {
-      name,
-      brand_color: document.getElementById('agent-color').value,
-      welcome_message: document.getElementById('agent-welcome').value || 'Hi! How can I help you today?',
-      logo_url: document.getElementById('agent-logo').value,
-      system_prompt: document.getElementById('agent-prompt').value || `You are a helpful assistant for ${name}. Answer only from the provided knowledge. Be friendly and concise.`
-    }
-
-    try {
-      const url = editingAgentId ? `${API}/agents/${editingAgentId}` : `${API}/agents`
-      const method = editingAgentId ? 'PUT' : 'POST'
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(body)
-      })
-      const data = await res.json()
-      if (!editingAgentId) editingAgentId = data._id
-      showToast('Agent saved!', 'success')
-    } catch(e) { showToast('Failed to save agent', 'error') }
-  }
-
-  async function deleteAgent(id) {
-    if (!confirm('Delete this agent?')) return
-    try {
-      await fetch(`${API}/agents/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } })
-      showToast('Agent deleted', 'success')
-      loadAgents()
-    } catch(e) {}
-  }
-
-  // ── SOURCES ──
-  function switchSourceTab(type, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
-    document.querySelectorAll('.source-input-area').forEach(a => a.classList.remove('active'))
-    btn.classList.add('active')
-    document.getElementById(`source-${type}`).classList.add('active')
-  }
-
-  async function addSource(type) {
-    if (!editingAgentId) {
-      await saveAgent()
-      if (!editingAgentId) return
-    }
-
-    let content = ''
-    if (type === 'text') {
-      content = document.getElementById('source-text-input').value.trim()
-      if (!content) { showToast('Please enter some text', 'error'); return }
-    } else if (type === 'url') {
-      content = document.getElementById('source-url-input').value.trim()
-      if (!content) { showToast('Please enter a URL', 'error'); return }
-    }
-
-    try {
-      const res = await fetch(`${API}/agents/${editingAgentId}/sources`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ type, content })
-      })
-      const source = await res.json()
-      sources.push(source)
-      renderSources()
-      if (type === 'text') document.getElementById('source-text-input').value = ''
-      if (type === 'url') document.getElementById('source-url-input').value = ''
-      showToast('Source added!', 'success')
-    } catch(e) { showToast('Failed to add source', 'error') }
-  }
-
-  async function handleFileSelect(input) {
-    if (!input.files.length) return
-    if (!editingAgentId) {
-      await saveAgent()
-      if (!editingAgentId) return
-    }
-
-    const formData = new FormData()
-    formData.append('file', input.files[0])
-
-    try {
-      showToast('Processing file...', 'success')
-      const res = await fetch(`${API}/agents/${editingAgentId}/sources/file`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData
-      })
-      const source = await res.json()
-      sources.push(source)
-      renderSources()
-      showToast('File processed and added!', 'success')
-    } catch(e) { showToast('Failed to process file', 'error') }
-  }
-
-  async function deleteSource(id) {
-    try {
-      await fetch(`${API}/agents/${editingAgentId}/sources/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      sources = sources.filter(s => s._id !== id)
-      renderSources()
-      showToast('Source removed', 'success')
-    } catch(e) {}
-  }
-
-  function renderSources() {
-    const list = document.getElementById('sources-list')
-    if (!sources.length) {
-      list.innerHTML = `<div style="text-align:center; padding:20px; color:var(--muted); font-size:13px;">No sources yet. Add text, files or URLs above.</div>`
-      updateKnowledgeMeter(0)
-      return
-    }
-    list.innerHTML = sources.map(s => `
-      <div class="source-item">
-        <span class="source-type-badge type-${s.type}">${s.type}</span>
-        <div class="source-content">${s.type === 'url' ? s.content : (s.content?.substring(0,120) + (s.content?.length > 120 ? '...' : ''))}</div>
-        <div class="source-actions">
-          <button class="btn-icon delete" onclick="deleteSource('${s._id}')">
-            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-          </button>
-        </div>
-      </div>
-    `).join('')
-
-    const totalChars = sources.reduce((acc, s) => acc + (s.content?.length || 0), 0)
-    const estTokens = Math.round(totalChars / 4)
-    updateKnowledgeMeter(estTokens)
-  }
-
-  function updateKnowledgeMeter(tokens) {
-    const max = 18000
-    const pct = Math.min((tokens / max) * 100, 100)
-    document.getElementById('knowledge-meter').style.width = `${pct}%`
-    document.getElementById('knowledge-size').textContent = `~${tokens.toLocaleString()} / 18,000 tokens`
-    if (pct > 90) document.getElementById('knowledge-meter').style.background = 'var(--accent2)'
-  }
-
-  // ── PUBLISH ──
-  async function publishAgent() {
-    if (!editingAgentId) {
-      await saveAgent()
-      if (!editingAgentId) return
-    }
-
-    try {
-      const res = await fetch(`${API}/agents/${editingAgentId}/publish`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      const data = await res.json()
-      const url = data.url
-      document.getElementById('published-url').textContent = url
-      document.getElementById('published-url-box').style.display = 'flex'
-      showToast('Agent published! 🚀', 'success')
-    } catch(e) { showToast('Failed to publish', 'error') }
-  }
-
-  function copyUrl() {
-    const url = document.getElementById('published-url').textContent
-    navigator.clipboard.writeText(url)
-    showToast('URL copied!', 'success')
-  }
-
-  // ── MODALS ──
-  function openUpgradeModal() { document.getElementById('upgrade-modal').classList.add('open') }
-  function closeModal(id) { document.getElementById(id).classList.remove('open') }
-
-  function selectPlan(plan) {
-    closeModal('upgrade-modal')
-    window.location.href = `${API}/payments/checkout?plan=${plan}&token=${token}`
-  }
-
-  // ── HELPERS ──
-  function formatTokens(n) {
-    if (n >= 1000000) return (n/1000000).toFixed(1) + 'M'
-    if (n >= 1000) return (n/1000).toFixed(1) + 'K'
-    return n.toString()
-  }
-
-  function getPlanLabel(plan) {
-    const labels = { free: 'Free Plan', starter: 'Starter', growth: 'Growth', pro_saas: 'Pro', business: 'Business', pro: '⭐ Enterprise' }
-    return labels[plan] || 'Free Plan'
-  }
-
-  function showToast(msg, type = 'success') {
-    const t = document.getElementById('toast')
-    t.textContent = type === 'success' ? '✓ ' + msg : '✕ ' + msg
-    t.className = `toast ${type} show`
-    setTimeout(() => t.classList.remove('show'), 3000)
-  }
-
-  // ── START ──
-  init()
-</script>
+      // Show error if OAuth failed
+      if (params.get('error')) {
+        const msg = document.getElementById('statusMsg');
+        msg.textContent = '⚠️ Login failed. Please try again.';
+        msg.classList.add('error');
+      }
+    })();
+  </script>
 </body>
 </html>
