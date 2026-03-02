@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aasai — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24;
+      --border: #2a2a38; --accent: #6c63ff; --accent2: #ff6584;
+      --accent3: #43e97b; --text: #f0f0f8; --muted: #7a7a9a; --radius: 14px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+    .sidebar { position:fixed; left:0; top:0; bottom:0; width:240px; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; padding:24px 0; z-index:100; }
+    .sidebar-logo { display:flex; align-items:center; gap:10px; padding:0 20px 28px; border-bottom:1px solid var(--border); margin-bottom:16px; }
+    .logo-mark { width:36px; height:36px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:16px; color:white; }
+    .logo-text { font-family:'Syne',sans-serif; font-size:20px; font-weight:700; }
+    .nav-item { display:flex; align-items:center; gap:12px; padding:11px 12px; color:var(--muted); font-size:14px; font-weight:500; cursor:pointer; transition:all 0.15s; border-radius:8px; margin:1px 8px; text-decoration:none; }
+    .nav-item:hover { background:var(--surface2); color:var(--text); }
+    .nav-item.active { background:rgba(108,99,255,0.15); color:var(--accent); }
+    .sidebar-bottom { margin-top:auto; padding:16px 8px 0; border-top:1px solid var(--border); }
+    .user-chip { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px; }
+    .user-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:white; flex-shrink:0; overflow:hidden; }
+    .user-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+    .user-name { font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .user-plan { font-size:11px; color:var(--accent3); font-weight:500; }
+    .main { margin-left:240px; min-height:100vh; }
+    .topbar { padding:20px 32px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--bg); position:sticky; top:0; z-index:50; }
+    .page-title { font-family:'Syne',sans-serif; font-size:20px; font-weight:700; }
+    .btn-primary { display:flex; align-items:center; gap:8px; padding:10px 18px; background:var(--accent); color:white; border:none; border-radius:var(--radius); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:all 0.2s; }
+    .btn-primary:hover { background:#5a52e0; transform:translateY(-1px); }
+    .btn-secondary { padding:10px 18px; background:transparent; border:1px solid var(--border); border-radius:var(--radius); color:var(--muted); font-family:'DM Sans',sans-serif; font-size:14px; cursor:pointer; transition:all 0.15s; }
+    .btn-secondary:hover { border-color:var(--text); color:var(--text); }
+    .content { padding:32px; }
+    .page { display:none; }
+    .page.active { display:block; }
+    .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px; }
+    .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; position:relative; overflow:hidden; }
+    .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+    .stat-label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; }
+    .stat-value { font-family:'Syne',sans-serif; font-size:32px; font-weight:700; margin-bottom:4px; }
+    .stat-sub { font-size:12px; color:var(--muted); }
+    .token-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:32px; }
+    .token-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .token-title { font-family:'Syne',sans-serif; font-size:16px; font-weight:600; }
+    .badge { padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
+    .badge-free { background:rgba(67,233,123,0.15); color:var(--accent3); }
+    .token-bar-bg { height:8px; background:var(--surface2); border-radius:4px; overflow:hidden; margin-bottom:8px; }
+    .token-bar-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:4px; transition:width 1s ease; }
+    .token-counts { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); }
+    .agents-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+    .agent-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; cursor:pointer; transition:all 0.2s; }
+    .agent-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 32px rgba(108,99,255,0.1); }
+    .agent-card-header { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+    .agent-avatar { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; overflow:hidden; }
+    .agent-avatar img { width:100%; height:100%; object-fit:cover; border-radius:10px; }
+    .agent-name { font-family:'Syne',sans-serif; font-size:16px; font-weight:600; }
+    .agent-desc { font-size:12px; color:var(--muted); margin-top:2px; }
+    .agent-stats { display:flex; gap:16px; margin-bottom:16px; }
+    .agent-stat { font-size:12px; color:var(--muted); }
+    .agent-stat span { color:var(--text); font-weight:500; }
+    .agent-footer { display:flex; align-items:center; justify-content:space-between; }
+    .status-live { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--accent3); }
+    .status-live::before { content:''; width:6px; height:6px; background:var(--accent3); border-radius:50%; animation:pulse 2s infinite; }
+    .status-draft { font-size:12px; color:var(--muted); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .btn-icon { width:28px; height:28px; border:none; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; background:transparent; color:var(--muted); transition:all 0.15s; }
+    .btn-icon:hover { background:rgba(255,101,132,0.15); color:var(--accent2); }
+    .empty-state { text-align:center; padding:80px 20px; color:var(--muted); }
+    .empty-icon { width:64px; height:64px; background:var(--surface); border:1px solid var(--border); border-radius:16px; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:28px; }
+    .empty-state h3 { font-family:'Syne',sans-serif; font-size:18px; color:var(--text); margin-bottom:8px; }
+    .empty-state p { font-size:14px; margin-bottom:24px; }
+    .form-section { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px; margin-bottom:20px; }
+    .form-section-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:600; margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+    .section-num { width:24px; height:24px; background:rgba(108,99,255,0.2); color:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-group { margin-bottom:16px; }
+    label { display:block; font-size:13px; font-weight:500; color:var(--muted); margin-bottom:6px; }
+    input[type="text"], textarea { width:100%; padding:11px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; outline:none; transition:border-color 0.2s; }
+    input[type="color"] { width:100%; height:44px; padding:4px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; cursor:pointer; outline:none; }
+    input[type="text"]:focus, textarea:focus { border-color:var(--accent); }
+    textarea { resize:vertical; min-height:100px; }
+    .sources-list { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+    .source-item { display:flex; align-items:flex-start; gap:12px; padding:14px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; }
+    .source-type-badge { padding:3px 8px; border-radius:6px; font-size:11px; font-weight:600; text-transform:uppercase; flex-shrink:0; }
+    .type-text { background:rgba(108,99,255,0.15); color:var(--accent); }
+    .type-file { background:rgba(255,101,132,0.15); color:var(--accent2); }
+    .type-url { background:rgba(67,233,123,0.15); color:var(--accent3); }
+    .source-content { flex:1; font-size:13px; color:var(--muted); line-height:1.5; word-break:break-word; }
+    .add-source-tabs { display:flex; gap:8px; margin-bottom:14px; }
+    .tab-btn { padding:7px 14px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--muted); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; transition:all 0.15s; }
+    .tab-btn.active { background:rgba(108,99,255,0.15); border-color:var(--accent); color:var(--accent); }
+    .source-input-area { display:none; }
+    .source-input-area.active { display:block; }
+    .file-drop { border:2px dashed var(--border); border-radius:10px; padding:24px; text-align:center; cursor:pointer; color:var(--muted); font-size:14px; transition:all 0.2s; }
+    .file-drop:hover { border-color:var(--accent); color:var(--accent); }
+    .token-meter { display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; margin-top:12px; }
+    .token-meter-bar { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+    .token-meter-fill { height:100%; background:linear-gradient(90deg,var(--accent3),var(--accent)); border-radius:3px; width:0%; transition:width 0.5s; }
+    .token-meter-text { font-size:12px; color:var(--muted); white-space:nowrap; }
+    .publish-box { background:linear-gradient(135deg,rgba(108,99,255,0.1),rgba(255,101,132,0.05)); border:1px solid rgba(108,99,255,0.3); border-radius:var(--radius); padding:28px; text-align:center; }
+    .publish-box h3 { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; margin-bottom:8px; }
+    .publish-box p { color:var(--muted); font-size:14px; margin-bottom:20px; }
+    .btn-publish { padding:13px 32px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none; border-radius:var(--radius); color:white; font-family:'Syne',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+    .btn-publish:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(108,99,255,0.3); }
+    .published-url-box { margin-top:16px; padding:14px 16px; background:var(--surface2); border:1px solid var(--accent); border-radius:10px; display:flex; align-items:center; gap:10px; }
+    .published-url { flex:1; font-size:13px; color:var(--accent); word-break:break-all; }
+    .btn-copy { padding:6px 12px; background:rgba(108,99,255,0.15); border:none; border-radius:6px; color:var(--accent); font-size:12px; cursor:pointer; }
+    .btn-copy:hover { background:rgba(108,99,255,0.3); }
+    .toast { position:fixed; bottom:24px; right:24px; padding:12px 20px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); font-size:14px; z-index:9999; transform:translateY(100px); opacity:0; transition:all 0.3s; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.success { border-color:var(--accent3); }
+    .toast.error { border-color:var(--accent2); }
+    .spinner { width:32px; height:32px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  </style>
+</head>
+<body>
+
+<div id="loading" style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:12px;">
+  <div class="spinner"></div>
+  <div style="color:var(--muted);font-size:14px;">Loading...</div>
+</div>
+
+<div id="app" style="display:none;">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">A</div>
+      <span class="logo-text">Aasai</span>
+    </div>
+    <nav>
+      <a class="nav-item active" onclick="showPage('dashboard');return false;" href="#">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" onclick="showPage('agents');return false;" href="#">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        My Agents
+      </a>
+      <a class="nav-item" onclick="startCreate();return false;" href="#">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Create Agent
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="user-chip">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div>
+          <div class="user-name" id="user-name">...</div>
+          <div class="user-plan" id="user-plan">Free Plan</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD PAGE -->
+    <div id="page-dashboard" class="page active">
+      <div class="topbar">
+        <div class="page-title">Dashboard</div>
+        <button class="btn-primary" onclick="startCreate()">+ New Agent</button>
+      </div>
+      <div class="content">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Total Agents</div><div class="stat-value" id="s-agents">0</div><div class="stat-sub">Active agents</div></div>
+          <div class="stat-card"><div class="stat-label">Total Queries</div><div class="stat-value" id="s-queries">0</div><div class="stat-sub">All time</div></div>
+          <div class="stat-card"><div class="stat-label">Tokens Used</div><div class="stat-value" id="s-tokens">0</div><div class="stat-sub">Lifetime</div></div>
+        </div>
+        <div class="token-card">
+          <div class="token-header">
+            <div class="token-title">Token Usage</div>
+            <span class="badge badge-free" id="plan-badge">Free Plan</span>
+          </div>
+          <div class="token-bar-bg"><div class="token-bar-fill" id="token-bar" style="width:0%"></div></div>
+          <div class="token-counts"><span id="t-used">0 used</span><span id="t-limit">1,000,000 total</span></div>
+        </div>
+        <div style="margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:600;">Recent Agents</div>
+          <a onclick="showPage('agents');return false;" href="#" style="font-size:13px;color:var(--accent);text-decoration:none;">View all →</a>
+        </div>
+        <div class="agents-grid" id="dash-agents"></div>
+      </div>
+    </div>
+
+    <!-- AGENTS PAGE -->
+    <div id="page-agents" class="page">
+      <div class="topbar">
+        <div class="page-title">My Agents</div>
+        <button class="btn-primary" onclick="startCreate()">+ New Agent</button>
+      </div>
+      <div class="content"><div class="agents-grid" id="all-agents"></div></div>
+    </div>
+
+    <!-- CREATE/EDIT PAGE -->
+    <div id="page-create" class="page">
+      <div class="topbar">
+        <div class="page-title" id="create-title">Create Agent</div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-secondary" onclick="showPage('agents')">Cancel</button>
+          <button class="btn-primary" onclick="saveAgent()">Save Agent</button>
+        </div>
+      </div>
+      <div class="content" style="max-width:800px;">
+        <div class="form-section">
+          <div class="form-section-title"><div class="section-num">1</div>Basic Information</div>
+          <div class="form-row">
+            <div class="form-group"><label>Agent Name *</label><input type="text" id="f-name" placeholder="e.g. Springfield Coaching Bot" /></div>
+            <div class="form-group"><label>Brand Color</label><input type="color" id="f-color" value="#6c63ff" /></div>
+          </div>
+          <div class="form-group"><label>Welcome Message</label><input type="text" id="f-welcome" placeholder="Hi! How can I help you today?" /></div>
+          <div class="form-group"><label>Logo URL (optional)</label><input type="text" id="f-logo" placeholder="https://yoursite.com/logo.png" /></div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title"><div class="section-num">2</div>AI Behaviour</div>
+          <div class="form-group"><label>System Prompt</label><textarea id="f-prompt" placeholder="You are a helpful assistant for [Organisation]. Answer only from the provided knowledge. Be friendly and concise."></textarea></div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title"><div class="section-num">3</div>Knowledge Sources</div>
+          <div class="sources-list" id="sources-list"></div>
+          <div class="add-source-tabs">
+            <button class="tab-btn active" onclick="switchTab('text',this)">📝 Text</button>
+            <button class="tab-btn" onclick="switchTab('file',this)">📄 File</button>
+            <button class="tab-btn" onclick="switchTab('url',this)">🔗 URL</button>
+          </div>
+          <div class="source-input-area active" id="tab-text">
+            <textarea id="src-text" placeholder="Paste your knowledge here — fees, timings, FAQs, policies..." style="min-height:120px;"></textarea>
+            <button class="btn-primary" style="margin-top:10px;" onclick="addSource('text')">Add Text</button>
+          </div>
+          <div class="source-input-area" id="tab-file">
+            <div class="file-drop" onclick="document.getElementById('file-input').click()">
+              <input type="file" id="file-input" style="display:none;" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" onchange="uploadFile(this)" />
+              <div style="font-size:24px;margin-bottom:8px;">📎</div>
+              <div>Click to upload</div>
+              <div style="font-size:12px;margin-top:4px;">PDF, DOCX, TXT, PNG, JPG</div>
+            </div>
+          </div>
+          <div class="source-input-area" id="tab-url">
+            <input type="text" id="src-url" placeholder="https://yourwebsite.com/about" />
+            <button class="btn-primary" style="margin-top:10px;" onclick="addSource('url')">Fetch & Add</button>
+          </div>
+          <div class="token-meter">
+            <span style="font-size:12px;color:var(--muted);">Knowledge size</span>
+            <div class="token-meter-bar"><div class="token-meter-fill" id="k-fill"></div></div>
+            <span class="token-meter-text" id="k-text">~0 / 18,000 tokens</span>
+          </div>
+        </div>
+        <div class="publish-box">
+          <h3>Ready to go live?</h3>
+          <p>Publish your agent and get a shareable chat link instantly.</p>
+          <button class="btn-publish" onclick="publishAgent()">🚀 Publish Agent</button>
+          <div class="published-url-box" id="url-box" style="display:none;">
+            <span class="published-url" id="pub-url"></span>
+            <button class="btn-copy" onclick="copyUrl()">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = 'https://apiv2.aasaitech.in'
+  let token = localStorage.getItem('aasai_token')
+  let currentUser = null
+  let sources = []
+  let editingAgentId = null
+
+  async function init() {
+    const params = new URLSearchParams(window.location.search)
+    const urlToken = params.get('token')
+    if (urlToken) {
+      localStorage.setItem('aasai_token', urlToken)
+      token = urlToken
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+    if (!token) { window.location.replace('index.html'); return }
+    try {
+      const res = await fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+      if (!res.ok) throw new Error()
+      currentUser = await res.json()
+      document.getElementById('loading').style.display = 'none'
+      document.getElementById('app').style.display = 'block'
+      const initials = currentUser.name ? currentUser.name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2) : '?'
+      if (currentUser.avatar) document.getElementById('user-avatar').innerHTML = `<img src="${currentUser.avatar}" />`
+      else document.getElementById('user-avatar').textContent = initials
+      document.getElementById('user-name').textContent = currentUser.name || currentUser.email
+      loadDashboard()
+    } catch(e) {
+      localStorage.removeItem('aasai_token')
+      window.location.replace('index.html')
+    }
+  }
+
+  function showPage(p) {
+    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'))
+    document.getElementById('page-'+p).classList.add('active')
+    document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'))
+    const map = {dashboard:0, agents:1, create:2}
+    if (map[p] !== undefined) document.querySelectorAll('.nav-item')[map[p]].classList.add('active')
+    if (p === 'dashboard') loadDashboard()
+    if (p === 'agents') loadAgents()
+  }
+
+  function startCreate() {
+    editingAgentId = null; sources = []
+    document.getElementById('create-title').textContent = 'Create Agent'
+    document.getElementById('f-name').value = ''
+    document.getElementById('f-color').value = '#6c63ff'
+    document.getElementById('f-welcome').value = ''
+    document.getElementById('f-logo').value = ''
+    document.getElementById('f-prompt').value = ''
+    document.getElementById('url-box').style.display = 'none'
+    renderSources()
+    showPage('create')
+  }
+
+  async function loadDashboard() {
+    try {
+      const r = await fetch(`${API}/dashboard`, { headers: { Authorization: `Bearer ${token}` } })
+      const d = await r.json()
+      document.getElementById('s-agents').textContent = d.agents_count || 0
+      document.getElementById('s-queries').textContent = (d.total_queries||0).toLocaleString()
+      document.getElementById('s-tokens').textContent = fmt(d.tokens_used||0)
+      const used = d.tokens_used||0, limit = d.token_limit
+      const pct = limit ? Math.min((used/limit)*100,100).toFixed(1) : 0
+      document.getElementById('token-bar').style.width = pct+'%'
+      document.getElementById('t-used').textContent = fmt(used)+' used'
+      document.getElementById('t-limit').textContent = limit ? fmt(limit)+' total' : 'Unlimited'
+      renderCards(d.recent_agents||[], 'dash-agents')
+    } catch(e) {}
+  }
+
+  async function loadAgents() {
+    try {
+      const r = await fetch(`${API}/agents`, { headers: { Authorization: `Bearer ${token}` } })
+      renderCards(await r.json(), 'all-agents')
+    } catch(e) {}
+  }
+
+  function renderCards(list, id) {
+    const c = document.getElementById(id)
+    if (!list.length) {
+      c.innerHTML = `<div class="empty-state"><div class="empty-icon">🤖</div><h3>No agents yet</h3><p>Create your first AI agent</p><button class="btn-primary" onclick="startCreate()">Create Agent</button></div>`
+      return
+    }
+    c.innerHTML = list.map(a => `
+      <div class="agent-card" onclick="editAgent('${a._id}')">
+        <div class="agent-card-header">
+          <div class="agent-avatar" style="background:${a.brand_color||'#6c63ff'}22;">${a.logo_url?`<img src="${a.logo_url}"/>`:'🤖'}</div>
+          <div><div class="agent-name">${a.name}</div><div class="agent-desc">${a.sources_count||0} sources</div></div>
+        </div>
+        <div class="agent-stats">
+          <div class="agent-stat">Queries: <span>${(a.query_count||0).toLocaleString()}</span></div>
+          <div class="agent-stat">Tokens: <span>${fmt(a.tokens_consumed||0)}</span></div>
+        </div>
+        <div class="agent-footer">
+          <span class="${a.published?'status-live':'status-draft'}">${a.published?'Live':'Draft'}</span>
+          <button class="btn-icon" onclick="event.stopPropagation();deleteAgent('${a._id}')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+          </button>
+        </div>
+      </div>`).join('')
+  }
+
+  async function editAgent(id) {
+    try {
+      const [ar, sr] = await Promise.all([
+        fetch(`${API}/agents/${id}`, { headers:{Authorization:`Bearer ${token}`} }),
+        fetch(`${API}/agents/${id}/sources`, { headers:{Authorization:`Bearer ${token}`} })
+      ])
+      const a = await ar.json(); sources = await sr.json()
+      editingAgentId = id
+      document.getElementById('create-title').textContent = 'Edit Agent'
+      document.getElementById('f-name').value = a.name||''
+      document.getElementById('f-color').value = a.brand_color||'#6c63ff'
+      document.getElementById('f-welcome').value = a.welcome_message||''
+      document.getElementById('f-logo').value = a.logo_url||''
+      document.getElementById('f-prompt').value = a.system_prompt||''
+      if (a.published_url) { document.getElementById('pub-url').textContent = a.published_url; document.getElementById('url-box').style.display = 'flex' }
+      else document.getElementById('url-box').style.display = 'none'
+      renderSources(); showPage('create')
+    } catch(e) { toast('Failed to load agent','error') }
+  }
+
+  async function saveAgent() {
+    const name = document.getElementById('f-name').value.trim()
+    if (!name) { toast('Agent name is required','error'); return }
+    const body = { name, brand_color: document.getElementById('f-color').value, welcome_message: document.getElementById('f-welcome').value||'Hi! How can I help you today?', logo_url: document.getElementById('f-logo').value, system_prompt: document.getElementById('f-prompt').value||`You are a helpful assistant for ${name}. Answer only from the provided knowledge. Be friendly and concise.` }
+    try {
+      const r = await fetch(editingAgentId?`${API}/agents/${editingAgentId}`:`${API}/agents`, { method:editingAgentId?'PUT':'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`}, body:JSON.stringify(body) })
+      const d = await r.json()
+      if (!editingAgentId) editingAgentId = d._id
+      toast('Agent saved!','success')
+    } catch(e) { toast('Failed to save','error') }
+  }
+
+  async function deleteAgent(id) {
+    if (!confirm('Delete this agent?')) return
+    await fetch(`${API}/agents/${id}`, { method:'DELETE', headers:{Authorization:`Bearer ${token}`} })
+    toast('Deleted','success'); loadAgents()
+  }
+
+  function switchTab(type, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'))
+    document.querySelectorAll('.source-input-area').forEach(a=>a.classList.remove('active'))
+    btn.classList.add('active')
+    document.getElementById('tab-'+type).classList.add('active')
+  }
+
+  async function ensureSaved() {
+    if (!editingAgentId) await saveAgent()
+    return !!editingAgentId
+  }
+
+  async function addSource(type) {
+    const content = type==='text' ? document.getElementById('src-text').value.trim() : document.getElementById('src-url').value.trim()
+    if (!content) { toast('Please enter content','error'); return }
+    if (!await ensureSaved()) return
+    try {
+      if (type==='url') toast('Fetching URL...','success')
+      const r = await fetch(`${API}/agents/${editingAgentId}/sources`, { method:'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`}, body:JSON.stringify({type,content}) })
+      const s = await r.json()
+      if (!r.ok) { toast(s.error||'Failed','error'); return }
+      sources.push(s); renderSources()
+      if (type==='text') document.getElementById('src-text').value = ''
+      if (type==='url') document.getElementById('src-url').value = ''
+      toast('Source added!','success')
+    } catch(e) { toast('Failed to add source','error') }
+  }
+
+  async function uploadFile(input) {
+    if (!input.files.length) return
+    if (!await ensureSaved()) return
+    const fd = new FormData(); fd.append('file', input.files[0])
+    try {
+      toast('Processing file...','success')
+      const r = await fetch(`${API}/agents/${editingAgentId}/sources/file`, { method:'POST', headers:{Authorization:`Bearer ${token}`}, body:fd })
+      const s = await r.json()
+      sources.push(s); renderSources(); toast('File processed!','success')
+    } catch(e) { toast('Failed to process file','error') }
+  }
+
+  async function deleteSource(id) {
+    await fetch(`${API}/agents/${editingAgentId}/sources/${id}`, { method:'DELETE', headers:{Authorization:`Bearer ${token}`} })
+    sources = sources.filter(s=>s._id!==id); renderSources()
+  }
+
+  function renderSources() {
+    const el = document.getElementById('sources-list')
+    if (!sources.length) { el.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">No sources yet.</div>`; updateMeter(0); return }
+    el.innerHTML = sources.map(s=>`
+      <div class="source-item">
+        <span class="source-type-badge type-${s.type}">${s.type}</span>
+        <div class="source-content">${(s.content||'').substring(0,120)}${(s.content||'').length>120?'...':''}</div>
+        <button class="btn-icon" onclick="deleteSource('${s._id}')">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        </button>
+      </div>`).join('')
+    const chars = sources.reduce((a,s)=>a+(s.extracted_text||s.content||'').length,0)
+    updateMeter(Math.round(chars/4))
+  }
+
+  function updateMeter(t) {
+    const pct = Math.min((t/18000)*100,100)
+    document.getElementById('k-fill').style.width = pct+'%'
+    document.getElementById('k-fill').style.background = pct>90?'var(--accent2)':''
+    document.getElementById('k-text').textContent = `~${t.toLocaleString()} / 18,000 tokens`
+  }
+
+  async function publishAgent() {
+    if (!await ensureSaved()) return
+    try {
+      const r = await fetch(`${API}/agents/${editingAgentId}/publish`, { method:'POST', headers:{Authorization:`Bearer ${token}`} })
+      const d = await r.json()
+      if (!r.ok) { toast(d.error||'Publish failed','error'); return }
+      document.getElementById('pub-url').textContent = d.url
+      document.getElementById('url-box').style.display = 'flex'
+      toast('Agent published! 🚀','success')
+    } catch(e) { toast('Failed to publish','error') }
+  }
+
+  function copyUrl() {
+    navigator.clipboard.writeText(document.getElementById('pub-url').textContent)
+    toast('URL copied!','success')
+  }
+
+  function fmt(n) {
+    if (n>=1000000) return (n/1000000).toFixed(1)+'M'
+    if (n>=1000) return (n/1000).toFixed(1)+'K'
+    return n.toString()
+  }
+
+  function toast(msg, type='success') {
+    const t = document.getElementById('toast')
+    t.textContent = (type==='success'?'✓ ':'✕ ')+msg
+    t.className = `toast ${type} show`
+    setTimeout(()=>t.classList.remove('show'),3000)
+  }
+
+  init()
+</script>
+</body>
+</html>
