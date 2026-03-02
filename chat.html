@@ -3,605 +3,206 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700&display=swap" rel="stylesheet" />
+  <title>Aasai — AI Agent Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --surface2: #1a1a24;
+      --border: #2a2a38;
       --accent: #6c63ff;
-      --bg: #f7f7fb;
-      --surface: #ffffff;
-      --border: #e8e8f0;
-      --text: #1a1a2e;
-      --muted: #8888aa;
-      --bubble-user: #6c63ff;
-      --bubble-bot: #ffffff;
-      --radius: 18px;
+      --accent2: #ff6584;
+      --accent3: #43e97b;
+      --text: #f0f0f8;
+      --muted: #7a7a9a;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'DM Sans', sans-serif;
       background: var(--bg);
       color: var(--text);
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    /* ── HEADER ── */
-    .chat-header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
+      min-height: 100vh;
       display: flex;
       align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-      box-shadow: 0 1px 0 var(--border);
-    }
-
-    .header-avatar {
-      width: 40px; height: 40px;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
+      justify-content: center;
       overflow: hidden;
     }
-
-    .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-    .header-info { flex: 1; }
-    .header-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
-    .header-status {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 12px; color: var(--muted);
-    }
-
-    .status-dot {
-      width: 6px; height: 6px;
-      background: #43e97b;
+    .orb {
+      position: fixed;
       border-radius: 50%;
-      animation: pulse 2s infinite;
+      filter: blur(120px);
+      pointer-events: none;
+      animation: orbFloat 8s ease-in-out infinite;
     }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+    .orb1 { width: 600px; height: 600px; background: rgba(108,99,255,0.14); top: -200px; left: -200px; }
+    .orb2 { width: 400px; height: 400px; background: rgba(255,101,132,0.09); bottom: -100px; right: -100px; animation-delay: 3s; }
+    .orb3 { width: 300px; height: 300px; background: rgba(67,233,123,0.06); top: 40%; left: 50%; animation-delay: 6s; }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(20px, -20px); }
     }
-
-    .powered-by {
-      font-size: 11px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .powered-by a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    /* ── MESSAGES ── */
-    .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .messages::-webkit-scrollbar { width: 4px; }
-    .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-    /* Welcome */
-    .welcome-card {
+    .login-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 8px;
+      border-radius: 28px;
+      padding: 52px 44px;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.6s ease forwards;
     }
-
-    .welcome-avatar {
-      width: 56px; height: 56px;
-      border-radius: 16px;
-      margin: 0 auto 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px;
-      overflow: hidden;
-    }
-
-    .welcome-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-    .welcome-card h2 { font-family: 'Syne', sans-serif; font-size: 17px; margin-bottom: 6px; }
-    .welcome-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
-
-    /* Suggestions */
-    .suggestions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .suggestion-chip {
-      padding: 8px 14px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.15s;
-      color: var(--text);
-    }
-
-    .suggestion-chip:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(108,99,255,0.05);
-    }
-
-    /* Message bubbles */
-    .message {
-      display: flex;
-      gap: 8px;
-      max-width: 85%;
-      animation: msgIn 0.2s ease;
-    }
-
-    @keyframes msgIn {
-      from { opacity: 0; transform: translateY(8px); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
-    .message.user {
-      align-self: flex-end;
-      flex-direction: row-reverse;
-    }
-
-    .message.bot { align-self: flex-start; }
-
-    .msg-avatar {
-      width: 28px; height: 28px;
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px;
-      flex-shrink: 0;
-      margin-top: 2px;
-      overflow: hidden;
-    }
-
-    .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-    .msg-bubble {
-      padding: 11px 15px;
-      border-radius: var(--radius);
-      font-size: 14px;
-      line-height: 1.55;
-      max-width: 100%;
-    }
-
-    .message.user .msg-bubble {
-      background: var(--bubble-user);
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
-
-    .message.bot .msg-bubble {
-      background: var(--bubble-bot);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-bottom-left-radius: 4px;
-    }
-
-    .msg-time {
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 3px;
-      text-align: right;
-    }
-
-    .message.bot .msg-time { text-align: left; }
-
-    /* Typing indicator */
-    .typing {
+    .logo {
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 12px 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      border-bottom-left-radius: 4px;
-      width: fit-content;
-    }
-
-    .typing-dot {
-      width: 6px; height: 6px;
-      background: var(--muted);
-      border-radius: 50%;
-      animation: typing 1.2s infinite;
-    }
-
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes typing {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-6px); }
-    }
-
-    /* ── INPUT ── */
-    .chat-input-area {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 12px 16px;
-      flex-shrink: 0;
-    }
-
-    .input-row {
-      display: flex;
-      align-items: flex-end;
       gap: 10px;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: 14px;
-      padding: 8px 8px 8px 16px;
-      transition: border-color 0.2s;
+      margin-bottom: 40px;
     }
-
-    .input-row:focus-within { border-color: var(--accent); }
-
-    #message-input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      color: var(--text);
-      outline: none;
-      resize: none;
-      max-height: 120px;
-      line-height: 1.5;
-      padding: 4px 0;
-    }
-
-    #message-input::placeholder { color: var(--muted); }
-
-    .btn-send {
-      width: 36px; height: 36px;
-      background: var(--accent);
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
+    .logo-mark {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 11px;
       display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
-      flex-shrink: 0;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: white;
     }
-
-    .btn-send:hover { background: #5a52e0; transform: scale(1.05); }
-    .btn-send:disabled { background: var(--border); cursor: not-allowed; transform: none; }
-
-    .char-hint {
-      font-size: 11px;
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 30px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    .subtitle {
       color: var(--muted);
-      text-align: center;
-      margin-top: 6px;
+      font-size: 15px;
+      margin-bottom: 36px;
+      line-height: 1.65;
     }
-
-    /* Loading state */
-    #loading {
+    .btn-google {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100dvh;
-      flex-direction: column;
       gap: 12px;
-      color: var(--muted);
-      font-size: 14px;
+      width: 100%;
+      padding: 14px 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
     }
-
-    .spinner {
-      width: 32px; height: 32px;
-      border: 2px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+    .btn-google:hover {
+      background: #222234;
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(108,99,255,0.15);
     }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Error state */
-    #error-state {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      height: 100dvh;
-      flex-direction: column;
-      gap: 12px;
+    .status-msg {
       text-align: center;
-      padding: 20px;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      min-height: 20px;
     }
-
-    #error-state h2 { font-family: 'Syne', sans-serif; font-size: 20px; }
-    #error-state p { color: var(--muted); font-size: 14px; }
+    .status-msg.error { color: #ff6584; }
+    .features {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .feature-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent3);
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
 
-<!-- Loading -->
-<div id="loading">
-  <div class="spinner"></div>
-  <span>Loading agent...</span>
-</div>
-
-<!-- Error -->
-<div id="error-state">
-  <div style="font-size:48px;">🤖</div>
-  <h2>Agent not found</h2>
-  <p>This agent may have been deleted or the link is invalid.</p>
-</div>
-
-<!-- Chat UI (hidden until loaded) -->
-<div id="chat-ui" style="display:none; flex-direction:column; height:100dvh;">
-
-  <!-- Header -->
-  <div class="chat-header">
-    <div class="header-avatar" id="header-avatar">🤖</div>
-    <div class="header-info">
-      <div class="header-name" id="header-name">Loading...</div>
-      <div class="header-status">
-        <div class="status-dot"></div>
-        Online
-      </div>
+  <div class="login-card">
+    <div class="logo">
+      <div class="logo-mark">A</div>
+      <span class="logo-text">Aasai</span>
     </div>
-    <div class="powered-by">by <a href="https://aasai.in" target="_blank">Aasai</a></div>
+    <h1>Build AI agents<br>in minutes</h1>
+    <p class="subtitle">Turn your knowledge into a 24/7 conversational assistant. No code required.</p>
+
+    <a href="https://apiv2.aasaitech.in/auth/google" class="btn-google">
+      <svg width="18" height="18" viewBox="0 0 18 18">
+        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+        <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/>
+        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/>
+      </svg>
+      Continue with Google
+    </a>
+
+    <div class="status-msg" id="statusMsg"></div>
+
+    <div class="features">
+      <div class="feature"><div class="feature-dot"></div> 1 million tokens free to start</div>
+      <div class="feature"><div class="feature-dot"></div> Upload docs, text, URLs as knowledge</div>
+      <div class="feature"><div class="feature-dot"></div> Publish a shareable chat link instantly</div>
+    </div>
   </div>
 
-  <!-- Messages -->
-  <div class="messages" id="messages">
+  <script>
+    (function() {
+      const params = new URLSearchParams(window.location.search);
 
-    <!-- Welcome card -->
-    <div class="welcome-card" id="welcome-card">
-      <div class="welcome-avatar" id="welcome-avatar">🤖</div>
-      <h2 id="welcome-name">Hello!</h2>
-      <p id="welcome-msg">How can I help you today?</p>
-    </div>
+      // If OAuth callback lands here with ?token=..., save and redirect
+      const urlToken = params.get('token');
+      if (urlToken) {
+        localStorage.setItem('aasai_token', urlToken);
+        window.history.replaceState({}, '', window.location.pathname);
+        window.location.replace('home.html');
+        return;
+      }
 
-    <!-- Suggestions -->
-    <div class="suggestions" id="suggestions"></div>
+      // Already logged in? Go to dashboard
+      const existingToken = localStorage.getItem('aasai_token');
+      if (existingToken) {
+        window.location.replace('home.html');
+        return;
+      }
 
-  </div>
-
-  <!-- Input -->
-  <div class="chat-input-area">
-    <div class="input-row">
-      <textarea
-        id="message-input"
-        placeholder="Type your question..."
-        rows="1"
-        onkeydown="handleKey(event)"
-        oninput="autoResize(this)"
-      ></textarea>
-      <button class="btn-send" id="send-btn" onclick="sendMessage()">
-        <svg width="16" height="16" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24">
-          <line x1="22" y1="2" x2="11" y2="13"/>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-        </svg>
-      </button>
-    </div>
-    <div class="char-hint">Powered by Aasai · AI can make mistakes</div>
-  </div>
-
-</div>
-
-<script>
-  const API = 'https://apiv2.aasaitech.in'
-  const params = new URLSearchParams(window.location.search)
-  const agentId = params.get('agent')
-  let agentConfig = null
-  let isTyping = false
-  let conversationHistory = []
-
-  // ── LOAD AGENT ──
-  async function loadAgent() {
-    if (!agentId) {
-      showError()
-      return
-    }
-
-    try {
-      const res = await fetch(`${API}/chat/${agentId}/config`)
-      if (!res.ok) { showError(); return }
-      agentConfig = await res.json()
-      applyBranding()
-      showChat()
-    } catch(e) {
-      showError()
-    }
-  }
-
-  function applyBranding() {
-    const color = agentConfig.brand_color || '#6c63ff'
-    document.documentElement.style.setProperty('--accent', color)
-    document.documentElement.style.setProperty('--bubble-user', color)
-
-    document.title = agentConfig.name || 'Chat'
-    document.getElementById('header-name').textContent = agentConfig.name || 'Assistant'
-
-    // Avatars
-    const logoHtml = agentConfig.logo_url
-      ? `<img src="${agentConfig.logo_url}" alt="logo" />`
-      : '🤖'
-
-    document.getElementById('header-avatar').innerHTML = logoHtml
-    document.getElementById('header-avatar').style.background = `${color}22`
-
-    document.getElementById('welcome-avatar').innerHTML = agentConfig.logo_url
-      ? `<img src="${agentConfig.logo_url}" alt="logo" />`
-      : '🤖'
-    document.getElementById('welcome-avatar').style.background = `${color}22`
-
-    document.getElementById('welcome-name').textContent = `Hello! 👋`
-    document.getElementById('welcome-msg').textContent = agentConfig.welcome_message || 'How can I help you today?'
-
-    // Suggestions
-    const suggestions = agentConfig.suggestions || ['What are your timings?', 'How to contact you?', 'Tell me about you']
-    const container = document.getElementById('suggestions')
-    container.innerHTML = suggestions.map(s =>
-      `<div class="suggestion-chip" onclick="sendSuggestion('${s}')">${s}</div>`
-    ).join('')
-  }
-
-  function showChat() {
-    document.getElementById('loading').style.display = 'none'
-    const chatUi = document.getElementById('chat-ui')
-    chatUi.style.display = 'flex'
-    chatUi.style.flexDirection = 'column'
-  }
-
-  function showError() {
-    document.getElementById('loading').style.display = 'none'
-    document.getElementById('error-state').style.display = 'flex'
-  }
-
-  // ── MESSAGING ──
-  function handleKey(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
-  }
-
-  function autoResize(el) {
-    el.style.height = 'auto'
-    el.style.height = Math.min(el.scrollHeight, 120) + 'px'
-  }
-
-  async function sendSuggestion(text) {
-    document.getElementById('message-input').value = text
-    await sendMessage()
-  }
-
-  async function sendMessage() {
-    const input = document.getElementById('message-input')
-    const text = input.value.trim()
-    if (!text || isTyping) return
-
-    // Hide welcome & suggestions on first message
-    document.getElementById('welcome-card').style.display = 'none'
-    document.getElementById('suggestions').style.display = 'none'
-
-    // Add user message
-    addMessage('user', text)
-    input.value = ''
-    input.style.height = 'auto'
-    conversationHistory.push({ role: 'user', content: text })
-
-    // Show typing
-    isTyping = true
-    document.getElementById('send-btn').disabled = true
-    const typingEl = showTyping()
-
-    try {
-      const res = await fetch(`${API}/chat/${agentId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: text })
-      })
-      const data = await res.json()
-      typingEl.remove()
-
-      const answer = data.answer || "I'm sorry, I couldn't find an answer to that."
-      addMessage('bot', answer)
-      conversationHistory.push({ role: 'assistant', content: answer })
-    } catch(e) {
-      typingEl.remove()
-      addMessage('bot', "Sorry, I'm having trouble connecting. Please try again.")
-    }
-
-    isTyping = false
-    document.getElementById('send-btn').disabled = false
-    input.focus()
-  }
-
-  function addMessage(role, text) {
-    const messages = document.getElementById('messages')
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    const color = agentConfig?.brand_color || '#6c63ff'
-
-    const logoHtml = agentConfig?.logo_url
-      ? `<img src="${agentConfig.logo_url}" alt="" />`
-      : '🤖'
-
-    const el = document.createElement('div')
-    el.className = `message ${role}`
-
-    if (role === 'user') {
-      el.innerHTML = `
-        <div>
-          <div class="msg-bubble">${escapeHtml(text)}</div>
-          <div class="msg-time">${time}</div>
-        </div>
-        <div class="msg-avatar" style="background:${color}22;">${logoHtml}</div>
-      `
-    } else {
-      el.innerHTML = `
-        <div class="msg-avatar" style="background:${color}22;">${logoHtml}</div>
-        <div>
-          <div class="msg-bubble">${formatResponse(text)}</div>
-          <div class="msg-time">${time}</div>
-        </div>
-      `
-    }
-
-    messages.appendChild(el)
-    messages.scrollTop = messages.scrollHeight
-  }
-
-  function showTyping() {
-    const messages = document.getElementById('messages')
-    const color = agentConfig?.brand_color || '#6c63ff'
-    const logoHtml = agentConfig?.logo_url
-      ? `<img src="${agentConfig.logo_url}" alt="" />`
-      : '🤖'
-
-    const el = document.createElement('div')
-    el.className = 'message bot'
-    el.id = 'typing-indicator'
-    el.innerHTML = `
-      <div class="msg-avatar" style="background:${color}22;">${logoHtml}</div>
-      <div class="typing">
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-      </div>
-    `
-    messages.appendChild(el)
-    messages.scrollTop = messages.scrollHeight
-    return el
-  }
-
-  function escapeHtml(text) {
-    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')
-  }
-
-  function formatResponse(text) {
-    return text
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n/g,'<br>')
-  }
-
-  // ── START ──
-  loadAgent()
-</script>
+      // Show error if OAuth failed
+      if (params.get('error')) {
+        const msg = document.getElementById('statusMsg');
+        msg.textContent = '⚠️ Login failed. Please try again.';
+        msg.classList.add('error');
+      }
+    })();
+  </script>
 </body>
 </html>
