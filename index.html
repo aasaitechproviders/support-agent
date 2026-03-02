@@ -178,31 +178,31 @@
 
   <script>
     (function() {
-      const params = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams(window.location.search)
 
-      // If OAuth callback lands here with ?token=..., save and redirect
-      const urlToken = params.get('token');
+      // Token from OAuth callback
+      const urlToken = params.get('token')
       if (urlToken) {
-        localStorage.setItem('aasai_token', urlToken);
-        window.history.replaceState({}, '', window.location.pathname);
-        window.location.replace('home.html');
-        return;
+        localStorage.setItem('aasai_token', urlToken)
+        window.history.replaceState({}, '', window.location.pathname)
+        window.location.replace('home.html')
+        return
       }
 
-      // Already logged in? Go to dashboard
-      const existingToken = localStorage.getItem('aasai_token');
-      if (existingToken) {
-        window.location.replace('home.html');
-        return;
+      // Already logged in
+      const existing = localStorage.getItem('aasai_token')
+      if (existing) {
+        window.location.replace('home.html')
+        return
       }
 
-      // Show error if OAuth failed
+      // Auth error
       if (params.get('error')) {
-        const msg = document.getElementById('statusMsg');
-        msg.textContent = '⚠️ Login failed. Please try again.';
-        msg.classList.add('error');
+        const msg = document.getElementById('statusMsg')
+        msg.textContent = '⚠️ Login failed. Please try again.'
+        msg.classList.add('error')
       }
-    })();
+    })()
   </script>
 </body>
 </html>
