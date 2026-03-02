@@ -13,6 +13,8 @@
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+    /* SIDEBAR */
     .sidebar { position:fixed; left:0; top:0; bottom:0; width:240px; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; padding:24px 0; z-index:100; }
     .sidebar-logo { display:flex; align-items:center; gap:10px; padding:0 20px 28px; border-bottom:1px solid var(--border); margin-bottom:16px; }
     .logo-mark { width:36px; height:36px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:16px; color:white; }
@@ -26,6 +28,10 @@
     .user-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
     .user-name { font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .user-plan { font-size:11px; color:var(--accent3); font-weight:500; }
+    .btn-logout { background:none; border:none; cursor:pointer; color:var(--muted); padding:6px; border-radius:6px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; }
+    .btn-logout:hover { background:rgba(255,101,132,0.15); color:var(--accent2); }
+
+    /* MAIN */
     .main { margin-left:240px; min-height:100vh; }
     .topbar { padding:20px 32px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--bg); position:sticky; top:0; z-index:50; }
     .page-title { font-family:'Syne',sans-serif; font-size:20px; font-weight:700; }
@@ -36,20 +42,27 @@
     .content { padding:32px; }
     .page { display:none; }
     .page.active { display:block; }
+
+    /* STATS */
     .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px; }
     .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; position:relative; overflow:hidden; }
     .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
     .stat-label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; }
     .stat-value { font-family:'Syne',sans-serif; font-size:32px; font-weight:700; margin-bottom:4px; }
     .stat-sub { font-size:12px; color:var(--muted); }
+
+    /* TOKEN CARD */
     .token-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:32px; }
     .token-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
     .token-title { font-family:'Syne',sans-serif; font-size:16px; font-weight:600; }
     .badge { padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
     .badge-free { background:rgba(67,233,123,0.15); color:var(--accent3); }
+    .badge-pro { background:rgba(108,99,255,0.15); color:var(--accent); }
     .token-bar-bg { height:8px; background:var(--surface2); border-radius:4px; overflow:hidden; margin-bottom:8px; }
     .token-bar-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:4px; transition:width 1s ease; }
     .token-counts { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); }
+
+    /* AGENTS */
     .agents-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
     .agent-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; cursor:pointer; transition:all 0.2s; }
     .agent-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 32px rgba(108,99,255,0.1); }
@@ -68,10 +81,14 @@
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
     .btn-icon { width:28px; height:28px; border:none; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; background:transparent; color:var(--muted); transition:all 0.15s; }
     .btn-icon:hover { background:rgba(255,101,132,0.15); color:var(--accent2); }
+
+    /* EMPTY */
     .empty-state { text-align:center; padding:80px 20px; color:var(--muted); }
     .empty-icon { width:64px; height:64px; background:var(--surface); border:1px solid var(--border); border-radius:16px; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:28px; }
     .empty-state h3 { font-family:'Syne',sans-serif; font-size:18px; color:var(--text); margin-bottom:8px; }
     .empty-state p { font-size:14px; margin-bottom:24px; }
+
+    /* FORM */
     .form-section { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:28px; margin-bottom:20px; }
     .form-section-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:600; margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
     .section-num { width:24px; height:24px; background:rgba(108,99,255,0.2); color:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
@@ -82,6 +99,8 @@
     input[type="color"] { width:100%; height:44px; padding:4px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; cursor:pointer; outline:none; }
     input[type="text"]:focus, textarea:focus { border-color:var(--accent); }
     textarea { resize:vertical; min-height:100px; }
+
+    /* SOURCES */
     .sources-list { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
     .source-item { display:flex; align-items:flex-start; gap:12px; padding:14px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; }
     .source-type-badge { padding:3px 8px; border-radius:6px; font-size:11px; font-weight:600; text-transform:uppercase; flex-shrink:0; }
@@ -96,10 +115,14 @@
     .source-input-area.active { display:block; }
     .file-drop { border:2px dashed var(--border); border-radius:10px; padding:24px; text-align:center; cursor:pointer; color:var(--muted); font-size:14px; transition:all 0.2s; }
     .file-drop:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* TOKEN METER */
     .token-meter { display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; margin-top:12px; }
     .token-meter-bar { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
     .token-meter-fill { height:100%; background:linear-gradient(90deg,var(--accent3),var(--accent)); border-radius:3px; width:0%; transition:width 0.5s; }
     .token-meter-text { font-size:12px; color:var(--muted); white-space:nowrap; }
+
+    /* PUBLISH */
     .publish-box { background:linear-gradient(135deg,rgba(108,99,255,0.1),rgba(255,101,132,0.05)); border:1px solid rgba(108,99,255,0.3); border-radius:var(--radius); padding:28px; text-align:center; }
     .publish-box h3 { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; margin-bottom:8px; }
     .publish-box p { color:var(--muted); font-size:14px; margin-bottom:20px; }
@@ -107,14 +130,17 @@
     .btn-publish:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(108,99,255,0.3); }
     .published-url-box { margin-top:16px; padding:14px 16px; background:var(--surface2); border:1px solid var(--accent); border-radius:10px; display:flex; align-items:center; gap:10px; }
     .published-url { flex:1; font-size:13px; color:var(--accent); word-break:break-all; }
-    .btn-copy { padding:6px 12px; background:rgba(108,99,255,0.15); border:none; border-radius:6px; color:var(--accent); font-size:12px; cursor:pointer; }
+    .btn-copy { padding:6px 12px; background:rgba(108,99,255,0.15); border:none; border-radius:6px; color:var(--accent); font-size:12px; cursor:pointer; white-space:nowrap; }
     .btn-copy:hover { background:rgba(108,99,255,0.3); }
+
+    /* TOAST */
     .toast { position:fixed; bottom:24px; right:24px; padding:12px 20px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); font-size:14px; z-index:9999; transform:translateY(100px); opacity:0; transition:all 0.3s; }
     .toast.show { transform:translateY(0); opacity:1; }
     .toast.success { border-color:var(--accent3); }
     .toast.error { border-color:var(--accent2); }
+
     .spinner { width:32px; height:32px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes spin { to{transform:rotate(360deg)} }
     ::-webkit-scrollbar { width:6px; }
     ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
   </style>
@@ -127,6 +153,8 @@
 </div>
 
 <div id="app" style="display:none;">
+
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="logo-mark">A</div>
@@ -149,17 +177,21 @@
     <div class="sidebar-bottom">
       <div class="user-chip">
         <div class="user-avatar" id="user-avatar">?</div>
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="user-name" id="user-name">...</div>
           <div class="user-plan" id="user-plan">Free Plan</div>
         </div>
+        <button class="btn-logout" onclick="logout()" title="Logout">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
       </div>
     </div>
   </aside>
 
+  <!-- MAIN -->
   <main class="main">
 
-    <!-- DASHBOARD PAGE -->
+    <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
       <div class="topbar">
         <div class="page-title">Dashboard</div>
@@ -187,7 +219,7 @@
       </div>
     </div>
 
-    <!-- AGENTS PAGE -->
+    <!-- AGENTS -->
     <div id="page-agents" class="page">
       <div class="topbar">
         <div class="page-title">My Agents</div>
@@ -196,7 +228,7 @@
       <div class="content"><div class="agents-grid" id="all-agents"></div></div>
     </div>
 
-    <!-- CREATE/EDIT PAGE -->
+    <!-- CREATE / EDIT -->
     <div id="page-create" class="page">
       <div class="topbar">
         <div class="page-title" id="create-title">Create Agent</div>
@@ -206,6 +238,7 @@
         </div>
       </div>
       <div class="content" style="max-width:800px;">
+
         <div class="form-section">
           <div class="form-section-title"><div class="section-num">1</div>Basic Information</div>
           <div class="form-row">
@@ -215,10 +248,12 @@
           <div class="form-group"><label>Welcome Message</label><input type="text" id="f-welcome" placeholder="Hi! How can I help you today?" /></div>
           <div class="form-group"><label>Logo URL (optional)</label><input type="text" id="f-logo" placeholder="https://yoursite.com/logo.png" /></div>
         </div>
+
         <div class="form-section">
           <div class="form-section-title"><div class="section-num">2</div>AI Behaviour</div>
           <div class="form-group"><label>System Prompt</label><textarea id="f-prompt" placeholder="You are a helpful assistant for [Organisation]. Answer only from the provided knowledge. Be friendly and concise."></textarea></div>
         </div>
+
         <div class="form-section">
           <div class="form-section-title"><div class="section-num">3</div>Knowledge Sources</div>
           <div class="sources-list" id="sources-list"></div>
@@ -249,6 +284,7 @@
             <span class="token-meter-text" id="k-text">~0 / 18,000 tokens</span>
           </div>
         </div>
+
         <div class="publish-box">
           <h3>Ready to go live?</h3>
           <p>Publish your agent and get a shareable chat link instantly.</p>
@@ -258,6 +294,7 @@
             <button class="btn-copy" onclick="copyUrl()">Copy</button>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -273,6 +310,7 @@
   let sources = []
   let editingAgentId = null
 
+  // ── INIT ──
   async function init() {
     const params = new URLSearchParams(window.location.search)
     const urlToken = params.get('token')
@@ -289,9 +327,13 @@
       document.getElementById('loading').style.display = 'none'
       document.getElementById('app').style.display = 'block'
       const initials = currentUser.name ? currentUser.name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2) : '?'
-      if (currentUser.avatar) document.getElementById('user-avatar').innerHTML = `<img src="${currentUser.avatar}" />`
-      else document.getElementById('user-avatar').textContent = initials
+      if (currentUser.avatar) {
+        document.getElementById('user-avatar').innerHTML = `<img src="${currentUser.avatar}" />`
+      } else {
+        document.getElementById('user-avatar').textContent = initials
+      }
       document.getElementById('user-name').textContent = currentUser.name || currentUser.email
+      document.getElementById('user-plan').textContent = currentUser.plan === 'pro' ? '⭐ Enterprise' : '🆓 Free Plan'
       loadDashboard()
     } catch(e) {
       localStorage.removeItem('aasai_token')
@@ -299,11 +341,18 @@
     }
   }
 
+  // ── LOGOUT ──
+  function logout() {
+    localStorage.removeItem('aasai_token')
+    window.location.replace('index.html')
+  }
+
+  // ── NAVIGATION ──
   function showPage(p) {
     document.querySelectorAll('.page').forEach(x => x.classList.remove('active'))
     document.getElementById('page-'+p).classList.add('active')
     document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'))
-    const map = {dashboard:0, agents:1, create:2}
+    const map = { dashboard:0, agents:1, create:2 }
     if (map[p] !== undefined) document.querySelectorAll('.nav-item')[map[p]].classList.add('active')
     if (p === 'dashboard') loadDashboard()
     if (p === 'agents') loadAgents()
@@ -322,6 +371,7 @@
     showPage('create')
   }
 
+  // ── DASHBOARD ──
   async function loadDashboard() {
     try {
       const r = await fetch(`${API}/dashboard`, { headers: { Authorization: `Bearer ${token}` } })
@@ -334,10 +384,15 @@
       document.getElementById('token-bar').style.width = pct+'%'
       document.getElementById('t-used').textContent = fmt(used)+' used'
       document.getElementById('t-limit').textContent = limit ? fmt(limit)+' total' : 'Unlimited'
+      if (d.plan === 'pro') {
+        document.getElementById('plan-badge').textContent = 'Pro Plan'
+        document.getElementById('plan-badge').className = 'badge badge-pro'
+      }
       renderCards(d.recent_agents||[], 'dash-agents')
-    } catch(e) {}
+    } catch(e) { console.error(e) }
   }
 
+  // ── AGENTS ──
   async function loadAgents() {
     try {
       const r = await fetch(`${API}/agents`, { headers: { Authorization: `Bearer ${token}` } })
@@ -355,17 +410,18 @@
       <div class="agent-card" onclick="editAgent('${a._id}')">
         <div class="agent-card-header">
           <div class="agent-avatar" style="background:${a.brand_color||'#6c63ff'}22;">${a.logo_url?`<img src="${a.logo_url}"/>`:'🤖'}</div>
-          <div><div class="agent-name">${a.name}</div><div class="agent-desc">${a.sources_count||0} sources</div></div>
-        </div>
-        <div class="agent-stats">
-          <div class="agent-stat">Queries: <span>${(a.query_count||0).toLocaleString()}</span></div>
-          <div class="agent-stat">Tokens: <span>${fmt(a.tokens_consumed||0)}</span></div>
+          <div><div class="agent-name">${a.name}</div><div class="agent-desc">${a.sources_count||0} sources · ${(a.query_count||0).toLocaleString()} queries</div></div>
         </div>
         <div class="agent-footer">
           <span class="${a.published?'status-live':'status-draft'}">${a.published?'Live':'Draft'}</span>
-          <button class="btn-icon" onclick="event.stopPropagation();deleteAgent('${a._id}')">
-            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-          </button>
+          <div style="display:flex;gap:6px;">
+            ${a.published_url ? `<button class="btn-icon" onclick="event.stopPropagation();window.open('${a.published_url}','_blank')" title="Open chat">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </button>` : ''}
+            <button class="btn-icon" onclick="event.stopPropagation();deleteAgent('${a._id}')" title="Delete">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+            </button>
+          </div>
         </div>
       </div>`).join('')
   }
@@ -384,8 +440,12 @@
       document.getElementById('f-welcome').value = a.welcome_message||''
       document.getElementById('f-logo').value = a.logo_url||''
       document.getElementById('f-prompt').value = a.system_prompt||''
-      if (a.published_url) { document.getElementById('pub-url').textContent = a.published_url; document.getElementById('url-box').style.display = 'flex' }
-      else document.getElementById('url-box').style.display = 'none'
+      if (a.published_url) {
+        document.getElementById('pub-url').textContent = a.published_url
+        document.getElementById('url-box').style.display = 'flex'
+      } else {
+        document.getElementById('url-box').style.display = 'none'
+      }
       renderSources(); showPage('create')
     } catch(e) { toast('Failed to load agent','error') }
   }
@@ -393,9 +453,19 @@
   async function saveAgent() {
     const name = document.getElementById('f-name').value.trim()
     if (!name) { toast('Agent name is required','error'); return }
-    const body = { name, brand_color: document.getElementById('f-color').value, welcome_message: document.getElementById('f-welcome').value||'Hi! How can I help you today?', logo_url: document.getElementById('f-logo').value, system_prompt: document.getElementById('f-prompt').value||`You are a helpful assistant for ${name}. Answer only from the provided knowledge. Be friendly and concise.` }
+    const body = {
+      name,
+      brand_color: document.getElementById('f-color').value,
+      welcome_message: document.getElementById('f-welcome').value || 'Hi! How can I help you today?',
+      logo_url: document.getElementById('f-logo').value,
+      system_prompt: document.getElementById('f-prompt').value || `You are a helpful assistant for ${name}. Answer only from the provided knowledge. Be friendly and concise.`
+    }
     try {
-      const r = await fetch(editingAgentId?`${API}/agents/${editingAgentId}`:`${API}/agents`, { method:editingAgentId?'PUT':'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`}, body:JSON.stringify(body) })
+      const r = await fetch(editingAgentId ? `${API}/agents/${editingAgentId}` : `${API}/agents`, {
+        method: editingAgentId ? 'PUT' : 'POST',
+        headers: { 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
+        body: JSON.stringify(body)
+      })
       const d = await r.json()
       if (!editingAgentId) editingAgentId = d._id
       toast('Agent saved!','success')
@@ -403,11 +473,13 @@
   }
 
   async function deleteAgent(id) {
-    if (!confirm('Delete this agent?')) return
+    if (!confirm('Delete this agent? This cannot be undone.')) return
     await fetch(`${API}/agents/${id}`, { method:'DELETE', headers:{Authorization:`Bearer ${token}`} })
-    toast('Deleted','success'); loadAgents()
+    toast('Agent deleted','success')
+    loadAgents()
   }
 
+  // ── SOURCES ──
   function switchTab(type, btn) {
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'))
     document.querySelectorAll('.source-input-area').forEach(a=>a.classList.remove('active'))
@@ -426,7 +498,11 @@
     if (!await ensureSaved()) return
     try {
       if (type==='url') toast('Fetching URL...','success')
-      const r = await fetch(`${API}/agents/${editingAgentId}/sources`, { method:'POST', headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`}, body:JSON.stringify({type,content}) })
+      const r = await fetch(`${API}/agents/${editingAgentId}/sources`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`},
+        body: JSON.stringify({type, content})
+      })
       const s = await r.json()
       if (!r.ok) { toast(s.error||'Failed','error'); return }
       sources.push(s); renderSources()
@@ -442,25 +518,35 @@
     const fd = new FormData(); fd.append('file', input.files[0])
     try {
       toast('Processing file...','success')
-      const r = await fetch(`${API}/agents/${editingAgentId}/sources/file`, { method:'POST', headers:{Authorization:`Bearer ${token}`}, body:fd })
+      const r = await fetch(`${API}/agents/${editingAgentId}/sources/file`, {
+        method:'POST', headers:{Authorization:`Bearer ${token}`}, body:fd
+      })
       const s = await r.json()
-      sources.push(s); renderSources(); toast('File processed!','success')
+      if (!r.ok) { toast(s.error||'Failed','error'); return }
+      sources.push(s); renderSources()
+      toast('File processed! ✓','success')
     } catch(e) { toast('Failed to process file','error') }
   }
 
   async function deleteSource(id) {
-    await fetch(`${API}/agents/${editingAgentId}/sources/${id}`, { method:'DELETE', headers:{Authorization:`Bearer ${token}`} })
+    await fetch(`${API}/agents/${editingAgentId}/sources/${id}`, {
+      method:'DELETE', headers:{Authorization:`Bearer ${token}`}
+    })
     sources = sources.filter(s=>s._id!==id); renderSources()
+    toast('Source removed','success')
   }
 
   function renderSources() {
     const el = document.getElementById('sources-list')
-    if (!sources.length) { el.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">No sources yet.</div>`; updateMeter(0); return }
+    if (!sources.length) {
+      el.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">No sources yet. Add text, files or URLs below.</div>`
+      updateMeter(0); return
+    }
     el.innerHTML = sources.map(s=>`
       <div class="source-item">
         <span class="source-type-badge type-${s.type}">${s.type}</span>
         <div class="source-content">${(s.content||'').substring(0,120)}${(s.content||'').length>120?'...':''}</div>
-        <button class="btn-icon" onclick="deleteSource('${s._id}')">
+        <button class="btn-icon" onclick="deleteSource('${s._id}')" title="Remove">
           <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
         </button>
       </div>`).join('')
@@ -471,14 +557,17 @@
   function updateMeter(t) {
     const pct = Math.min((t/18000)*100,100)
     document.getElementById('k-fill').style.width = pct+'%'
-    document.getElementById('k-fill').style.background = pct>90?'var(--accent2)':''
+    document.getElementById('k-fill').style.background = pct>90 ? 'var(--accent2)' : ''
     document.getElementById('k-text').textContent = `~${t.toLocaleString()} / 18,000 tokens`
   }
 
+  // ── PUBLISH ──
   async function publishAgent() {
     if (!await ensureSaved()) return
     try {
-      const r = await fetch(`${API}/agents/${editingAgentId}/publish`, { method:'POST', headers:{Authorization:`Bearer ${token}`} })
+      const r = await fetch(`${API}/agents/${editingAgentId}/publish`, {
+        method:'POST', headers:{Authorization:`Bearer ${token}`}
+      })
       const d = await r.json()
       if (!r.ok) { toast(d.error||'Publish failed','error'); return }
       document.getElementById('pub-url').textContent = d.url
@@ -489,9 +578,10 @@
 
   function copyUrl() {
     navigator.clipboard.writeText(document.getElementById('pub-url').textContent)
-    toast('URL copied!','success')
+    toast('URL copied! ✓','success')
   }
 
+  // ── HELPERS ──
   function fmt(n) {
     if (n>=1000000) return (n/1000000).toFixed(1)+'M'
     if (n>=1000) return (n/1000).toFixed(1)+'K'
@@ -502,7 +592,7 @@
     const t = document.getElementById('toast')
     t.textContent = (type==='success'?'✓ ':'✕ ')+msg
     t.className = `toast ${type} show`
-    setTimeout(()=>t.classList.remove('show'),3000)
+    setTimeout(()=>t.classList.remove('show'), 3000)
   }
 
   init()
