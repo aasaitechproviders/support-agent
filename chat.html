@@ -365,7 +365,7 @@
     try {
       const r = await fetch(`${API}/chat/${agentId}`, {
         method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ question:text, history:conversationHistory })
+        body: JSON.stringify({ question:text, history:conversationHistory, session_id, visitor_id })
       })
       const d = await r.json()
       typing.remove()
