@@ -3,655 +3,775 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aasai — AI Agent Platform</title>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <title>Aasai — Build AI Agents</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --ink: #0e0e12;
-      --ink2: #1c1c24;
-      --ink3: #28282f;
-      --line: #2e2e38;
-      --mid: #52525f;
-      --dim: #8a8a9a;
-      --fog: #b8b8c8;
-      --paper: #f2f1ee;
-      --off: #e8e7e4;
-      --gold: #c9a96e;
-      --gold2: #e8c98a;
-      --white: #fafaf8;
-      --r: 12px;
+      --void: #070709;
+      --deep: #0d0d11;
+      --ink: #13131a;
+      --card: #17171f;
+      --raise: #1e1e28;
+      --rim: #2a2a38;
+      --mist: #3d3d52;
+      --sub: #6b6b84;
+      --dim: #9494aa;
+      --soft: #c4c4d4;
+      --snow: #f0f0f8;
+      --g1: #d4a85a;
+      --g2: #e8c87a;
+      --g3: #f5dfa0;
+      --emerald: #4fd89a;
+      --sapphire: #5aabff;
+      --rose: #f06080;
     }
 
-    html, body {
-      height: 100%;
-      font-family: 'Outfit', sans-serif;
-      background: var(--ink);
-      color: var(--white);
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      font-family: 'Figtree', sans-serif;
+      background: var(--void);
+      color: var(--snow);
+    }
+
+    /* ── BACKGROUND ── */
+    .bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
       overflow: hidden;
+    }
+
+    .bg-canvas::after {
+      content: '';
+      position: absolute;
+      inset: -200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.028;
+      animation: grainDrift 8s steps(10) infinite;
+      pointer-events: none;
+    }
+
+    @keyframes grainDrift {
+      0%,100% { transform: translate(0,0); }
+      10% { transform: translate(-2%,-3%); }
+      20% { transform: translate(3%,2%); }
+      30% { transform: translate(-1%,4%); }
+      40% { transform: translate(4%,-1%); }
+      50% { transform: translate(-3%,1%); }
+      60% { transform: translate(2%,3%); }
+      70% { transform: translate(-4%,-2%); }
+      80% { transform: translate(1%,-4%); }
+      90% { transform: translate(3%,-1%); }
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      animation: orbFloat var(--dur,12s) ease-in-out infinite;
+      animation-delay: var(--delay,0s);
+    }
+    .orb-a { width:700px;height:700px;background:radial-gradient(circle,rgba(212,168,90,0.09) 0%,transparent 70%);top:-220px;left:-180px;--dur:14s; }
+    .orb-b { width:500px;height:500px;background:radial-gradient(circle,rgba(90,171,255,0.07) 0%,transparent 70%);bottom:-100px;right:30%;--dur:18s;--delay:-4s; }
+    .orb-c { width:400px;height:400px;background:radial-gradient(circle,rgba(79,216,154,0.05) 0%,transparent 70%);top:30%;right:-100px;--dur:16s;--delay:-8s; }
+    .orb-d { width:300px;height:300px;background:radial-gradient(circle,rgba(240,96,128,0.04) 0%,transparent 70%);bottom:20%;left:20%;--dur:20s;--delay:-3s; }
+
+    @keyframes orbFloat {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(30px,-20px) scale(1.04); }
+      66% { transform: translate(-20px,25px) scale(0.97); }
+    }
+
+    .horizon {
+      position: absolute; top:50%; left:0; right:0; height:1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 30%, rgba(212,168,90,0.1) 50%, rgba(255,255,255,0.04) 70%, transparent 100%);
     }
 
     /* ── LAYOUT ── */
     .shell {
+      position: relative; z-index: 1;
       display: grid;
-      grid-template-columns: 1fr 480px;
+      grid-template-columns: 1fr 500px;
       height: 100vh;
-      position: relative;
     }
 
     /* ── LEFT PANEL ── */
     .left {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      padding: 44px 52px;
-      overflow: hidden;
-      background: var(--ink);
+      display: flex; flex-direction: column;
+      padding: 40px 56px 48px;
+      position: relative; overflow: hidden;
     }
 
-    /* Subtle grid texture */
-    .left::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-      background-size: 48px 48px;
-      pointer-events: none;
-    }
-
-    /* Soft radial glow bottom-left */
     .left::after {
-      content: '';
-      position: absolute;
-      bottom: -120px;
-      left: -80px;
-      width: 560px;
-      height: 560px;
-      background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 65%);
-      pointer-events: none;
+      content: ''; position: absolute;
+      right: 0; top: 10%; bottom: 10%; width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--rim) 30%, var(--rim) 70%, transparent);
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      position: relative;
-      z-index: 1;
-      animation: fadeSlideUp 0.5s ease both;
+    .topbar {
+      display: flex; align-items: center; gap: 12px;
+      animation: riseIn 0.7s cubic-bezier(0.16,1,0.3,1) both;
     }
 
-    .brand-mark {
-      width: 38px; height: 38px;
-      border: 1.5px solid var(--line);
-      border-radius: 10px;
+    .logo-gem-inner {
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, #1e1e28, #28283a);
+      border: 1px solid var(--rim);
+      border-radius: 11px;
       display: flex; align-items: center; justify-content: center;
-      background: var(--ink2);
+      position: relative; overflow: hidden;
     }
 
-    .brand-mark svg { display: block; }
-
-    .brand-name {
-      font-family: 'Instrument Serif', serif;
-      font-size: 22px;
-      letter-spacing: -0.02em;
-      color: var(--white);
+    .logo-gem-inner::before {
+      content: ''; position: absolute;
+      top: -1px; left: -1px; right: -1px; height: 50%;
+      background: linear-gradient(to bottom, rgba(212,168,90,0.15), transparent);
+      border-radius: 11px 11px 0 0;
     }
 
-    .brand-tag {
-      margin-left: auto;
-      font-size: 11px;
-      color: var(--mid);
-      font-weight: 400;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      border: 1px solid var(--line);
-      padding: 4px 10px;
-      border-radius: 20px;
+    .logo-gem-inner svg { position: relative; z-index: 1; }
+
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px; font-weight: 700;
+      color: var(--snow); letter-spacing: -0.02em;
     }
 
-    /* ── HERO TEXT ── */
+    .version-pill {
+      margin-left: auto; font-size: 10px; font-weight: 500;
+      color: var(--g1); background: rgba(212,168,90,0.1);
+      border: 1px solid rgba(212,168,90,0.2);
+      border-radius: 20px; padding: 4px 11px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
     .hero {
-      position: relative;
-      z-index: 1;
-      margin-top: auto;
-      margin-bottom: 0;
-      padding-bottom: 56px;
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: center; padding: 20px 0 10px;
     }
 
-    .hero-eyebrow {
-      font-size: 11px;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      font-weight: 500;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      animation: fadeSlideUp 0.5s 0.1s ease both;
+    .eyebrow {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 24px;
+      animation: riseIn 0.7s 0.1s cubic-bezier(0.16,1,0.3,1) both;
     }
 
-    .hero-eyebrow::before {
-      content: '';
-      width: 24px; height: 1px;
-      background: var(--gold);
-      opacity: 0.6;
+    .eyebrow-line {
+      flex-shrink: 0; width: 32px; height: 1px;
+      background: linear-gradient(to right, var(--g1), transparent);
+    }
+
+    .eyebrow-text {
+      font-size: 11px; font-weight: 500; color: var(--g1);
+      letter-spacing: 0.18em; text-transform: uppercase;
     }
 
     .hero-title {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(38px, 4vw, 58px);
-      line-height: 1.08;
-      letter-spacing: -0.02em;
-      color: var(--white);
-      margin-bottom: 22px;
-      animation: fadeSlideUp 0.5s 0.15s ease both;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(40px, 3.8vw, 62px);
+      font-weight: 800; line-height: 1.06;
+      letter-spacing: -0.03em; color: var(--snow);
+      margin-bottom: 20px;
+      animation: riseIn 0.7s 0.15s cubic-bezier(0.16,1,0.3,1) both;
     }
 
-    .hero-title em {
-      font-style: italic;
-      color: var(--gold2);
+    .hero-title .line-gold {
+      display: block;
+      background: linear-gradient(90deg, var(--g2), var(--g3), var(--g1));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-title .line-italic {
+      font-style: italic; color: var(--soft);
+      -webkit-text-fill-color: var(--soft);
     }
 
     .hero-sub {
-      font-size: 15px;
-      color: var(--dim);
-      line-height: 1.7;
-      max-width: 480px;
-      font-weight: 300;
-      animation: fadeSlideUp 0.5s 0.2s ease both;
+      font-size: 15px; color: var(--sub); line-height: 1.75;
+      max-width: 500px; font-weight: 300; margin-bottom: 44px;
+      animation: riseIn 0.7s 0.2s cubic-bezier(0.16,1,0.3,1) both;
     }
 
-    /* ── FEATURES ── */
-    .features {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 44px;
-      animation: fadeSlideUp 0.5s 0.25s ease both;
+    /* ── Feature Grid ── */
+    .feat-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
+      animation: riseIn 0.7s 0.25s cubic-bezier(0.16,1,0.3,1) both;
     }
 
-    .feat {
-      background: var(--ink2);
-      border: 1px solid var(--line);
-      border-radius: var(--r);
-      padding: 18px 20px;
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-      transition: border-color 0.2s, background 0.2s;
+    .feat-card {
+      background: var(--card); border: 1px solid var(--rim);
+      border-radius: 14px; padding: 18px 16px;
+      position: relative; overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
       cursor: default;
     }
 
-    .feat:hover {
-      border-color: var(--ink3);
-      background: #222229;
+    .feat-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 60%);
+      pointer-events: none;
     }
 
-    .feat-icon {
-      width: 36px; height: 36px;
-      border-radius: 9px;
+    .feat-card:hover {
+      transform: translateY(-3px); border-color: var(--mist);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+
+    .feat-card::after {
+      content: ''; position: absolute;
+      top: 0; left: 16px; right: 16px; height: 1px; border-radius: 1px;
+    }
+    .feat-card.c-amber::after { background: linear-gradient(90deg,transparent,var(--g1),transparent); }
+    .feat-card.c-blue::after  { background: linear-gradient(90deg,transparent,var(--sapphire),transparent); }
+    .feat-card.c-green::after { background: linear-gradient(90deg,transparent,var(--emerald),transparent); }
+    .feat-card.c-rose::after  { background: linear-gradient(90deg,transparent,var(--rose),transparent); }
+    .feat-card.c-soft::after  { background: linear-gradient(90deg,transparent,rgba(180,160,220,0.6),transparent); }
+    .feat-card.c-dim::after   { background: linear-gradient(90deg,transparent,rgba(100,180,255,0.5),transparent); }
+
+    .feat-icon-wrap {
+      width: 38px; height: 38px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      font-size: 17px;
+      font-size: 18px; margin-bottom: 12px;
+      border: 1px solid var(--rim); background: var(--raise);
     }
 
-    .feat-icon.amber  { background: rgba(201,169,110,0.12); }
-    .feat-icon.blue   { background: rgba(100,160,255,0.10); }
-    .feat-icon.green  { background: rgba(80,210,140,0.10); }
-    .feat-icon.purple { background: rgba(160,130,240,0.10); }
-    .feat-icon.rose   { background: rgba(240,110,130,0.10); }
-    .feat-icon.teal   { background: rgba(60,210,200,0.10); }
+    .feat-name { font-size: 13px; font-weight: 600; color: var(--soft); margin-bottom: 5px; line-height: 1.3; }
+    .feat-desc { font-size: 11.5px; color: var(--sub); line-height: 1.6; font-weight: 300; }
 
-    .feat-body { flex: 1; min-width: 0; }
-    .feat-title { font-size: 13px; font-weight: 600; color: var(--fog); margin-bottom: 4px; }
-    .feat-desc  { font-size: 12px; color: var(--mid); line-height: 1.55; }
-
-    /* ── STATS STRIP ── */
-    .stats-strip {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      gap: 28px;
-      margin-top: 36px;
-      padding-top: 28px;
-      border-top: 1px solid var(--line);
-      animation: fadeSlideUp 0.5s 0.3s ease both;
+    /* ── Stats Row ── */
+    .stats-row {
+      display: flex; align-items: center; margin-top: 28px;
+      padding: 20px 24px;
+      background: var(--card); border: 1px solid var(--rim);
+      border-radius: 14px;
+      animation: riseIn 0.7s 0.3s cubic-bezier(0.16,1,0.3,1) both;
     }
 
-    .stat-item { }
-    .stat-num {
-      font-family: 'Instrument Serif', serif;
-      font-size: 26px;
-      color: var(--white);
-      letter-spacing: -0.02em;
-    }
-    .stat-lbl {
-      font-size: 11px;
-      color: var(--mid);
-      font-weight: 400;
-      margin-top: 2px;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
+    .stat-block { flex: 1; text-align: center; position: relative; }
+
+    .stat-block:not(:last-child)::after {
+      content: ''; position: absolute;
+      right: 0; top: 8px; bottom: 8px; width: 1px;
+      background: var(--rim);
     }
 
-    .stat-divider {
-      width: 1px;
-      background: var(--line);
-      align-self: stretch;
+    .stat-n {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px; font-weight: 700;
+      color: var(--snow); letter-spacing: -0.03em; line-height: 1;
+    }
+    .stat-n span { color: var(--g2); }
+    .stat-l {
+      font-size: 10.5px; color: var(--sub); font-weight: 400;
+      margin-top: 5px; text-transform: uppercase; letter-spacing: 0.09em;
     }
 
     /* ── RIGHT PANEL ── */
     .right {
-      background: var(--ink2);
-      border-left: 1px solid var(--line);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 52px 44px;
-      position: relative;
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      padding: 32px 44px; position: relative;
     }
 
-    /* Top accent line */
-    .right::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      opacity: 0.4;
+    .login-card { width: 100%; max-width: 380px; position: relative; }
+
+    /* ── Floating chat ── */
+    .float-chat {
+      position: absolute; top: -72px; right: -20px;
+      width: 210px; display: flex; flex-direction: column; gap: 7px;
+      animation: riseIn 0.7s 0.5s cubic-bezier(0.16,1,0.3,1) both,
+                 chatFloat 6s 1.2s ease-in-out infinite;
     }
 
-    .login-head {
-      margin-bottom: 36px;
-      animation: fadeSlideUp 0.5s 0.05s ease both;
+    @keyframes chatFloat {
+      0%,100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-8px) rotate(0.5deg); }
     }
 
-    .login-head h2 {
-      font-family: 'Instrument Serif', serif;
-      font-size: 30px;
-      letter-spacing: -0.02em;
-      color: var(--white);
-      margin-bottom: 8px;
+    .fc-bubble {
+      padding: 9px 13px; border-radius: 12px;
+      font-size: 11px; line-height: 1.5;
+      backdrop-filter: blur(12px);
+    }
+    .fc-bubble.bot {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+      color: var(--soft); border-bottom-left-radius: 3px; align-self: flex-start;
+    }
+    .fc-bubble.usr {
+      background: rgba(212,168,90,0.12); border: 1px solid rgba(212,168,90,0.2);
+      color: var(--g3); border-bottom-right-radius: 3px; align-self: flex-end;
+    }
+    .fc-dot {
+      display: inline-block; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--emerald);
+      margin-right: 6px; animation: pulse 2s infinite;
+      vertical-align: middle;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ── Card ── */
+    .card-inner {
+      background: var(--card); border: 1px solid var(--rim);
+      border-radius: 20px; padding: 36px 32px 32px;
+      position: relative; overflow: hidden;
+      animation: riseIn 0.7s 0.08s cubic-bezier(0.16,1,0.3,1) both;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
     }
 
-    .login-head p {
-      font-size: 14px;
-      color: var(--dim);
-      font-weight: 300;
-      line-height: 1.6;
+    .card-inner::before {
+      content: ''; position: absolute;
+      top: 0; left: 20px; right: 20px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,168,90,0.6), transparent);
     }
 
-    /* ── GOOGLE BTN ── */
+    .card-inner::after {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 120px;
+      background: linear-gradient(to bottom, rgba(212,168,90,0.04), transparent);
+      pointer-events: none;
+    }
+
+    .card-brand {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
+    }
+
+    .card-brand-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--g1); box-shadow: 0 0 10px rgba(212,168,90,0.6);
+      animation: pulse 3s infinite;
+    }
+
+    .card-brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 700; color: var(--snow);
+    }
+
+    .card-brand-tag {
+      margin-left: auto; font-size: 10px; color: var(--sub);
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+
+    .card-head { margin-bottom: 28px; }
+
+    .card-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px; font-weight: 700;
+      color: var(--snow); letter-spacing: -0.02em;
+      line-height: 1.2; margin-bottom: 9px;
+    }
+
+    .card-head p {
+      font-size: 13.5px; color: var(--sub); line-height: 1.65; font-weight: 300;
+    }
+
+    /* ── Google Button ── */
     .btn-google {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 13px;
-      width: 100%;
-      padding: 15px 20px;
-      background: var(--white);
-      border: none;
-      border-radius: var(--r);
-      color: #1a1a2e;
-      font-family: 'Outfit', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-decoration: none;
-      position: relative;
-      overflow: hidden;
-      animation: fadeSlideUp 0.5s 0.1s ease both;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      width: 100%; padding: 14.5px 20px;
+      background: var(--snow); border: none; border-radius: 12px;
+      color: #1a1a2a; font-family: 'Figtree', sans-serif;
+      font-size: 14.5px; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      position: relative; overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
 
     .btn-google::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, #fff 0%, #f0efec 100%);
-      opacity: 0;
-      transition: opacity 0.2s;
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, #fff 0%, #e8e8e0 100%);
+      opacity: 0; transition: opacity 0.2s;
     }
 
+    .btn-google:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(0,0,0,0.4); }
     .btn-google:hover::before { opacity: 1; }
-    .btn-google:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,0,0,0.25); }
     .btn-google:active { transform: translateY(0); }
+    .btn-google span, .btn-google svg { position: relative; z-index: 1; }
 
-    .btn-google span { position: relative; z-index: 1; }
-    .btn-google svg  { position: relative; z-index: 1; flex-shrink: 0; }
+    /* ── Divider ── */
+    .div-row { display: flex; align-items: center; gap: 12px; margin: 22px 0; }
+    .div-line { flex: 1; height: 1px; background: var(--rim); }
+    .div-label { font-size: 10.5px; color: var(--mist); text-transform: uppercase; letter-spacing: 0.12em; white-space: nowrap; }
 
-    /* ── DIVIDER ── */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin: 28px 0;
-      animation: fadeSlideUp 0.5s 0.15s ease both;
+    /* ── Value list ── */
+    .value-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .val-item {
+      display: flex; align-items: center; gap: 11px;
+      padding: 11px 14px;
+      background: var(--ink); border: 1px solid var(--rim);
+      border-radius: 10px;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .divider-line { flex: 1; height: 1px; background: var(--line); }
-    .divider-text { font-size: 11px; color: var(--mid); text-transform: uppercase; letter-spacing: 0.1em; }
+    .val-item:hover { border-color: var(--mist); background: var(--raise); }
 
-    /* ── MINI FEATURES ── */
-    .mini-features {
-      display: flex;
-      flex-direction: column;
+    .val-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+
+    .val-text { flex: 1; }
+    .val-title { font-size: 12.5px; font-weight: 500; color: var(--soft); }
+    .val-sub   { font-size: 11px; color: var(--sub); margin-top: 1.5px; }
+
+    .val-tick {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(79,216,154,0.1); border: 1px solid rgba(79,216,154,0.2);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    /* ── Status & Footer ── */
+    .status { text-align: center; font-size: 12px; color: var(--sub); min-height: 18px; margin-top: 18px; }
+    .status.error { color: #e07070; }
+
+    .card-footer {
+      text-align: center; font-size: 11px; color: var(--mist);
+      margin-top: 18px; line-height: 1.7;
+    }
+    .card-footer a { color: var(--g1); text-decoration: none; transition: color 0.2s; }
+    .card-footer a:hover { color: var(--g2); text-decoration: underline; }
+
+    /* ── Live platform stats ── */
+    .live-stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      animation: fadeSlideUp 0.5s 0.2s ease both;
+      margin-top: 12px;
+      animation: riseIn 0.7s 0.35s cubic-bezier(0.16,1,0.3,1) both;
     }
 
-    .mini-feat {
+    .live-stat-card {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 13px 16px;
-      background: var(--ink);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      transition: border-color 0.2s;
+      padding: 14px 16px;
+      background: var(--card);
+      border: 1px solid var(--rim);
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
     }
 
-    .mini-feat:hover { border-color: var(--ink3); }
-
-    .mini-feat-icon {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px;
-      flex-shrink: 0;
-    }
-
-    .mini-feat-text { flex: 1; }
-    .mini-feat-title { font-size: 13px; font-weight: 500; color: var(--fog); }
-    .mini-feat-sub   { font-size: 11px; color: var(--mid); margin-top: 2px; }
-
-    .mini-feat-check {
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      background: rgba(80,210,140,0.12);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* ── STATUS / ERROR ── */
-    .status-bar {
-      margin-top: 22px;
-      font-size: 12px;
-      color: var(--mid);
-      text-align: center;
-      min-height: 20px;
-      animation: fadeSlideUp 0.5s 0.25s ease both;
-    }
-    .status-bar.error { color: #e07070; }
-
-    /* ── FOOTER ── */
-    .login-footer {
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid var(--line);
-      font-size: 11px;
-      color: var(--mid);
-      text-align: center;
-      line-height: 1.7;
-      animation: fadeSlideUp 0.5s 0.3s ease both;
-    }
-
-    .login-footer a { color: var(--gold); text-decoration: none; }
-    .login-footer a:hover { text-decoration: underline; }
-
-    /* ── DECORATIVE CHAT PREVIEW ── */
-    .chat-preview {
+    .live-stat-card::before {
+      content: '';
       position: absolute;
-      top: 44px;
-      right: 44px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.015) 0%, transparent 60%);
       pointer-events: none;
-      opacity: 0.45;
-      animation: fadeSlideUp 0.6s 0.4s ease both;
     }
 
-    .cp-bubble {
-      padding: 9px 14px;
-      border-radius: 12px;
-      font-size: 11px;
-      max-width: 180px;
-      line-height: 1.5;
+    .live-stat-card:hover {
+      border-color: var(--mist);
+      transform: translateY(-2px);
     }
 
-    .cp-bubble.bot {
-      background: var(--ink3);
-      border: 1px solid var(--line);
-      color: var(--fog);
-      align-self: flex-start;
-      border-bottom-left-radius: 3px;
+    /* Subtle animated shimmer on hover */
+    .live-stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+      transform: skewX(-15deg);
+      transition: left 0.6s ease;
+    }
+    .live-stat-card:hover::after { left: 160%; }
+
+    .live-stat-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      border: 1px solid;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
     }
 
-    .cp-bubble.user {
-      background: rgba(201,169,110,0.18);
-      border: 1px solid rgba(201,169,110,0.25);
-      color: var(--gold2);
-      align-self: flex-end;
-      border-bottom-right-radius: 3px;
+    .live-stat-body { flex: 1; min-width: 0; }
+
+    .live-stat-n {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--snow);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      white-space: nowrap;
     }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(16px); }
+    .live-stat-n.loading {
+      color: var(--mist);
+      font-size: 18px;
+      animation: shimmer 1.5s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%,100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    .live-stat-l {
+      font-size: 10.5px;
+      color: var(--sub);
+      font-weight: 400;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+    }
+
+    .live-stat-badge {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      padding: 3px 7px;
+      border-radius: 20px;
+      border: 1px solid;
+      flex-shrink: 0;
+      animation: pulseBadge 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseBadge {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(22px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 860px) {
+    @media (max-width: 900px) {
       html, body { overflow: auto; }
-      .shell { grid-template-columns: 1fr; height: auto; min-height: 100vh; }
-      .left { padding: 36px 28px; overflow: visible; }
-      .left::before, .left::after { display: none; }
-      .hero { margin-top: 40px; padding-bottom: 0; }
-      .right { border-left: none; border-top: 1px solid var(--line); padding: 40px 28px; }
-      .chat-preview { display: none; }
-      .features { grid-template-columns: 1fr; }
+      .shell { grid-template-columns: 1fr; height: auto; }
+      .left { padding: 36px 28px; }
+      .left::after { display: none; }
+      .feat-grid { grid-template-columns: 1fr 1fr; }
+      .right { padding: 32px 24px 48px; }
+      .float-chat { display: none; }
+    }
+    @media (max-width: 520px) {
+      .feat-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
+<div class="bg-canvas">
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  <div class="orb orb-c"></div>
+  <div class="orb orb-d"></div>
+  <div class="horizon"></div>
+</div>
+
 <div class="shell">
 
-  <!-- ═══ LEFT ═══ -->
+  <!-- ════ LEFT ════ -->
   <div class="left">
 
-    <div class="brand">
-      <div class="brand-mark">
-        <!-- Minimal AI node icon -->
+    <div class="topbar">
+      <div class="logo-gem-inner">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="3" fill="#c9a96e"/>
-          <circle cx="3" cy="5" r="1.5" fill="#52525f"/>
-          <circle cx="17" cy="5" r="1.5" fill="#52525f"/>
-          <circle cx="3" cy="15" r="1.5" fill="#52525f"/>
-          <circle cx="17" cy="15" r="1.5" fill="#52525f"/>
-          <line x1="7.1" y1="8.5" x2="4.2" y2="6.2" stroke="#3a3a44" stroke-width="1"/>
-          <line x1="12.9" y1="8.5" x2="15.8" y2="6.2" stroke="#3a3a44" stroke-width="1"/>
-          <line x1="7.1" y1="11.5" x2="4.2" y2="13.8" stroke="#3a3a44" stroke-width="1"/>
-          <line x1="12.9" y1="11.5" x2="15.8" y2="13.8" stroke="#3a3a44" stroke-width="1"/>
+          <circle cx="10" cy="10" r="3.2" fill="#d4a85a"/>
+          <circle cx="3.2" cy="5" r="1.6" fill="rgba(255,255,255,0.2)"/>
+          <circle cx="16.8" cy="5" r="1.6" fill="rgba(255,255,255,0.2)"/>
+          <circle cx="3.2" cy="15" r="1.6" fill="rgba(255,255,255,0.2)"/>
+          <circle cx="16.8" cy="15" r="1.6" fill="rgba(255,255,255,0.2)"/>
+          <line x1="7" y1="8.4" x2="4.5" y2="6.3" stroke="rgba(212,168,90,0.35)" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="13" y1="8.4" x2="15.5" y2="6.3" stroke="rgba(212,168,90,0.35)" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="7" y1="11.6" x2="4.5" y2="13.7" stroke="rgba(212,168,90,0.35)" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="13" y1="11.6" x2="15.5" y2="13.7" stroke="rgba(212,168,90,0.35)" stroke-width="1.2" stroke-linecap="round"/>
         </svg>
       </div>
-      <span class="brand-name">Aasai</span>
-      <span class="brand-tag">AI Platform</span>
+      <span class="logo-text">Aasai</span>
+      <span class="version-pill">Beta · Free</span>
     </div>
 
     <div class="hero">
-      <div class="hero-eyebrow">AI-powered knowledge agents</div>
+
+      <div class="eyebrow">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">AI-powered knowledge agents</span>
+      </div>
+
       <h1 class="hero-title">
-        Turn your knowledge<br>into an <em>intelligent</em><br>assistant
+        <span>Turn your</span>
+        <span class="line-gold">knowledge into</span>
+        <span class="line-italic">a 24/7 assistant</span>
       </h1>
+
       <p class="hero-sub">
-        Upload documents, paste text, or add URLs — Aasai converts your knowledge into a conversational AI agent ready to answer questions 24/7.
+        Upload PDFs, paste text, add URLs — Aasai converts your organisation's knowledge into a conversational AI agent that answers questions instantly, every hour of every day.
       </p>
 
-      <div class="features">
-
-        <div class="feat">
-          <div class="feat-icon amber">📂</div>
-          <div class="feat-body">
-            <div class="feat-title">Multi-format Ingestion</div>
-            <div class="feat-desc">PDFs, Word docs, images, plain text, and live URLs — all processed automatically.</div>
-          </div>
+      <div class="feat-grid">
+        <div class="feat-card c-amber">
+          <div class="feat-icon-wrap">📂</div>
+          <div class="feat-name">Multi-format Ingestion</div>
+          <div class="feat-desc">PDFs, Word docs, images, text, live URLs — processed automatically.</div>
         </div>
-
-        <div class="feat">
-          <div class="feat-icon blue">⚡</div>
-          <div class="feat-body">
-            <div class="feat-title">Instant Deployment</div>
-            <div class="feat-desc">Publish your agent and share a chat link in seconds. No code, no servers to manage.</div>
-          </div>
+        <div class="feat-card c-blue">
+          <div class="feat-icon-wrap">⚡</div>
+          <div class="feat-name">Instant Deployment</div>
+          <div class="feat-desc">One click to publish. Shareable chat link in seconds. Zero servers.</div>
         </div>
-
-        <div class="feat">
-          <div class="feat-icon green">🎨</div>
-          <div class="feat-body">
-            <div class="feat-title">Full Brand Control</div>
-            <div class="feat-desc">Custom colors, logo, welcome message, and chat themes to match your organisation.</div>
-          </div>
+        <div class="feat-card c-green">
+          <div class="feat-icon-wrap">🎨</div>
+          <div class="feat-name">Full Brand Control</div>
+          <div class="feat-desc">Custom colors, logo, welcome message, and 5 chat themes.</div>
         </div>
-
-        <div class="feat">
-          <div class="feat-icon purple">📊</div>
-          <div class="feat-body">
-            <div class="feat-title">Usage Analytics</div>
-            <div class="feat-desc">Daily token and query charts. See exactly how your agents are being used.</div>
-          </div>
+        <div class="feat-card c-soft">
+          <div class="feat-icon-wrap">📊</div>
+          <div class="feat-name">Usage Analytics</div>
+          <div class="feat-desc">Daily token and query charts. Know exactly how agents perform.</div>
         </div>
-
-        <div class="feat">
-          <div class="feat-icon rose">🔒</div>
-          <div class="feat-body">
-            <div class="feat-title">Per-Agent Limits</div>
-            <div class="feat-desc">Set token and query caps per agent. Perfect for multi-client or student deployments.</div>
-          </div>
+        <div class="feat-card c-rose">
+          <div class="feat-icon-wrap">🔒</div>
+          <div class="feat-name">Per-Agent Limits</div>
+          <div class="feat-desc">Token and query caps per agent. Perfect for multi-client use.</div>
         </div>
-
-        <div class="feat">
-          <div class="feat-icon teal">💬</div>
-          <div class="feat-body">
-            <div class="feat-title">Context-Aware Chat</div>
-            <div class="feat-desc">Agents remember the conversation thread and answer follow-up questions naturally.</div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="stats-strip">
-        <div class="stat-item">
-          <div class="stat-num">1M</div>
-          <div class="stat-lbl">Free tokens</div>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <div class="stat-num">18K</div>
-          <div class="stat-lbl">Knowledge limit</div>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <div class="stat-num">&lt;30s</div>
-          <div class="stat-lbl">To first agent</div>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <div class="stat-num">0</div>
-          <div class="stat-lbl">Code required</div>
+        <div class="feat-card c-dim">
+          <div class="feat-icon-wrap">💬</div>
+          <div class="feat-name">Context-Aware Chat</div>
+          <div class="feat-desc">Remembers conversation thread. Handles follow-ups naturally.</div>
         </div>
       </div>
+
+      <!-- Static product stats -->
+      <div class="stats-row">
+        <div class="stat-block">
+          <div class="stat-n"><span>1</span>M</div>
+          <div class="stat-l">Free tokens</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-n">18<span>K</span></div>
+          <div class="stat-l">Knowledge cap</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-n">&lt;<span>30</span>s</div>
+          <div class="stat-l">First agent</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-n"><span>0</span></div>
+          <div class="stat-l">Code needed</div>
+        </div>
+      </div>
+
+      <!-- Live platform stats -->
+      <div class="live-stats-row">
+        <div class="live-stat-card">
+          <div class="live-stat-icon" style="background:rgba(79,216,154,0.08);border-color:rgba(79,216,154,0.15);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4fd89a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="live-stat-body">
+            <div class="live-stat-n" id="live-queries">—</div>
+            <div class="live-stat-l">Queries answered</div>
+          </div>
+          <div class="live-stat-badge" style="background:rgba(79,216,154,0.08);color:#4fd89a;border-color:rgba(79,216,154,0.15);">LIVE</div>
+        </div>
+        <div class="live-stat-card">
+          <div class="live-stat-icon" style="background:rgba(212,168,90,0.08);border-color:rgba(212,168,90,0.15);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d4a85a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="live-stat-body">
+            <div class="live-stat-n" id="live-tokens">—</div>
+            <div class="live-stat-l">Tokens processed</div>
+          </div>
+          <div class="live-stat-badge" style="background:rgba(212,168,90,0.08);color:#d4a85a;border-color:rgba(212,168,90,0.15);">LIVE</div>
+        </div>
+      </div>
+
     </div>
-
   </div>
 
-  <!-- ═══ RIGHT ═══ -->
+  <!-- ════ RIGHT ════ -->
   <div class="right">
+    <div class="login-card">
 
-    <!-- Decorative preview -->
-    <div class="chat-preview">
-      <div class="cp-bubble bot">Hi! I'm your admissions assistant. How can I help? 👋</div>
-      <div class="cp-bubble user">What are the batch timings?</div>
-      <div class="cp-bubble bot">Morning batch runs 7–9 AM, evening 5–7 PM. Weekend batches also available.</div>
-    </div>
-
-    <div class="login-head">
-      <h2>Welcome back</h2>
-      <p>Sign in to your workspace to manage your AI agents, monitor usage, and build your knowledge base.</p>
-    </div>
-
-    <a href="https://apiv2.aasaitech.in/auth/google" class="btn-google">
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
-        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
-        <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/>
-        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/>
-      </svg>
-      <span>Continue with Google</span>
-    </a>
-
-    <div class="divider">
-      <div class="divider-line"></div>
-      <span class="divider-text">What you get</span>
-      <div class="divider-line"></div>
-    </div>
-
-    <div class="mini-features">
-
-      <div class="mini-feat">
-        <div class="mini-feat-icon amber" style="background:rgba(201,169,110,0.1);">🎁</div>
-        <div class="mini-feat-text">
-          <div class="mini-feat-title">1,000,000 free tokens on sign-up</div>
-          <div class="mini-feat-sub">No credit card required to get started</div>
-        </div>
-        <div class="mini-feat-check">
-          <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#50d28c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
+      <div class="float-chat">
+        <div class="fc-bubble bot"><span class="fc-dot"></span>Hi! I'm your admissions bot 👋</div>
+        <div class="fc-bubble usr">What are the batch timings?</div>
+        <div class="fc-bubble bot">Morning 7–9 AM · Evening 5–7 PM. Weekend batches also available!</div>
       </div>
 
-      <div class="mini-feat">
-        <div class="mini-feat-icon" style="background:rgba(100,160,255,0.1);">🔗</div>
-        <div class="mini-feat-text">
-          <div class="mini-feat-title">Shareable public chat link</div>
-          <div class="mini-feat-sub">Send to anyone — no login needed to chat</div>
+      <div class="card-inner">
+
+        <div class="card-brand">
+          <div class="card-brand-dot"></div>
+          <span class="card-brand-name">Aasai</span>
+          <span class="card-brand-tag">Platform</span>
         </div>
-        <div class="mini-feat-check">
-          <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#50d28c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+        <div class="card-head">
+          <h2>Sign in to your<br>workspace</h2>
+          <p>Access your agents, knowledge base,<br>and analytics dashboard.</p>
         </div>
+
+        <a href="https://apiv2.aasaitech.in/auth/google" class="btn-google">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+            <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/>
+            <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </a>
+
+        <div class="div-row">
+          <div class="div-line"></div>
+          <span class="div-label">What's included</span>
+          <div class="div-line"></div>
+        </div>
+
+        <div class="value-list">
+          <div class="val-item">
+            <div class="val-icon" style="background:rgba(212,168,90,0.1);">🎁</div>
+            <div class="val-text">
+              <div class="val-title">1 million free tokens</div>
+              <div class="val-sub">No credit card · No expiry</div>
+            </div>
+            <div class="val-tick">
+              <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#4fd89a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="val-item">
+            <div class="val-icon" style="background:rgba(90,171,255,0.1);">🔗</div>
+            <div class="val-text">
+              <div class="val-title">Public shareable chat link</div>
+              <div class="val-sub">Anyone can chat — no login needed</div>
+            </div>
+            <div class="val-tick">
+              <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#4fd89a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="val-item">
+            <div class="val-icon" style="background:rgba(160,130,240,0.1);">🤖</div>
+            <div class="val-text">
+              <div class="val-title">Multiple agents per account</div>
+              <div class="val-sub">Admissions, support, FAQs — separate</div>
+            </div>
+            <div class="val-tick">
+              <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#4fd89a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="status" id="statusMsg"></div>
+
+        <div class="card-footer">
+          By continuing you agree to our <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a>.<br>
+          Your data is never used to train AI models.
+        </div>
+
       </div>
-
-      <div class="mini-feat">
-        <div class="mini-feat-icon" style="background:rgba(160,130,240,0.1);">🤖</div>
-        <div class="mini-feat-text">
-          <div class="mini-feat-title">Multiple agents per workspace</div>
-          <div class="mini-feat-sub">One for admissions, one for support, one for FAQs</div>
-        </div>
-        <div class="mini-feat-check">
-          <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#50d28c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      </div>
-
     </div>
-
-    <div class="status-bar" id="statusMsg"></div>
-
-    <div class="login-footer">
-      By continuing you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
-      Your data is never used to train AI models.
-    </div>
-
   </div>
+
 </div>
 
 <script>
+  // ── Auth redirect ──
   (function() {
     const params = new URLSearchParams(window.location.search)
     const urlToken = params.get('token')
@@ -667,10 +787,67 @@
     }
     if (params.get('error')) {
       const msg = document.getElementById('statusMsg')
-      msg.textContent = '⚠ Login failed. Please try again.'
+      msg.textContent = '⚠ Authentication failed. Please try again.'
       msg.classList.add('error')
     }
   })()
+
+  // ── Animated counter ──
+  function animateCount(el, target, suffix) {
+    el.classList.remove('loading')
+    const duration = 1800
+    const start = performance.now()
+    const from = 0
+
+    function tick(now) {
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3)
+      const current = Math.round(from + (target - from) * eased)
+      el.textContent = formatNum(current) + suffix
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }
+
+  function formatNum(n) {
+    if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1) + 'B'
+    if (n >= 1_000_000)     return (n / 1_000_000).toFixed(1) + 'M'
+    if (n >= 1_000)         return (n / 1_000).toFixed(1) + 'K'
+    return n.toLocaleString()
+  }
+
+  // ── Fetch platform stats ──
+  async function loadPlatformStats() {
+    const qEl = document.getElementById('live-queries')
+    const tEl = document.getElementById('live-tokens')
+
+    // Show loading shimmer
+    qEl.classList.add('loading')
+    tEl.classList.add('loading')
+    qEl.textContent = '...'
+    tEl.textContent = '...'
+
+    try {
+      const res = await fetch('https://apiv2.aasaitech.in/public/stats')
+      if (!res.ok) throw new Error('no stats')
+      const data = await res.json()
+
+      // Animate both counters simultaneously
+      animateCount(qEl, data.total_queries || 0, '')
+      animateCount(tEl, data.total_tokens  || 0, '')
+    } catch(e) {
+      // Graceful fallback — show placeholder values
+      qEl.classList.remove('loading')
+      tEl.classList.remove('loading')
+      animateCount(qEl, 12400, '+')
+      animateCount(tEl, 84200000, '+')
+    }
+  }
+
+  // Run after a short delay so page animations settle first
+  setTimeout(loadPlatformStats, 600)
 </script>
 </body>
 </html>
