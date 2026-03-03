@@ -4,205 +4,673 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aasai — AI Agent Platform</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
     :root {
-      --bg: #0a0a0f;
-      --surface: #111118;
-      --surface2: #1a1a24;
-      --border: #2a2a38;
-      --accent: #6c63ff;
-      --accent2: #ff6584;
-      --accent3: #43e97b;
-      --text: #f0f0f8;
-      --muted: #7a7a9a;
+      --ink: #0e0e12;
+      --ink2: #1c1c24;
+      --ink3: #28282f;
+      --line: #2e2e38;
+      --mid: #52525f;
+      --dim: #8a8a9a;
+      --fog: #b8b8c8;
+      --paper: #f2f1ee;
+      --off: #e8e7e4;
+      --gold: #c9a96e;
+      --gold2: #e8c98a;
+      --white: #fafaf8;
+      --r: 12px;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
+    html, body {
+      height: 100%;
+      font-family: 'Outfit', sans-serif;
+      background: var(--ink);
+      color: var(--white);
       overflow: hidden;
     }
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(120px);
-      pointer-events: none;
-      animation: orbFloat 8s ease-in-out infinite;
-    }
-    .orb1 { width: 600px; height: 600px; background: rgba(108,99,255,0.14); top: -200px; left: -200px; }
-    .orb2 { width: 400px; height: 400px; background: rgba(255,101,132,0.09); bottom: -100px; right: -100px; animation-delay: 3s; }
-    .orb3 { width: 300px; height: 300px; background: rgba(67,233,123,0.06); top: 40%; left: 50%; animation-delay: 6s; }
-    @keyframes orbFloat {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(20px, -20px); }
-    }
-    .login-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 52px 44px;
-      width: 100%;
-      max-width: 420px;
+
+    /* ── LAYOUT ── */
+    .shell {
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      height: 100vh;
       position: relative;
-      z-index: 1;
-      animation: fadeUp 0.6s ease forwards;
     }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(28px); }
-      to   { opacity: 1; transform: translateY(0); }
+
+    /* ── LEFT PANEL ── */
+    .left {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 44px 52px;
+      overflow: hidden;
+      background: var(--ink);
     }
-    .logo {
+
+    /* Subtle grid texture */
+    .left::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* Soft radial glow bottom-left */
+    .left::after {
+      content: '';
+      position: absolute;
+      bottom: -120px;
+      left: -80px;
+      width: 560px;
+      height: 560px;
+      background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 40px;
+      gap: 11px;
+      position: relative;
+      z-index: 1;
+      animation: fadeSlideUp 0.5s ease both;
     }
-    .logo-mark {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 11px;
+
+    .brand-mark {
+      width: 38px; height: 38px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 18px;
-      color: white;
+      background: var(--ink2);
     }
-    .logo-text {
-      font-family: 'Syne', sans-serif;
+
+    .brand-mark svg { display: block; }
+
+    .brand-name {
+      font-family: 'Instrument Serif', serif;
       font-size: 22px;
-      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--white);
     }
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: 30px;
-      font-weight: 700;
-      margin-bottom: 10px;
-      line-height: 1.2;
+
+    .brand-tag {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--mid);
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+      padding: 4px 10px;
+      border-radius: 20px;
     }
-    .subtitle {
-      color: var(--muted);
+
+    /* ── HERO TEXT ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+      margin-bottom: 0;
+      padding-bottom: 56px;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 500;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: fadeSlideUp 0.5s 0.1s ease both;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--gold);
+      opacity: 0.6;
+    }
+
+    .hero-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(38px, 4vw, 58px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 22px;
+      animation: fadeSlideUp 0.5s 0.15s ease both;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold2);
+    }
+
+    .hero-sub {
       font-size: 15px;
-      margin-bottom: 36px;
-      line-height: 1.65;
+      color: var(--dim);
+      line-height: 1.7;
+      max-width: 480px;
+      font-weight: 300;
+      animation: fadeSlideUp 0.5s 0.2s ease both;
     }
+
+    /* ── FEATURES ── */
+    .features {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 44px;
+      animation: fadeSlideUp 0.5s 0.25s ease both;
+    }
+
+    .feat {
+      background: var(--ink2);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 18px 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: default;
+    }
+
+    .feat:hover {
+      border-color: var(--ink3);
+      background: #222229;
+    }
+
+    .feat-icon {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 17px;
+    }
+
+    .feat-icon.amber  { background: rgba(201,169,110,0.12); }
+    .feat-icon.blue   { background: rgba(100,160,255,0.10); }
+    .feat-icon.green  { background: rgba(80,210,140,0.10); }
+    .feat-icon.purple { background: rgba(160,130,240,0.10); }
+    .feat-icon.rose   { background: rgba(240,110,130,0.10); }
+    .feat-icon.teal   { background: rgba(60,210,200,0.10); }
+
+    .feat-body { flex: 1; min-width: 0; }
+    .feat-title { font-size: 13px; font-weight: 600; color: var(--fog); margin-bottom: 4px; }
+    .feat-desc  { font-size: 12px; color: var(--mid); line-height: 1.55; }
+
+    /* ── STATS STRIP ── */
+    .stats-strip {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 28px;
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line);
+      animation: fadeSlideUp 0.5s 0.3s ease both;
+    }
+
+    .stat-item { }
+    .stat-num {
+      font-family: 'Instrument Serif', serif;
+      font-size: 26px;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--mid);
+      font-weight: 400;
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .stat-divider {
+      width: 1px;
+      background: var(--line);
+      align-self: stretch;
+    }
+
+    /* ── RIGHT PANEL ── */
+    .right {
+      background: var(--ink2);
+      border-left: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 52px 44px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Top accent line */
+    .right::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.4;
+    }
+
+    .login-head {
+      margin-bottom: 36px;
+      animation: fadeSlideUp 0.5s 0.05s ease both;
+    }
+
+    .login-head h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 30px;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .login-head p {
+      font-size: 14px;
+      color: var(--dim);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    /* ── GOOGLE BTN ── */
     .btn-google {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 13px;
       width: 100%;
-      padding: 14px 20px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
+      padding: 15px 20px;
+      background: var(--white);
+      border: none;
+      border-radius: var(--r);
+      color: #1a1a2e;
+      font-family: 'Outfit', sans-serif;
       font-size: 15px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
       text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      animation: fadeSlideUp 0.5s 0.1s ease both;
     }
-    .btn-google:hover {
-      background: #222234;
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(108,99,255,0.15);
+
+    .btn-google::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #fff 0%, #f0efec 100%);
+      opacity: 0;
+      transition: opacity 0.2s;
     }
-    .status-msg {
-      text-align: center;
-      margin-top: 14px;
-      font-size: 13px;
-      color: var(--muted);
-      min-height: 20px;
-    }
-    .status-msg.error { color: #ff6584; }
-    .features {
-      margin-top: 36px;
-      display: flex;
-      flex-direction: column;
-      gap: 11px;
-    }
-    .feature {
+
+    .btn-google:hover::before { opacity: 1; }
+    .btn-google:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0,0,0,0.25); }
+    .btn-google:active { transform: translateY(0); }
+
+    .btn-google span { position: relative; z-index: 1; }
+    .btn-google svg  { position: relative; z-index: 1; flex-shrink: 0; }
+
+    /* ── DIVIDER ── */
+    .divider {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--muted);
+      gap: 14px;
+      margin: 28px 0;
+      animation: fadeSlideUp 0.5s 0.15s ease both;
     }
-    .feature-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent3);
+    .divider-line { flex: 1; height: 1px; background: var(--line); }
+    .divider-text { font-size: 11px; color: var(--mid); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ── MINI FEATURES ── */
+    .mini-features {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeSlideUp 0.5s 0.2s ease both;
+    }
+
+    .mini-feat {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      background: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      transition: border-color 0.2s;
+    }
+
+    .mini-feat:hover { border-color: var(--ink3); }
+
+    .mini-feat-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
       flex-shrink: 0;
+    }
+
+    .mini-feat-text { flex: 1; }
+    .mini-feat-title { font-size: 13px; font-weight: 500; color: var(--fog); }
+    .mini-feat-sub   { font-size: 11px; color: var(--mid); margin-top: 2px; }
+
+    .mini-feat-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: rgba(80,210,140,0.12);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── STATUS / ERROR ── */
+    .status-bar {
+      margin-top: 22px;
+      font-size: 12px;
+      color: var(--mid);
+      text-align: center;
+      min-height: 20px;
+      animation: fadeSlideUp 0.5s 0.25s ease both;
+    }
+    .status-bar.error { color: #e07070; }
+
+    /* ── FOOTER ── */
+    .login-footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      font-size: 11px;
+      color: var(--mid);
+      text-align: center;
+      line-height: 1.7;
+      animation: fadeSlideUp 0.5s 0.3s ease both;
+    }
+
+    .login-footer a { color: var(--gold); text-decoration: none; }
+    .login-footer a:hover { text-decoration: underline; }
+
+    /* ── DECORATIVE CHAT PREVIEW ── */
+    .chat-preview {
+      position: absolute;
+      top: 44px;
+      right: 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      opacity: 0.45;
+      animation: fadeSlideUp 0.6s 0.4s ease both;
+    }
+
+    .cp-bubble {
+      padding: 9px 14px;
+      border-radius: 12px;
+      font-size: 11px;
+      max-width: 180px;
+      line-height: 1.5;
+    }
+
+    .cp-bubble.bot {
+      background: var(--ink3);
+      border: 1px solid var(--line);
+      color: var(--fog);
+      align-self: flex-start;
+      border-bottom-left-radius: 3px;
+    }
+
+    .cp-bubble.user {
+      background: rgba(201,169,110,0.18);
+      border: 1px solid rgba(201,169,110,0.25);
+      color: var(--gold2);
+      align-self: flex-end;
+      border-bottom-right-radius: 3px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      html, body { overflow: auto; }
+      .shell { grid-template-columns: 1fr; height: auto; min-height: 100vh; }
+      .left { padding: 36px 28px; overflow: visible; }
+      .left::before, .left::after { display: none; }
+      .hero { margin-top: 40px; padding-bottom: 0; }
+      .right { border-left: none; border-top: 1px solid var(--line); padding: 40px 28px; }
+      .chat-preview { display: none; }
+      .features { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
 
-  <div class="login-card">
-    <div class="logo">
-      <div class="logo-mark">A</div>
-      <span class="logo-text">Aasai</span>
+<div class="shell">
+
+  <!-- ═══ LEFT ═══ -->
+  <div class="left">
+
+    <div class="brand">
+      <div class="brand-mark">
+        <!-- Minimal AI node icon -->
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="3" fill="#c9a96e"/>
+          <circle cx="3" cy="5" r="1.5" fill="#52525f"/>
+          <circle cx="17" cy="5" r="1.5" fill="#52525f"/>
+          <circle cx="3" cy="15" r="1.5" fill="#52525f"/>
+          <circle cx="17" cy="15" r="1.5" fill="#52525f"/>
+          <line x1="7.1" y1="8.5" x2="4.2" y2="6.2" stroke="#3a3a44" stroke-width="1"/>
+          <line x1="12.9" y1="8.5" x2="15.8" y2="6.2" stroke="#3a3a44" stroke-width="1"/>
+          <line x1="7.1" y1="11.5" x2="4.2" y2="13.8" stroke="#3a3a44" stroke-width="1"/>
+          <line x1="12.9" y1="11.5" x2="15.8" y2="13.8" stroke="#3a3a44" stroke-width="1"/>
+        </svg>
+      </div>
+      <span class="brand-name">Aasai</span>
+      <span class="brand-tag">AI Platform</span>
     </div>
-    <h1>Build AI agents<br>in minutes</h1>
-    <p class="subtitle">Turn your knowledge into a 24/7 conversational assistant. No code required.</p>
+
+    <div class="hero">
+      <div class="hero-eyebrow">AI-powered knowledge agents</div>
+      <h1 class="hero-title">
+        Turn your knowledge<br>into an <em>intelligent</em><br>assistant
+      </h1>
+      <p class="hero-sub">
+        Upload documents, paste text, or add URLs — Aasai converts your knowledge into a conversational AI agent ready to answer questions 24/7.
+      </p>
+
+      <div class="features">
+
+        <div class="feat">
+          <div class="feat-icon amber">📂</div>
+          <div class="feat-body">
+            <div class="feat-title">Multi-format Ingestion</div>
+            <div class="feat-desc">PDFs, Word docs, images, plain text, and live URLs — all processed automatically.</div>
+          </div>
+        </div>
+
+        <div class="feat">
+          <div class="feat-icon blue">⚡</div>
+          <div class="feat-body">
+            <div class="feat-title">Instant Deployment</div>
+            <div class="feat-desc">Publish your agent and share a chat link in seconds. No code, no servers to manage.</div>
+          </div>
+        </div>
+
+        <div class="feat">
+          <div class="feat-icon green">🎨</div>
+          <div class="feat-body">
+            <div class="feat-title">Full Brand Control</div>
+            <div class="feat-desc">Custom colors, logo, welcome message, and chat themes to match your organisation.</div>
+          </div>
+        </div>
+
+        <div class="feat">
+          <div class="feat-icon purple">📊</div>
+          <div class="feat-body">
+            <div class="feat-title">Usage Analytics</div>
+            <div class="feat-desc">Daily token and query charts. See exactly how your agents are being used.</div>
+          </div>
+        </div>
+
+        <div class="feat">
+          <div class="feat-icon rose">🔒</div>
+          <div class="feat-body">
+            <div class="feat-title">Per-Agent Limits</div>
+            <div class="feat-desc">Set token and query caps per agent. Perfect for multi-client or student deployments.</div>
+          </div>
+        </div>
+
+        <div class="feat">
+          <div class="feat-icon teal">💬</div>
+          <div class="feat-body">
+            <div class="feat-title">Context-Aware Chat</div>
+            <div class="feat-desc">Agents remember the conversation thread and answer follow-up questions naturally.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="stats-strip">
+        <div class="stat-item">
+          <div class="stat-num">1M</div>
+          <div class="stat-lbl">Free tokens</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num">18K</div>
+          <div class="stat-lbl">Knowledge limit</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num">&lt;30s</div>
+          <div class="stat-lbl">To first agent</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-num">0</div>
+          <div class="stat-lbl">Code required</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ RIGHT ═══ -->
+  <div class="right">
+
+    <!-- Decorative preview -->
+    <div class="chat-preview">
+      <div class="cp-bubble bot">Hi! I'm your admissions assistant. How can I help? 👋</div>
+      <div class="cp-bubble user">What are the batch timings?</div>
+      <div class="cp-bubble bot">Morning batch runs 7–9 AM, evening 5–7 PM. Weekend batches also available.</div>
+    </div>
+
+    <div class="login-head">
+      <h2>Welcome back</h2>
+      <p>Sign in to your workspace to manage your AI agents, monitor usage, and build your knowledge base.</p>
+    </div>
 
     <a href="https://apiv2.aasaitech.in/auth/google" class="btn-google">
-      <svg width="18" height="18" viewBox="0 0 18 18">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
         <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
         <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
         <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/>
         <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/>
       </svg>
-      Continue with Google
+      <span>Continue with Google</span>
     </a>
 
-    <div class="status-msg" id="statusMsg"></div>
-
-    <div class="features">
-      <div class="feature"><div class="feature-dot"></div> 1 million tokens free to start</div>
-      <div class="feature"><div class="feature-dot"></div> Upload docs, text, URLs as knowledge</div>
-      <div class="feature"><div class="feature-dot"></div> Publish a shareable chat link instantly</div>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-text">What you get</span>
+      <div class="divider-line"></div>
     </div>
+
+    <div class="mini-features">
+
+      <div class="mini-feat">
+        <div class="mini-feat-icon amber" style="background:rgba(201,169,110,0.1);">🎁</div>
+        <div class="mini-feat-text">
+          <div class="mini-feat-title">1,000,000 free tokens on sign-up</div>
+          <div class="mini-feat-sub">No credit card required to get started</div>
+        </div>
+        <div class="mini-feat-check">
+          <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#50d28c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <div class="mini-feat">
+        <div class="mini-feat-icon" style="background:rgba(100,160,255,0.1);">🔗</div>
+        <div class="mini-feat-text">
+          <div class="mini-feat-title">Shareable public chat link</div>
+          <div class="mini-feat-sub">Send to anyone — no login needed to chat</div>
+        </div>
+        <div class="mini-feat-check">
+          <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#50d28c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <div class="mini-feat">
+        <div class="mini-feat-icon" style="background:rgba(160,130,240,0.1);">🤖</div>
+        <div class="mini-feat-text">
+          <div class="mini-feat-title">Multiple agents per workspace</div>
+          <div class="mini-feat-sub">One for admissions, one for support, one for FAQs</div>
+        </div>
+        <div class="mini-feat-check">
+          <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#50d28c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="status-bar" id="statusMsg"></div>
+
+    <div class="login-footer">
+      By continuing you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
+      Your data is never used to train AI models.
+    </div>
+
   </div>
+</div>
 
-  <script>
-    (function() {
-      const params = new URLSearchParams(window.location.search)
-
-      // Token from OAuth callback
-      const urlToken = params.get('token')
-      if (urlToken) {
-        localStorage.setItem('aasai_token', urlToken)
-        window.history.replaceState({}, '', window.location.pathname)
-        window.location.replace('home.html')
-        return
-      }
-
-      // Already logged in
-      const existing = localStorage.getItem('aasai_token')
-      if (existing) {
-        window.location.replace('home.html')
-        return
-      }
-
-      // Auth error
-      if (params.get('error')) {
-        const msg = document.getElementById('statusMsg')
-        msg.textContent = '⚠️ Login failed. Please try again.'
-        msg.classList.add('error')
-      }
-    })()
-  </script>
+<script>
+  (function() {
+    const params = new URLSearchParams(window.location.search)
+    const urlToken = params.get('token')
+    if (urlToken) {
+      localStorage.setItem('aasai_token', urlToken)
+      window.history.replaceState({}, '', window.location.pathname)
+      window.location.replace('home.html')
+      return
+    }
+    if (localStorage.getItem('aasai_token')) {
+      window.location.replace('home.html')
+      return
+    }
+    if (params.get('error')) {
+      const msg = document.getElementById('statusMsg')
+      msg.textContent = '⚠ Login failed. Please try again.'
+      msg.classList.add('error')
+    }
+  })()
+</script>
 </body>
 </html>
