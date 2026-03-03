@@ -5,207 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aasai — Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js">
-  // ══════════════════════════════════════════════════════
-  // CONVERSATIONS
-  // ══════════════════════════════════════════════════════
-  let convAgents = []
-  let activeSessionKey = null
-
-  async function initConversations() {
-    // Populate agent selector with user's agents
-    try {
-      const r = await apiFetch('/agents')
-      const d = await r.json()
-      convAgents = d.agents || []
-      const sel = document.getElementById('conv-agent-select')
-      sel.innerHTML = '<option value="">— Select an agent —</option>'
-      convAgents.forEach(a => {
-        const opt = document.createElement('option')
-        opt.value = a._id
-        opt.textContent = a.name
-        sel.appendChild(opt)
-      })
-      // Auto-select first agent if only one
-      if (convAgents.length === 1) {
-        sel.value = convAgents[0]._id
-        loadConversations()
-      }
-    } catch(e) { console.error(e) }
-  }
-
-  async function loadConversations() {
-    const agentId = document.getElementById('conv-agent-select').value
-    if (!agentId) return
-
-    const listEl = document.getElementById('conv-list-inner')
-    listEl.innerHTML = '<div class="conv-empty">Loading sessions…</div>'
-    document.getElementById('conv-stats-chips').innerHTML = ''
-    document.getElementById('conv-thread-inner').innerHTML = `
-      <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:.3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span style="font-size:14px;color:var(--muted)">Select a conversation to view the full thread</span>`
-    activeSessionKey = null
-
-    try {
-      const r = await apiFetch(`/agents/${agentId}/conversations`)
-      const d = await r.json()
-      const sessions = d.sessions || []
-
-      // Stats chips
-      const totalMsgs = sessions.reduce((a,s) => a + s.message_count, 0)
-      const uniqueIPs  = new Set(sessions.map(s => s.visitor_ip)).size
-      document.getElementById('conv-stats-chips').innerHTML = `
-        <div class="conv-stat-chip"><strong>${sessions.length}</strong> sessions</div>
-        <div class="conv-stat-chip"><strong>${totalMsgs}</strong> messages</div>
-        <div class="conv-stat-chip"><strong>${uniqueIPs}</strong> unique IPs</div>`
-
-      // Show or hide the clear button
-      const clearBtn = document.getElementById('conv-clear-btn')
-      if (clearBtn) clearBtn.style.display = sessions.length > 0 ? 'block' : 'none'
-
-      if (sessions.length === 0) {
-        listEl.innerHTML = '<div class="conv-empty">No conversations yet.<br>Share your chat link to start receiving messages.</div>'
-        return
-      }
-
-      listEl.innerHTML = sessions.map(s => {
-        const key = s.session_id || s.visitor_id || s.visitor_ip
-        const ago = timeAgo(s.last_active)
-        const preview = s.first_question.length > 55
-          ? s.first_question.slice(0,55) + '…'
-          : s.first_question
-        const ip = s.visitor_ip || 'Unknown'
-        const shortIp = ip.length > 15 ? ip.slice(0,15)+'…' : ip
-        return `
-        <div class="session-item" data-key="${escHtml(key)}" onclick="loadThread('${agentId}','${escHtml(key)}',this)">
-          <div class="session-ip">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
-            ${escHtml(shortIp)}
-            <span class="session-ip-badge">${s.message_count} msg${s.message_count!==1?'s':''}</span>
-          </div>
-          <div class="session-preview">${escHtml(preview)}</div>
-          <div class="session-meta">
-            <span>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              ${ago}
-            </span>
-            <span>Started ${timeAgo(s.started_at)}</span>
-          </div>
-        </div>`
-      }).join('')
-    } catch(e) {
-      listEl.innerHTML = '<div class="conv-empty">Failed to load conversations.</div>'
-      console.error(e)
-    }
-  }
-
-  async function loadThread(agentId, sessionKey, itemEl) {
-    // Highlight selected session
-    document.querySelectorAll('.session-item').forEach(x => x.classList.remove('active'))
-    itemEl.classList.add('active')
-    activeSessionKey = sessionKey
-
-    const panel = document.getElementById('conv-thread-inner')
-    panel.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">Loading thread…</div>'
-    panel.style.flexDirection = 'column'
-    panel.style.justifyContent = 'flex-start'
-    panel.style.alignItems = 'stretch'
-
-    try {
-      const r = await apiFetch(`/agents/${agentId}/conversations/${encodeURIComponent(sessionKey)}`)
-      const d = await r.json()
-      const msgs = d.messages || []
-
-      if (msgs.length === 0) {
-        panel.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">No messages found.</div>'
-        return
-      }
-
-      const ip = msgs[0].visitor_ip || 'Unknown'
-      const startTime = new Date(msgs[0].created_at).toLocaleString()
-      const totalTok = msgs.reduce((a,m) => a + (m.tokens_used||0), 0)
-
-      panel.innerHTML = `
-        <div class="thread-header">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
-          <span class="thread-ip-tag">${escHtml(ip)}</span>
-          <span style="font-size:12px;color:var(--muted);">Started ${startTime}</span>
-          <span style="margin-left:auto;font-size:12px;color:var(--muted);">${msgs.length} messages · ${fmtNum(totalTok)} tokens</span>
-        </div>
-        <div class="thread-msgs">
-          ${msgs.map(m => `
-            <div class="thread-turn">
-              <div class="thread-q">${escHtml(m.question)}</div>
-              <div class="thread-a">${m.answer}</div>
-              <div class="thread-ts">${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
-            </div>`).join('')}
-        </div>`
-    } catch(e) {
-      panel.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">Failed to load thread.</div>'
-      console.error(e)
-    }
-  }
-
-  function timeAgo(dateStr) {
-    const diff = Date.now() - new Date(dateStr).getTime()
-    const s = Math.floor(diff/1000)
-    if (s < 60) return 'just now'
-    const m = Math.floor(s/60); if (m < 60) return m+'m ago'
-    const h = Math.floor(m/60); if (h < 24) return h+'h ago'
-    const day = Math.floor(h/24); if (day < 30) return day+'d ago'
-    return new Date(dateStr).toLocaleDateString()
-  }
-
-  function fmtNum(n) {
-    if (n >= 1e6) return (n/1e6).toFixed(1)+'M'
-    if (n >= 1e3) return (n/1e3).toFixed(1)+'K'
-    return n.toString()
-  }
-
-  function escHtml(str) {
-    if (!str) return ''
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
-  }
-
-
-  // ══════════════════════════════════════════════════════
-  // CLEAR CONVERSATIONS — soft flag, no data deleted
-  // ══════════════════════════════════════════════════════
-
-  // Show the clear button once an agent is selected
-  const _origLoadConv = loadConversations
-  // We'll hook into loadConversations completion below
-
-  async function confirmClearAgentConversations() {
-    const agentId = document.getElementById('conv-agent-select').value
-    if (!agentId) return
-    const agentName = document.getElementById('conv-agent-select').selectedOptions[0]?.text || 'this agent'
-
-    if (!confirm(`Clear conversation history for "${agentName}"?\n\nThis hides all existing conversations from the dashboard. The data is kept safely in the database and is never deleted.`)) return
-
-    try {
-      const r = await apiFetch(`/agents/${agentId}/clear-conversations`, { method: 'POST' })
-      if (!r.ok) throw new Error()
-      toast('Conversation history cleared — data is preserved in database', 'success')
-      loadConversations()
-    } catch(e) {
-      toast('Failed to clear conversations', 'error')
-    }
-  }
-
-  async function confirmClearAllConversations() {
-    if (!confirm('Clear conversation history for ALL your agents?\n\nThis hides all conversations from the dashboard. Your data is kept safely and never deleted.')) return
-
-    try {
-      const r = await apiFetch('/conversations/clear-all', { method: 'POST' })
-      if (!r.ok) throw new Error()
-      toast('All conversation histories cleared — data is preserved', 'success')
-    } catch(e) {
-      toast('Failed to clear conversations', 'error')
-    }
-  }
-
-</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     :root {
       --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24;
@@ -844,6 +644,18 @@
 <script>
   const API = 'https://apiv2.aasaitech.in'
   let token = localStorage.getItem('aasai_token')
+
+  // ── shared authenticated fetch helper ──
+  async function apiFetch(path, opts = {}) {
+    return fetch(API + path, {
+      ...opts,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        ...(opts.headers || {})
+      }
+    })
+  }
   let currentUser = null
   let sources = []
   let editingAgentId = null
@@ -1379,6 +1191,205 @@
   }
 
   init()
+  // ══════════════════════════════════════════════════════
+  // CONVERSATIONS
+  // ══════════════════════════════════════════════════════
+  let convAgents = []
+  let activeSessionKey = null
+
+  async function initConversations() {
+    // Populate agent selector with user's agents
+    try {
+      const r = await apiFetch('/agents')
+      const d = await r.json()
+      convAgents = Array.isArray(d) ? d : (d.agents || [])
+      const sel = document.getElementById('conv-agent-select')
+      sel.innerHTML = '<option value="">— Select an agent —</option>'
+      convAgents.forEach(a => {
+        const opt = document.createElement('option')
+        opt.value = a._id
+        opt.textContent = a.name
+        sel.appendChild(opt)
+      })
+      // Auto-select first agent if only one
+      if (convAgents.length === 1) {
+        sel.value = convAgents[0]._id
+        loadConversations()
+      }
+    } catch(e) { console.error(e) }
+  }
+
+  async function loadConversations() {
+    const agentId = document.getElementById('conv-agent-select').value
+    if (!agentId) return
+
+    const listEl = document.getElementById('conv-list-inner')
+    listEl.innerHTML = '<div class="conv-empty">Loading sessions…</div>'
+    document.getElementById('conv-stats-chips').innerHTML = ''
+    document.getElementById('conv-thread-inner').innerHTML = `
+      <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:.3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span style="font-size:14px;color:var(--muted)">Select a conversation to view the full thread</span>`
+    activeSessionKey = null
+
+    try {
+      const r = await apiFetch(`/agents/${agentId}/conversations`)
+      const d = await r.json()
+      const sessions = d.sessions || []
+
+      // Stats chips
+      const totalMsgs = sessions.reduce((a,s) => a + s.message_count, 0)
+      const uniqueIPs  = new Set(sessions.map(s => s.visitor_ip)).size
+      document.getElementById('conv-stats-chips').innerHTML = `
+        <div class="conv-stat-chip"><strong>${sessions.length}</strong> sessions</div>
+        <div class="conv-stat-chip"><strong>${totalMsgs}</strong> messages</div>
+        <div class="conv-stat-chip"><strong>${uniqueIPs}</strong> unique IPs</div>`
+
+      // Show or hide the clear button
+      const clearBtn = document.getElementById('conv-clear-btn')
+      if (clearBtn) clearBtn.style.display = sessions.length > 0 ? 'block' : 'none'
+
+      if (sessions.length === 0) {
+        listEl.innerHTML = '<div class="conv-empty">No conversations yet.<br>Share your chat link to start receiving messages.</div>'
+        return
+      }
+
+      listEl.innerHTML = sessions.map(s => {
+        const key = s.session_id || s.visitor_id || s.visitor_ip
+        const ago = timeAgo(s.last_active)
+        const preview = s.first_question.length > 55
+          ? s.first_question.slice(0,55) + '…'
+          : s.first_question
+        const ip = s.visitor_ip || 'Unknown'
+        const shortIp = ip.length > 15 ? ip.slice(0,15)+'…' : ip
+        return `
+        <div class="session-item" data-key="${escHtml(key)}" onclick="loadThread('${agentId}','${escHtml(key)}',this)">
+          <div class="session-ip">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
+            ${escHtml(shortIp)}
+            <span class="session-ip-badge">${s.message_count} msg${s.message_count!==1?'s':''}</span>
+          </div>
+          <div class="session-preview">${escHtml(preview)}</div>
+          <div class="session-meta">
+            <span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              ${ago}
+            </span>
+            <span>Started ${timeAgo(s.started_at)}</span>
+          </div>
+        </div>`
+      }).join('')
+    } catch(e) {
+      listEl.innerHTML = '<div class="conv-empty">Failed to load conversations.</div>'
+      console.error(e)
+    }
+  }
+
+  async function loadThread(agentId, sessionKey, itemEl) {
+    // Highlight selected session
+    document.querySelectorAll('.session-item').forEach(x => x.classList.remove('active'))
+    itemEl.classList.add('active')
+    activeSessionKey = sessionKey
+
+    const panel = document.getElementById('conv-thread-inner')
+    panel.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">Loading thread…</div>'
+    panel.style.flexDirection = 'column'
+    panel.style.justifyContent = 'flex-start'
+    panel.style.alignItems = 'stretch'
+
+    try {
+      const r = await apiFetch(`/agents/${agentId}/conversations/${encodeURIComponent(sessionKey)}`)
+      const d = await r.json()
+      const msgs = d.messages || []
+
+      if (msgs.length === 0) {
+        panel.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">No messages found.</div>'
+        return
+      }
+
+      const ip = msgs[0].visitor_ip || 'Unknown'
+      const startTime = new Date(msgs[0].created_at).toLocaleString()
+      const totalTok = msgs.reduce((a,m) => a + (m.tokens_used||0), 0)
+
+      panel.innerHTML = `
+        <div class="thread-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
+          <span class="thread-ip-tag">${escHtml(ip)}</span>
+          <span style="font-size:12px;color:var(--muted);">Started ${startTime}</span>
+          <span style="margin-left:auto;font-size:12px;color:var(--muted);">${msgs.length} messages · ${fmtNum(totalTok)} tokens</span>
+        </div>
+        <div class="thread-msgs">
+          ${msgs.map(m => `
+            <div class="thread-turn">
+              <div class="thread-q">${escHtml(m.question)}</div>
+              <div class="thread-a">${m.answer}</div>
+              <div class="thread-ts">${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+            </div>`).join('')}
+        </div>`
+    } catch(e) {
+      panel.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">Failed to load thread.</div>'
+      console.error(e)
+    }
+  }
+
+  function timeAgo(dateStr) {
+    const diff = Date.now() - new Date(dateStr).getTime()
+    const s = Math.floor(diff/1000)
+    if (s < 60) return 'just now'
+    const m = Math.floor(s/60); if (m < 60) return m+'m ago'
+    const h = Math.floor(m/60); if (h < 24) return h+'h ago'
+    const day = Math.floor(h/24); if (day < 30) return day+'d ago'
+    return new Date(dateStr).toLocaleDateString()
+  }
+
+  function fmtNum(n) {
+    if (n >= 1e6) return (n/1e6).toFixed(1)+'M'
+    if (n >= 1e3) return (n/1e3).toFixed(1)+'K'
+    return n.toString()
+  }
+
+  function escHtml(str) {
+    if (!str) return ''
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+  }
+
+
+  // ══════════════════════════════════════════════════════
+  // CLEAR CONVERSATIONS — soft flag, no data deleted
+  // ══════════════════════════════════════════════════════
+
+  // Show the clear button once an agent is selected
+  const _origLoadConv = loadConversations
+  // We'll hook into loadConversations completion below
+
+  async function confirmClearAgentConversations() {
+    const agentId = document.getElementById('conv-agent-select').value
+    if (!agentId) return
+    const agentName = document.getElementById('conv-agent-select').selectedOptions[0]?.text || 'this agent'
+
+    if (!confirm(`Clear conversation history for "${agentName}"?\n\nThis hides all existing conversations from the dashboard. The data is kept safely in the database and is never deleted.`)) return
+
+    try {
+      const r = await apiFetch(`/agents/${agentId}/clear-conversations`, { method: 'POST' })
+      if (!r.ok) throw new Error()
+      toast('Conversation history cleared — data is preserved in database', 'success')
+      loadConversations()
+    } catch(e) {
+      toast('Failed to clear conversations', 'error')
+    }
+  }
+
+  async function confirmClearAllConversations() {
+    if (!confirm('Clear conversation history for ALL your agents?\n\nThis hides all conversations from the dashboard. Your data is kept safely and never deleted.')) return
+
+    try {
+      const r = await apiFetch('/conversations/clear-all', { method: 'POST' })
+      if (!r.ok) throw new Error()
+      toast('All conversation histories cleared — data is preserved', 'success')
+    } catch(e) {
+      toast('Failed to clear conversations', 'error')
+    }
+  }
+
 </script>
 </body>
 </html>
