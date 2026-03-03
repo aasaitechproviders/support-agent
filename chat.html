@@ -225,6 +225,14 @@
 <script>
   const API = 'https://apiv2.aasaitech.in'
   const agentId = new URLSearchParams(window.location.search).get('agent')
+
+  // Visitor tracking — groups messages into conversation threads
+  let visitor_id = localStorage.getItem('aasai_vid')
+  if (!visitor_id) {
+    visitor_id = 'v_' + Math.random().toString(36).slice(2) + Date.now().toString(36)
+    localStorage.setItem('aasai_vid', visitor_id)
+  }
+  const session_id = 's_' + Math.random().toString(36).slice(2) + Date.now().toString(36)
   let config = null
   let busy = false
   let conversationHistory = []
