@@ -59,6 +59,10 @@
         <div class="conv-stat-chip"><strong>${totalMsgs}</strong> messages</div>
         <div class="conv-stat-chip"><strong>${uniqueIPs}</strong> unique IPs</div>`
 
+      // Show or hide the clear button
+      const clearBtn = document.getElementById('conv-clear-btn')
+      if (clearBtn) clearBtn.style.display = sessions.length > 0 ? 'block' : 'none'
+
       if (sessions.length === 0) {
         listEl.innerHTML = '<div class="conv-empty">No conversations yet.<br>Share your chat link to start receiving messages.</div>'
         return
@@ -161,6 +165,44 @@
   function escHtml(str) {
     if (!str) return ''
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+  }
+
+
+  // ══════════════════════════════════════════════════════
+  // CLEAR CONVERSATIONS — soft flag, no data deleted
+  // ══════════════════════════════════════════════════════
+
+  // Show the clear button once an agent is selected
+  const _origLoadConv = loadConversations
+  // We'll hook into loadConversations completion below
+
+  async function confirmClearAgentConversations() {
+    const agentId = document.getElementById('conv-agent-select').value
+    if (!agentId) return
+    const agentName = document.getElementById('conv-agent-select').selectedOptions[0]?.text || 'this agent'
+
+    if (!confirm(`Clear conversation history for "${agentName}"?\n\nThis hides all existing conversations from the dashboard. The data is kept safely in the database and is never deleted.`)) return
+
+    try {
+      const r = await apiFetch(`/agents/${agentId}/clear-conversations`, { method: 'POST' })
+      if (!r.ok) throw new Error()
+      toast('Conversation history cleared — data is preserved in database', 'success')
+      loadConversations()
+    } catch(e) {
+      toast('Failed to clear conversations', 'error')
+    }
+  }
+
+  async function confirmClearAllConversations() {
+    if (!confirm('Clear conversation history for ALL your agents?\n\nThis hides all conversations from the dashboard. Your data is kept safely and never deleted.')) return
+
+    try {
+      const r = await apiFetch('/conversations/clear-all', { method: 'POST' })
+      if (!r.ok) throw new Error()
+      toast('All conversation histories cleared — data is preserved', 'success')
+    } catch(e) {
+      toast('Failed to clear conversations', 'error')
+    }
   }
 
 </script>
@@ -660,7 +702,10 @@
         <select id="conv-agent-select" onchange="loadConversations()" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;min-width:220px;cursor:pointer;">
           <option value="">— Select an agent —</option>
         </select>
-        <div id="conv-stats-chips" style="display:flex;gap:8px;margin-left:auto;"></div>
+        <div id="conv-stats-chips" style="display:flex;gap:8px;margin-left:auto;align-items:center;"></div>
+        <button id="conv-clear-btn" onclick="confirmClearAgentConversations()" style="display:none;padding:7px 14px;background:transparent;border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s;margin-left:8px;" onmouseover="this.style.background='rgba(239,68,68,0.08)'" onmouseout="this.style.background='transparent'">
+          Clear history
+        </button>
       </div>
 
       <!-- Two-panel layout: session list left, thread right -->
@@ -715,7 +760,7 @@
               <div class="settings-card-title">Danger Zone</div>
               <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">These actions are irreversible. Please be careful.</div>
               <div style="display:flex;flex-direction:column;gap:10px;">
-                <button class="btn-danger" onclick="toast('All conversations cleared','success')">Clear All Conversations</button>
+                <button class="btn-danger" onclick="confirmClearAllConversations()">Clear All Conversations</button>
                 <button class="btn-danger" onclick="confirmDeleteAccount()">Delete Account</button>
               </div>
             </div>
