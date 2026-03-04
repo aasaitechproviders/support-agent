@@ -8,7 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;
+      --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;--bg-rgb:10,10,15;
       --border:#2a2a38;--accent:#6c63ff;--accent-rgb:108,99,255;--accent2:#ff6584;
       --accent3:#43e97b;--text:#f0f0f8;--muted:#7a7a9a;--radius:14px;
       --sidebar-w:240px;
@@ -237,6 +237,26 @@
 
     /* THEME SWATCHES */
     .theme-swatch-btn{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;cursor:pointer;border:1.5px solid var(--border);transition:all .15s;}
+
+    /* BACKGROUND THEME PICKER */
+    .bg-theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+    .bg-theme-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 8px;border-radius:12px;cursor:pointer;border:2px solid var(--border);transition:all .18s;background:transparent;}
+    .bg-theme-btn:hover{border-color:var(--muted);}
+    .bg-theme-btn.active{border-color:var(--accent);background:rgba(var(--accent-rgb),.08);}
+    .bg-theme-preview{width:100%;height:44px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:4px;overflow:hidden;position:relative;}
+    .bg-theme-preview .p-bar{height:6px;border-radius:3px;}
+    .bg-theme-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+    .bg-theme-btn.active .bg-theme-label{color:var(--accent);}
+
+    /* CUSTOM BG COLOUR PICKER */
+    .custom-bg-wrap{display:none;flex-direction:column;gap:12px;padding-top:4px;}
+    .custom-bg-wrap.open{display:flex;}
+
+    /* SMOOTH THEME TRANSITIONS */
+    *{transition:background-color .25s ease, border-color .25s ease, color .25s ease;}
+    /* But don't slow down interactive transitions */
+    .btn-primary,.btn-secondary,.btn-icon,.nav-item,.agent-card,.color-swatch,.bg-theme-btn{transition:all .15s !important;}
+    input,textarea,select{transition:border-color .2s !important;}
 
     /* SECTION HEADER */
     .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap;}
@@ -550,10 +570,35 @@
       <div class="content">
         <div class="settings-grid">
           <div>
-            <!-- DASHBOARD ACCENT COLOUR -->
+            <!-- BACKGROUND THEME -->
             <div class="settings-card" style="margin-bottom:20px;">
-              <div class="settings-card-title">Dashboard Colour</div>
-              <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Personalise the accent colour used across your dashboard — buttons, highlights, and active states. Saved to your account.</p>
+              <div class="settings-card-title">Background Theme</div>
+              <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Choose how your dashboard looks. Pick a preset or set a completely custom background colour.</p>
+              <div class="bg-theme-grid" id="bg-theme-grid"></div>
+              <!-- Custom colour row (shown only when "Custom" selected) -->
+              <div class="custom-bg-wrap" id="custom-bg-wrap" style="margin-top:14px;">
+                <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Custom background colour</div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div id="custom-bg-preview" style="width:44px;height:44px;border-radius:10px;border:2px solid rgba(255,255,255,.15);flex-shrink:0;background:#0a0a0f;box-shadow:0 4px 14px rgba(0,0,0,.3);transition:background .2s;"></div>
+                  <input type="text" id="custom-bg-hex" value="#0A0A0F" maxlength="7" placeholder="#0A0A0F"
+                    style="flex:1;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;text-transform:uppercase;letter-spacing:.04em;outline:none;"
+                    oninput="onCustomBgHex(this.value)" />
+                  <label style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" title="Open colour picker">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    <input type="color" id="custom-bg-native" value="#0a0a0f" style="opacity:0;position:absolute;width:0;height:0;" oninput="onCustomBgNative(this.value)" />
+                  </label>
+                </div>
+              </div>
+              <button class="btn-primary" style="justify-content:center;margin-top:16px;" onclick="saveAppearance()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save Appearance
+              </button>
+            </div>
+
+            <!-- ACCENT COLOUR -->
+            <div class="settings-card" style="margin-bottom:20px;">
+              <div class="settings-card-title">Accent Colour</div>
+              <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Personalise buttons, highlights, and active states across your dashboard.</p>
               <div style="display:flex;flex-direction:column;gap:14px;">
                 <div style="display:flex;align-items:center;gap:12px;">
                   <div id="dash-color-preview" style="width:44px;height:44px;border-radius:10px;border:2px solid rgba(255,255,255,.15);flex-shrink:0;background:#6c63ff;box-shadow:0 4px 14px rgba(0,0,0,.3);transition:background .2s;"></div>
@@ -571,7 +616,7 @@
                 </div>
                 <button class="btn-primary" style="justify-content:center;" onclick="saveDashboardColor()">
                   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                  Save Colour
+                  Save Accent Colour
                 </button>
               </div>
             </div>
@@ -670,6 +715,166 @@
   }
   let currentUser=null, sources=[], editingAgentId=null, allAgents=[]
 
+  // ─── Background themes ───
+  const BG_THEMES = [
+    {
+      id: 'dark',
+      label: 'Dark',
+      bg: '#0a0a0f', bgRgb: '10,10,15',
+      surface: '#111118', surface2: '#1a1a24', border: '#2a2a38',
+      text: '#f0f0f8', muted: '#7a7a9a',
+      sbBg: '#111118', sbBorder: '#2a2a38',
+      topBg: '#0a0a0f', topBorder: '#2a2a38',
+    },
+    {
+      id: 'light',
+      label: 'Light',
+      bg: '#f5f5fa', bgRgb: '245,245,250',
+      surface: '#ffffff', surface2: '#ededf5', border: '#e0e0ec',
+      text: '#1a1a2e', muted: '#6868a0',
+      sbBg: '#ffffff', sbBorder: '#e0e0ec',
+      topBg: '#f5f5fa', topBorder: '#e0e0ec',
+    },
+    {
+      id: 'midnight',
+      label: 'Midnight',
+      bg: '#05050d', bgRgb: '5,5,13',
+      surface: '#0d0d1a', surface2: '#12122a', border: '#1e1e30',
+      text: '#e8e8ff', muted: '#6868a0',
+      sbBg: '#0d0d1a', sbBorder: '#1e1e30',
+      topBg: '#05050d', topBorder: '#1e1e30',
+    },
+    {
+      id: 'slate',
+      label: 'Slate',
+      bg: '#0f172a', bgRgb: '15,23,42',
+      surface: '#1e293b', surface2: '#263044', border: '#334155',
+      text: '#f1f5f9', muted: '#64748b',
+      sbBg: '#1e293b', sbBorder: '#334155',
+      topBg: '#0f172a', topBorder: '#334155',
+    },
+    {
+      id: 'white',
+      label: 'Pure White',
+      bg: '#ffffff', bgRgb: '255,255,255',
+      surface: '#f8f8fc', surface2: '#f0f0f8', border: '#e4e4f0',
+      text: '#1a1a2e', muted: '#6868a0',
+      sbBg: '#f8f8fc', sbBorder: '#e4e4f0',
+      topBg: '#ffffff', topBorder: '#e4e4f0',
+    },
+    {
+      id: 'custom',
+      label: 'Custom',
+      bg: null, // set from custom-bg-hex
+    },
+  ]
+
+  let currentBgTheme = 'dark'
+  let customBgHex = '#0a0a0f'
+
+  // ─── Apply full background theme ───
+  function applyBgTheme(themeId, customHex) {
+    const root = document.documentElement
+    let t = BG_THEMES.find(x => x.id === themeId)
+    if (!t) t = BG_THEMES[0]
+
+    if (themeId === 'custom') {
+      const hex = customHex || customBgHex || '#0a0a0f'
+      const [r,g,b] = [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)]
+      const isDark = (r*0.299 + g*0.587 + b*0.114) < 128
+      // Derive surface/border/text from bg luminance
+      const surfaceHex = isDark ? shiftHex(hex, 10) : shiftHex(hex, -10)
+      const surface2Hex = isDark ? shiftHex(hex, 20) : shiftHex(hex, -20)
+      const borderHex = isDark ? shiftHex(hex, 35) : shiftHex(hex, -35)
+      const textHex = isDark ? '#f0f0f8' : '#1a1a2e'
+      const mutedHex = isDark ? '#7a7a9a' : '#6868a0'
+      root.style.setProperty('--bg', hex)
+      root.style.setProperty('--bg-rgb', `${r},${g},${b}`)
+      root.style.setProperty('--surface', surfaceHex)
+      root.style.setProperty('--surface2', surface2Hex)
+      root.style.setProperty('--border', borderHex)
+      root.style.setProperty('--text', textHex)
+      root.style.setProperty('--muted', mutedHex)
+    } else {
+      root.style.setProperty('--bg', t.bg)
+      root.style.setProperty('--bg-rgb', t.bgRgb)
+      root.style.setProperty('--surface', t.surface)
+      root.style.setProperty('--surface2', t.surface2)
+      root.style.setProperty('--border', t.border)
+      root.style.setProperty('--text', t.text)
+      root.style.setProperty('--muted', t.muted)
+    }
+    currentBgTheme = themeId
+    // Update bg-theme-btn active state
+    document.querySelectorAll('.bg-theme-btn').forEach(b => b.classList.toggle('active', b.dataset.id === themeId))
+    // Show/hide custom colour picker
+    const cw = document.getElementById('custom-bg-wrap')
+    if (cw) cw.classList.toggle('open', themeId === 'custom')
+    // Rebuild chart with new colours if on dashboard
+    const ct = Chart.getChart('chart-tokens')
+    const cq = Chart.getChart('chart-queries')
+    if (ct || cq) { try { loadDashboard() } catch(e){} }
+  }
+
+  // Lighten/darken a hex colour by offset (positive = lighter, negative = darker)
+  function shiftHex(hex, offset) {
+    let r = Math.min(255,Math.max(0, parseInt(hex.slice(1,3),16) + offset))
+    let g = Math.min(255,Math.max(0, parseInt(hex.slice(3,5),16) + offset))
+    let b = Math.min(255,Math.max(0, parseInt(hex.slice(5,7),16) + offset))
+    return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('')
+  }
+
+  // ─── Build background theme picker ───
+  function buildBgThemeGrid() {
+    const grid = document.getElementById('bg-theme-grid')
+    if (!grid) return
+    grid.innerHTML = BG_THEMES.map(t => {
+      const previewContent = t.id === 'custom'
+        ? `<span style="font-size:18px;">🎨</span>`
+        : `<div style="width:100%;height:100%;background:${t.bg};display:flex;flex-direction:column;justify-content:flex-start;padding:5px 6px;gap:3px;">
+            <div style="height:4px;border-radius:2px;background:${t.surface};width:100%;"></div>
+            <div style="height:4px;border-radius:2px;background:${t.surface2};width:70%;"></div>
+            <div style="height:4px;border-radius:2px;background:${t.border};width:50%;"></div>
+          </div>`
+      return `<button class="bg-theme-btn ${t.id === currentBgTheme ? 'active' : ''}" data-id="${t.id}" onclick="selectBgTheme('${t.id}')">
+        <div class="bg-theme-preview">${previewContent}</div>
+        <span class="bg-theme-label">${t.label}</span>
+      </button>`
+    }).join('')
+  }
+
+  function selectBgTheme(id) {
+    applyBgTheme(id, customBgHex)
+  }
+
+  function onCustomBgHex(val) {
+    const hex = val.startsWith('#') ? val : '#'+val
+    if (!isValidHex(hex)) return
+    customBgHex = hex
+    document.getElementById('custom-bg-native').value = hex
+    document.getElementById('custom-bg-preview').style.background = hex
+    applyBgTheme('custom', hex)
+  }
+  function onCustomBgNative(val) {
+    customBgHex = val
+    document.getElementById('custom-bg-hex').value = val.toUpperCase()
+    document.getElementById('custom-bg-preview').style.background = val
+    applyBgTheme('custom', val)
+  }
+
+  async function saveAppearance() {
+    const body = {
+      dashboard_bg_theme: currentBgTheme,
+      dashboard_bg_custom: currentBgTheme === 'custom' ? customBgHex : null
+    }
+    try {
+      const r = await apiFetch('/auth/profile', { method:'PUT', body: JSON.stringify(body) })
+      if (!r.ok) throw new Error()
+      if (currentUser) { currentUser.dashboard_bg_theme = body.dashboard_bg_theme; currentUser.dashboard_bg_custom = body.dashboard_bg_custom }
+      toast('Appearance saved ✓', 'success')
+    } catch(e) { toast('Failed to save appearance', 'error') }
+  }
+
   const BRAND_COLORS=['#6c63ff','#7c3aed','#2563eb','#0891b2','#0d9488','#16a34a','#ca8a04','#ea580c','#dc2626','#db2777','#c8972a','#64748b','#ff6584','#43e97b','#f7971e']
 
   // ─── Helper: hex → "r, g, b" string ───
@@ -760,10 +965,15 @@
       currentUser=await res.json();
       document.getElementById('loading').style.display='none';
       document.getElementById('app').style.display='block';
-      // Apply saved dashboard accent before rendering anything
+      // Apply saved appearance
       const savedAccent = currentUser.dashboard_accent || '#6c63ff'
       applyAccent(savedAccent)
+      const savedBgTheme = currentUser.dashboard_bg_theme || 'dark'
+      const savedBgCustom = currentUser.dashboard_bg_custom || '#0a0a0f'
+      customBgHex = savedBgCustom
+      applyBgTheme(savedBgTheme, savedBgCustom)
       buildDashColorPalette()
+      buildBgThemeGrid()
       buildColorPalette()
       buildThemeSwatches()
       renderUserChip()
@@ -893,7 +1103,9 @@
       const match=(daily||[]).find(x=>x._id===key);
       tokenData.push(match?match.tokens:0);queryData.push(match?match.queries:0);
     }
-    const opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7a7a9a',font:{size:10},maxRotation:45}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7a7a9a',font:{size:10}},beginAtZero:true}}};
+    const mutedColor = getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() || '#7a7a9a'
+    const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#2a2a38'
+    const opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gridColor+'88'},ticks:{color:mutedColor,font:{size:10},maxRotation:45}},y:{grid:{color:gridColor+'88'},ticks:{color:mutedColor,font:{size:10}},beginAtZero:true}}};
     ['chart-tokens','chart-queries'].forEach(id=>{const e=Chart.getChart(id);if(e)e.destroy();});
     new Chart(document.getElementById('chart-tokens'),{type:'bar',data:{labels,datasets:[{data:tokenData,backgroundColor:'rgba(var(--accent-rgb),.6)',borderColor:'#6c63ff',borderWidth:1,borderRadius:4}]},options:opts});
     new Chart(document.getElementById('chart-queries'),{type:'bar',data:{labels,datasets:[{data:queryData,backgroundColor:'rgba(255,101,132,.6)',borderColor:'#ff6584',borderWidth:1,borderRadius:4}]},options:opts});
@@ -1037,7 +1249,7 @@
 
   // SETTINGS
   async function loadSettings() {
-    // Sync dashboard colour picker to current accent
+    // Sync accent colour picker
     const cur = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6c63ff'
     const dp = document.getElementById('dash-color-preview')
     const dh = document.getElementById('dash-color-hex')
@@ -1048,6 +1260,19 @@
     document.querySelectorAll('#dash-color-palette .color-swatch').forEach(s =>
       s.classList.toggle('selected', s.dataset.color.toLowerCase() === cur.toLowerCase())
     )
+    // Rebuild bg theme grid with current state
+    buildBgThemeGrid()
+    // Sync custom bg picker if custom theme is active
+    if (currentBgTheme === 'custom') {
+      const cbp = document.getElementById('custom-bg-preview')
+      const cbh = document.getElementById('custom-bg-hex')
+      const cbn = document.getElementById('custom-bg-native')
+      if (cbp) cbp.style.background = customBgHex
+      if (cbh) cbh.value = customBgHex.toUpperCase()
+      if (cbn) cbn.value = customBgHex
+      const cw = document.getElementById('custom-bg-wrap')
+      if (cw) cw.classList.add('open')
+    }
     try {
       const r=await fetch(`${API}/agents`,{headers:{Authorization:`Bearer ${token}`}});
       const agents=await r.json();allAgents=agents;
