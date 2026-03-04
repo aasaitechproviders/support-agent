@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Terms & Privacy — Aasai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',sans-serif;background:#09090f;color:#e8e8f0;line-height:1.7;overflow-x:hidden;}
+a{text-decoration:none;color:inherit}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:#09090f}
+::-webkit-scrollbar-thumb{background:#2a2a3a;border-radius:4px}
+
+:root{
+  --bg:#09090f;--bg1:#0f0f1a;--bg2:#141422;
+  --line:rgba(255,255,255,.07);--line2:rgba(255,255,255,.11);
+  --t1:#f0f0f8;--t2:#9898b8;--t3:#55556a;--t4:#35354a;
+  --amber:#c8972a;--amber2:#e0ac40;
+  --green:#34d399;--greenA:rgba(52,211,153,.12);
+  --r8:8px;--r12:12px;--r16:16px;--nav:60px;
+}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;height:var(--nav);display:flex;align-items:center;background:rgba(9,9,15,.9);border-bottom:1px solid var(--line);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.nav-inner{width:100%;max-width:860px;margin:0 auto;padding:0 40px;display:flex;align-items:center;gap:12px;}
+.nav-logo{display:flex;align-items:center;gap:9px;font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--t1);letter-spacing:-.025em;font-variation-settings:'opsz' 24;}
+.nav-back{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--t3);transition:color .15s;padding:6px 12px;border-radius:var(--r8);border:1px solid var(--line);}
+.nav-back:hover{color:var(--t1);border-color:var(--line2);}
+
+/* HERO */
+.doc-hero{max-width:860px;margin:0 auto;padding:64px 40px 48px;}
+.doc-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:16px;}
+.doc-h{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:600;color:var(--t1);letter-spacing:-.03em;line-height:1.08;font-variation-settings:'opsz' 54;margin-bottom:16px;}
+.doc-sub{font-size:15px;color:var(--t2);line-height:1.75;max-width:560px;font-weight:300;}
+.doc-meta{display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap;}
+.doc-meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t3);}
+
+/* NO TRAINING BADGE */
+.no-training-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 20px;
+  background:var(--greenA);
+  border:1px solid rgba(52,211,153,.2);
+  border-radius:var(--r12);
+  margin-top:24px;
+}
+.no-training-badge .icon{font-size:20px;flex-shrink:0;}
+.no-training-badge .text{font-size:13px;font-weight:500;color:var(--green);line-height:1.5;}
+.no-training-badge .text span{display:block;font-size:11px;font-weight:400;color:rgba(52,211,153,.7);margin-top:2px;}
+
+/* DIVIDER */
+.doc-divider{height:1px;background:linear-gradient(90deg,transparent,var(--line) 20%,var(--line) 80%,transparent);max-width:860px;margin:0 auto;}
+
+/* TOC */
+.toc-wrap{max-width:860px;margin:0 auto;padding:32px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.toc-item{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r8);font-size:13px;color:var(--t2);cursor:pointer;transition:all .15s;}
+.toc-item:hover{border-color:var(--line2);color:var(--t1);}
+.toc-num{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--amber);font-variation-settings:'opsz' 18;flex-shrink:0;}
+
+/* CONTENT */
+.doc-body{max-width:860px;margin:0 auto;padding:16px 40px 100px;}
+.doc-section{margin-bottom:56px;scroll-margin-top:80px;}
+.doc-section-num{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.doc-section-num::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(200,151,42,.2),transparent);}
+.doc-section-h{font-family:'Fraunces',serif;font-size:clamp(20px,3vw,26px);font-weight:600;color:var(--t1);letter-spacing:-.02em;margin-bottom:16px;font-variation-settings:'opsz' 28;line-height:1.2;}
+.doc-section p{font-size:15px;color:var(--t2);line-height:1.8;margin-bottom:16px;font-weight:300;}
+.doc-section p:last-child{margin-bottom:0;}
+.doc-section ul,.doc-section ol{padding-left:20px;margin-bottom:16px;}
+.doc-section li{font-size:14px;color:var(--t2);line-height:1.75;margin-bottom:8px;font-weight:300;}
+.doc-section li:last-child{margin-bottom:0;}
+.doc-section strong{color:var(--t1);font-weight:600;}
+.doc-section a{color:var(--amber);text-decoration:underline;text-underline-offset:3px;}
+.doc-section a:hover{color:var(--amber2);}
+
+/* HIGHLIGHT BOX */
+.highlight-box{background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:0 var(--r8) var(--r8) 0;padding:16px 20px;margin:20px 0;}
+.highlight-box p{margin:0;font-size:14px;}
+
+/* KEY COMMITMENT */
+.commitment-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:20px 0;}
+.commitment-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r12);padding:18px;}
+.commitment-icon{font-size:22px;margin-bottom:10px;display:block;}
+.commitment-title{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:5px;}
+.commitment-text{font-size:12px;color:var(--t2);line-height:1.6;}
+
+/* CONTACT */
+.contact-box{background:linear-gradient(135deg,rgba(200,151,42,.05),rgba(200,151,42,.02));border:1px solid rgba(200,151,42,.2);border-radius:var(--r16);padding:28px;text-align:center;margin-top:40px;}
+.contact-box h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--t1);margin-bottom:8px;letter-spacing:-.02em;font-variation-settings:'opsz' 24;}
+.contact-box p{font-size:14px;color:var(--t2);margin-bottom:16px;}
+.contact-box a{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:var(--amber);color:#09090f;border-radius:var(--r8);font-size:14px;font-weight:600;transition:all .2s;}
+.contact-box a:hover{background:var(--amber2);}
+
+/* FOOTER */
+.doc-footer{border-top:1px solid var(--line);padding:24px 40px;max-width:860px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.doc-footer-note{font-size:12px;color:var(--t4);}
+.doc-footer-links{display:flex;gap:16px;}
+.doc-footer-link{font-size:12px;color:var(--t3);transition:color .15s;}
+.doc-footer-link:hover{color:var(--t1);}
+
+@media(max-width:768px){
+  .nav-inner{padding:0 20px;}
+  .doc-hero{padding:40px 20px 32px;}
+  .toc-wrap{padding:20px;grid-template-columns:1fr 1fr;}
+  .doc-body{padding:16px 20px 60px;}
+  .doc-footer{padding:20px;}
+  .commitment-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:480px){
+  .toc-wrap{grid-template-columns:1fr;}
+  .commitment-grid{grid-template-columns:1fr;}
+  .doc-meta{gap:10px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;">
+        <circle cx="10" cy="10" r="3" fill="#c8972a"/>
+        <circle cx="3" cy="5" r="1.4" fill="rgba(255,255,255,.2)"/>
+        <circle cx="17" cy="5" r="1.4" fill="rgba(255,255,255,.2)"/>
+        <circle cx="3" cy="15" r="1.4" fill="rgba(255,255,255,.2)"/>
+        <circle cx="17" cy="15" r="1.4" fill="rgba(255,255,255,.2)"/>
+        <line x1="6.8" y1="8.5" x2="4.2" y2="6.4" stroke="rgba(200,151,42,.4)" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="13.2" y1="8.5" x2="15.8" y2="6.4" stroke="rgba(200,151,42,.4)" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="6.8" y1="11.5" x2="4.2" y2="13.6" stroke="rgba(200,151,42,.4)" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="13.2" y1="11.5" x2="15.8" y2="13.6" stroke="rgba(200,151,42,.4)" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      Aasai
+    </a>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to home
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="doc-hero">
+  <div class="doc-kicker">Legal Documents</div>
+  <h1 class="doc-h">Terms of Service<br><em style="font-style:italic;font-weight:300;color:var(--t2);">& Privacy Policy</em></h1>
+  <p class="doc-sub">We believe in clear, plain-language policies. Here's exactly how Aasai works, what data we collect, and — crucially — what we will never do with it.</p>
+  <div class="doc-meta">
+    <div class="doc-meta-item">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Last updated: June 2025
+    </div>
+    <div class="doc-meta-item">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      ~8 minute read
+    </div>
+    <div class="doc-meta-item">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+      Applies to all users
+    </div>
+  </div>
+
+  <!-- KEY NO-TRAINING COMMITMENT -->
+  <div class="no-training-badge">
+    <div class="icon">🔒</div>
+    <div class="text">
+      Your data is <strong>never used to train AI models</strong> — not ours, not Google's, not anyone's.
+      <span>This is a hard commitment, not a preference. Your knowledge, conversations, and files remain yours alone.</span>
+    </div>
+  </div>
+</div>
+
+<div class="doc-divider"></div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc-wrap">
+  <a href="#acceptance" class="toc-item"><span class="toc-num">01</span>Acceptance of Terms</a>
+  <a href="#service" class="toc-item"><span class="toc-num">02</span>What Aasai Does</a>
+  <a href="#data" class="toc-item"><span class="toc-num">03</span>Data We Collect</a>
+  <a href="#no-training" class="toc-item"><span class="toc-num">04</span>No AI Training</a>
+  <a href="#usage" class="toc-item"><span class="toc-num">05</span>How We Use Data</a>
+  <a href="#sharing" class="toc-item"><span class="toc-num">06</span>Data Sharing</a>
+  <a href="#security" class="toc-item"><span class="toc-num">07</span>Security</a>
+  <a href="#user-rights" class="toc-item"><span class="toc-num">08</span>Your Rights</a>
+  <a href="#content" class="toc-item"><span class="toc-num">09</span>Content Policy</a>
+  <a href="#liability" class="toc-item"><span class="toc-num">10</span>Liability</a>
+  <a href="#changes" class="toc-item"><span class="toc-num">11</span>Changes to Terms</a>
+  <a href="#contact" class="toc-item"><span class="toc-num">12</span>Contact Us</a>
+</div>
+
+<div class="doc-divider"></div>
+
+<!-- BODY -->
+<div class="doc-body">
+
+  <!-- 01 -->
+  <div class="doc-section" id="acceptance">
+    <div class="doc-section-num">01 · Acceptance of Terms</div>
+    <h2 class="doc-section-h">By using Aasai, you agree to these terms</h2>
+    <p>These Terms of Service ("Terms") govern your access to and use of Aasai Technologies' platform, website, and services (collectively "Aasai" or "the Service"). By creating an account or using the Service in any way, you agree to be bound by these Terms.</p>
+    <p>If you are using Aasai on behalf of an organisation, you represent that you have the authority to bind that organisation to these Terms. If you don't have such authority, or if you do not agree with these Terms, you may not use the Service.</p>
+    <p>These Terms apply to all users, including account holders ("Users") and visitors who interact with published AI agents ("Visitors").</p>
+  </div>
+
+  <!-- 02 -->
+  <div class="doc-section" id="service">
+    <div class="doc-section-num">02 · What Aasai Does</div>
+    <h2 class="doc-section-h">An AI agent platform powered by your knowledge</h2>
+    <p>Aasai is a software-as-a-service (SaaS) platform that allows users to create AI-powered chat agents trained on their own knowledge bases. You can upload documents, paste text, or provide URLs, and Aasai converts that content into a conversational AI agent accessible via a shareable link.</p>
+    <p>The AI responses are generated using Google's Gemini language models. Aasai acts as the orchestration layer — we manage the knowledge base, user interface, branding, and delivery. We do not build or own the underlying language model.</p>
+    <div class="commitment-grid">
+      <div class="commitment-card"><span class="commitment-icon">📂</span><div class="commitment-title">Knowledge Storage</div><div class="commitment-text">Your uploaded content is stored securely in MongoDB Atlas. It is only used to answer questions from your published agents.</div></div>
+      <div class="commitment-card"><span class="commitment-icon">🤖</span><div class="commitment-title">AI Responses</div><div class="commitment-text">Responses are generated by Gemini 2.0 Flash. We send your knowledge and the question; Gemini returns an answer.</div></div>
+      <div class="commitment-card"><span class="commitment-icon">💬</span><div class="commitment-title">Conversations</div><div class="commitment-text">Visitor conversations are stored and made accessible to you via the dashboard. They are never shared or sold.</div></div>
+      <div class="commitment-card"><span class="commitment-icon">🎨</span><div class="commitment-title">Branding & Delivery</div><div class="commitment-text">We host the chat interface with your branding, colors, and logo. The experience is entirely yours to customise.</div></div>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="doc-section" id="data">
+    <div class="doc-section-num">03 · Data We Collect</div>
+    <h2 class="doc-section-h">Only what's necessary to run the service</h2>
+    <p>We collect the minimum data needed to operate Aasai. Here is a complete list of what we store:</p>
+
+    <p><strong>Account Information (Users)</strong></p>
+    <ul>
+      <li>Name and email address from your Google account (via Google OAuth)</li>
+      <li>Profile photo (from Google, or one you upload)</li>
+      <li>Organisation name and phone number (optional, if you provide them)</li>
+      <li>Plan type and token usage counts</li>
+      <li>Account creation date and last login timestamp</li>
+    </ul>
+
+    <p><strong>Agent Content</strong></p>
+    <ul>
+      <li>Knowledge base content you upload: text, extracted text from files, content scraped from URLs</li>
+      <li>Agent configuration: name, system prompt, brand color, theme, welcome message, logo URL</li>
+    </ul>
+
+    <p><strong>Conversation Data</strong></p>
+    <ul>
+      <li>Questions asked by visitors to your published agents</li>
+      <li>AI-generated answers</li>
+      <li>Visitor IP address (used for grouping conversations by session)</li>
+      <li>A session ID and visitor ID generated per browser session (stored only in the visitor's localStorage)</li>
+      <li>Timestamp of each message</li>
+      <li>Token count per message (for billing and quota tracking)</li>
+    </ul>
+
+    <div class="highlight-box">
+      <p><strong>We do not collect:</strong> credit card numbers (handled by payment processors), passwords (we use Google OAuth only), location data beyond IP address, device fingerprints, browsing history, or any biometric data.</p>
+    </div>
+  </div>
+
+  <!-- 04 — NO TRAINING -->
+  <div class="doc-section" id="no-training">
+    <div class="doc-section-num">04 · No AI Training — Our Core Commitment</div>
+    <h2 class="doc-section-h">Your data will never train any AI model</h2>
+
+    <div class="no-training-badge" style="margin-bottom:24px;">
+      <div class="icon">🛡️</div>
+      <div class="text">
+        <strong>Hard commitment, not a preference:</strong> None of the data you upload, create, or generate on Aasai — including knowledge bases, conversation logs, uploaded files, or system prompts — is ever used to train, fine-tune, evaluate, or improve any AI model.
+        <span>This applies to Aasai's systems and to any third-party model providers we work with.</span>
+      </div>
+    </div>
+
+    <p>Specifically, we commit that:</p>
+    <ul>
+      <li><strong>Your knowledge base content</strong> (PDFs, text, URLs) is used only to answer questions from your published agents. It is never used as training data.</li>
+      <li><strong>Visitor conversations</strong> (questions and AI responses) are stored for your dashboard analytics only. They are not fed back into any AI training pipeline.</li>
+      <li><strong>File uploads</strong> (PDFs, images, documents) are processed for text extraction and then referenced for answering questions. They are never used to train models.</li>
+      <li><strong>Google Gemini API usage</strong>: We use Google's Gemini API under terms that prohibit Google from using our API inputs to train their models. API data is not used for training per Google's API terms of service.</li>
+      <li><strong>We will never sell your data</strong> to any third party, including AI research organisations, data brokers, or advertising networks.</li>
+    </ul>
+
+    <p>If we ever update our data practices in a way that could affect this commitment, we will notify you via email at least 30 days in advance and provide a clear mechanism to delete your data before any such change takes effect. You will always have the option to delete your account and all associated data.</p>
+  </div>
+
+  <!-- 05 -->
+  <div class="doc-section" id="usage">
+    <div class="doc-section-num">05 · How We Use Your Data</div>
+    <h2 class="doc-section-h">Only to operate and improve Aasai</h2>
+    <p>We use the data we collect exclusively for the following purposes:</p>
+    <ul>
+      <li><strong>Service operation:</strong> Running your AI agents, storing your knowledge base, displaying your dashboard, and processing queries.</li>
+      <li><strong>Billing and quota:</strong> Tracking token usage against your plan limit. We need to know how many tokens you've consumed to enforce plan limits and calculate charges.</li>
+      <li><strong>Analytics for you:</strong> Populating your dashboard with query counts, session counts, and token usage charts. This data is yours — you can see it, manage it, and delete it.</li>
+      <li><strong>Service improvement:</strong> Aggregated, anonymised platform statistics (total queries, total tokens across all users) are used to understand platform-level usage and improve reliability. This never includes your specific content.</li>
+      <li><strong>Communication:</strong> Sending you important service-related emails (plan limits approaching, account updates). We do not send marketing emails unless you explicitly opt in.</li>
+      <li><strong>Security:</strong> Detecting abuse, unauthorized access, or violations of these Terms.</li>
+    </ul>
+  </div>
+
+  <!-- 06 -->
+  <div class="doc-section" id="sharing">
+    <div class="doc-section-num">06 · Data Sharing & Third Parties</div>
+    <h2 class="doc-section-h">We do not sell or share your personal data</h2>
+    <p>We do not sell, rent, or share your personal data with third parties for their commercial purposes. The only data sharing that occurs is:</p>
+    <ul>
+      <li><strong>Google Gemini API:</strong> Your knowledge base and visitor questions are sent to the Gemini API to generate answers. This is the core function of the service. Google processes this data under their API terms, which prohibit using it for training.</li>
+      <li><strong>Google OAuth:</strong> We receive your name, email, and profile photo from Google when you sign in. We do not share anything back with Google beyond the standard OAuth flow.</li>
+      <li><strong>MongoDB Atlas:</strong> Your data is stored in MongoDB Atlas (cloud database). MongoDB has access to your data for infrastructure purposes but is contractually prohibited from accessing it for any other reason.</li>
+      <li><strong>Cloudflare:</strong> Our frontend is served via Cloudflare for performance and security. Cloudflare processes request metadata (IP addresses, headers) as part of their CDN service.</li>
+      <li><strong>Legal requirements:</strong> We may disclose data if required by law, court order, or to protect the rights, property, or safety of Aasai, our users, or others.</li>
+    </ul>
+    <p>We do not integrate advertising networks, social media tracking pixels, or behavioral analytics platforms. There are no ads on Aasai, and we do not track you across the web.</p>
+  </div>
+
+  <!-- 07 -->
+  <div class="doc-section" id="security">
+    <div class="doc-section-num">07 · Security</div>
+    <h2 class="doc-section-h">Reasonable measures to protect your data</h2>
+    <p>We implement industry-standard security measures to protect your data:</p>
+    <ul>
+      <li>All data in transit is encrypted using HTTPS/TLS</li>
+      <li>Authentication is handled via JWT tokens with 30-day expiry and Google OAuth — we never store passwords</li>
+      <li>Database access is restricted to authorised application servers only</li>
+      <li>API keys and secrets are stored as environment variables and never exposed in code</li>
+      <li>File uploads are processed in memory and never written to disk unencrypted</li>
+    </ul>
+    <p>No system is 100% secure. If you discover a security vulnerability, please contact us immediately at <a href="mailto:security@aasaitech.in">security@aasaitech.in</a>. We will investigate and respond promptly.</p>
+    <p>In the event of a data breach that affects your personal information, we will notify you within 72 hours of becoming aware of the breach, in accordance with applicable data protection laws.</p>
+  </div>
+
+  <!-- 08 -->
+  <div class="doc-section" id="user-rights">
+    <div class="doc-section-num">08 · Your Rights</div>
+    <h2 class="doc-section-h">You own your data. Full stop.</h2>
+    <p>You have the following rights with respect to your data:</p>
+    <ul>
+      <li><strong>Access:</strong> You can view all your data at any time through the Aasai dashboard — agents, knowledge sources, conversation history, and profile information.</li>
+      <li><strong>Correction:</strong> You can update your profile information at any time via the Profile page.</li>
+      <li><strong>Deletion:</strong> You can delete individual agents, knowledge sources, or your entire account. When you delete your account, all associated data — agents, sources, conversations, profile — is permanently deleted within 30 days.</li>
+      <li><strong>Export:</strong> You can contact us to request an export of your data in a machine-readable format.</li>
+      <li><strong>Opt-out of communications:</strong> You can unsubscribe from non-essential emails at any time.</li>
+      <li><strong>Conversation clearing:</strong> You can clear your agent's conversation history from the dashboard at any time. The underlying data is soft-deleted (retained briefly for disaster recovery) and then permanently removed.</li>
+    </ul>
+    <p>To exercise any of these rights, use the dashboard controls or contact us at <a href="mailto:privacy@aasaitech.in">privacy@aasaitech.in</a>. We will respond within 30 days.</p>
+  </div>
+
+  <!-- 09 -->
+  <div class="doc-section" id="content">
+    <div class="doc-section-num">09 · Content Policy & Acceptable Use</div>
+    <h2 class="doc-section-h">Use Aasai responsibly</h2>
+    <p>You are responsible for the content you upload and the agents you create. You agree not to use Aasai to:</p>
+    <ul>
+      <li>Upload or publish content that is illegal, defamatory, harassing, or infringes third-party intellectual property rights</li>
+      <li>Create agents designed to deceive, defraud, or manipulate users</li>
+      <li>Distribute malware, spam, or phishing content</li>
+      <li>Upload content containing personally identifiable information of third parties without their consent</li>
+      <li>Attempt to reverse-engineer, scrape, or overload the Aasai platform</li>
+      <li>Use the service in any way that violates applicable laws or regulations</li>
+    </ul>
+    <p>You retain ownership of all content you upload to Aasai. By uploading content, you grant Aasai a limited, non-exclusive license to store and process that content solely for the purpose of operating the service for you.</p>
+    <p>Aasai reserves the right to suspend or terminate accounts that violate these content policies. We will notify you and give you an opportunity to respond unless doing so would cause harm or we are legally prohibited from doing so.</p>
+  </div>
+
+  <!-- 10 -->
+  <div class="doc-section" id="liability">
+    <div class="doc-section-num">10 · Liability & Disclaimers</div>
+    <h2 class="doc-section-h">Understanding the limits of our responsibility</h2>
+    <p>Aasai provides AI-generated responses that may not always be accurate, complete, or current. <strong>AI responses should not be relied upon for medical, legal, financial, or other professional advice.</strong> Users are responsible for verifying important information.</p>
+    <p>The Service is provided "as is" and "as available." To the maximum extent permitted by law, Aasai disclaims all warranties, express or implied, including warranties of merchantability, fitness for a particular purpose, and non-infringement.</p>
+    <p>Aasai's total liability to you for any claims arising out of your use of the Service shall not exceed the amount you paid to Aasai in the 12 months preceding the claim. For free plan users, this limit is ₹0.</p>
+    <p>We are not liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or goodwill.</p>
+  </div>
+
+  <!-- 11 -->
+  <div class="doc-section" id="changes">
+    <div class="doc-section-num">11 · Changes to These Terms</div>
+    <h2 class="doc-section-h">We'll tell you before anything changes</h2>
+    <p>We may update these Terms from time to time. When we do:</p>
+    <ul>
+      <li>We will update the "Last updated" date at the top of this page</li>
+      <li>For material changes, we will notify you via email at least 14 days before the changes take effect</li>
+      <li>For changes that affect our data practices (especially the no-training commitment), we will provide 30 days notice and a clear option to delete your data</li>
+      <li>Your continued use of the Service after changes take effect constitutes acceptance of the new Terms</li>
+    </ul>
+    <p>We will never retroactively change how we handle data you've already uploaded without giving you an opportunity to delete it first.</p>
+  </div>
+
+  <!-- 12 -->
+  <div class="doc-section" id="contact">
+    <div class="doc-section-num">12 · Governing Law & Contact</div>
+    <h2 class="doc-section-h">Questions? We're easy to reach.</h2>
+    <p>These Terms are governed by the laws of India, without regard to conflict of law principles. Any disputes shall be resolved in the courts of Tamil Nadu, India.</p>
+    <p>If you have any questions about these Terms, our privacy practices, or how we handle your data, please contact us:</p>
+
+    <div class="contact-box">
+      <h3>Get in touch with us</h3>
+      <p>We respond to all privacy and legal enquiries within 2 business days.</p>
+      <a href="mailto:hello@aasaitech.in">✉️ hello@aasaitech.in</a>
+    </div>
+  </div>
+
+</div><!-- /doc-body -->
+
+<div class="doc-divider" style="max-width:100%;"></div>
+<div style="max-width:860px;margin:0 auto;">
+  <div class="doc-footer">
+    <span class="doc-footer-note">© 2025 Aasai Technologies. All rights reserved.</span>
+    <div class="doc-footer-links">
+      <a class="doc-footer-link" href="index.html">Home</a>
+      <a class="doc-footer-link" href="mailto:hello@aasaitech.in">Contact</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
