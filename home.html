@@ -9,7 +9,7 @@
   <style>
     :root {
       --bg:#0a0a0f;--surface:#111118;--surface2:#1a1a24;
-      --border:#2a2a38;--accent:#6c63ff;--accent2:#ff6584;
+      --border:#2a2a38;--accent:#6c63ff;--accent-rgb:108,99,255;--accent2:#ff6584;
       --accent3:#43e97b;--text:#f0f0f8;--muted:#7a7a9a;--radius:14px;
       --sidebar-w:240px;
     }
@@ -23,7 +23,7 @@
     .logo-text{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
     .nav-item{display:flex;align-items:center;gap:12px;padding:11px 12px;color:var(--muted);font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;border-radius:8px;margin:1px 8px;text-decoration:none;}
     .nav-item:hover{background:var(--surface2);color:var(--text);}
-    .nav-item.active{background:rgba(108,99,255,.15);color:var(--accent);}
+    .nav-item.active{background:rgba(var(--accent-rgb),.15);color:var(--accent);}
     .sidebar-bottom{margin-top:auto;padding:16px 8px 0;border-top:1px solid var(--border);}
     .user-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .15s;}
     .user-chip:hover{background:var(--surface2);}
@@ -78,7 +78,7 @@
     .token-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;}
     .badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
     .badge-free{background:rgba(67,233,123,.15);color:var(--accent3);}
-    .badge-pro{background:rgba(108,99,255,.15);color:var(--accent);}
+    .badge-pro{background:rgba(var(--accent-rgb),.15);color:var(--accent);}
     .token-bar-bg{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-bottom:8px;}
     .token-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width 1s ease;}
     .token-counts{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);}
@@ -93,7 +93,7 @@
     /* AGENTS */
     .agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
     .agent-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;cursor:pointer;transition:all .2s;}
-    .agent-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 32px rgba(108,99,255,.1);}
+    .agent-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 32px rgba(var(--accent-rgb),.1);}
     .agent-card-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
     .agent-avatar{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;}
     .agent-avatar img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
@@ -116,7 +116,7 @@
     /* FORM */
     .form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;}
     .form-section-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
-    .section-num{width:24px;height:24px;background:rgba(108,99,255,.2);color:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+    .section-num{width:24px;height:24px;background:rgba(var(--accent-rgb),.2);color:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
     .form-group{margin-bottom:16px;}
     label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:6px;}
@@ -128,9 +128,10 @@
 
     /* COLOR */
     .color-palette{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
-    .color-swatch{width:28px;height:28px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0;}
-    .color-swatch:hover{transform:scale(1.15);}
-    .color-swatch.selected{border-color:white;box-shadow:0 0 0 1px var(--accent);}
+    .color-swatch{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .18s;flex-shrink:0;position:relative;}
+    .color-swatch:hover{transform:scale(1.18);border-color:rgba(255,255,255,.5);}
+    .color-swatch.selected{border-color:white !important;box-shadow:0 0 0 2px var(--accent),0 3px 12px rgba(0,0,0,.3);}
+    .color-swatch.selected::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:white;text-shadow:0 1px 3px rgba(0,0,0,.6);}
     .color-pick-row{display:flex;align-items:center;gap:12px;}
     .color-pick-preview{width:40px;height:40px;border-radius:10px;border:1px solid var(--border);flex-shrink:0;transition:background .2s;}
 
@@ -138,13 +139,13 @@
     .sources-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
     .source-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;}
     .source-type-badge{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;flex-shrink:0;}
-    .type-text{background:rgba(108,99,255,.15);color:var(--accent);}
+    .type-text{background:rgba(var(--accent-rgb),.15);color:var(--accent);}
     .type-file{background:rgba(255,101,132,.15);color:var(--accent2);}
     .type-url{background:rgba(67,233,123,.15);color:var(--accent3);}
     .source-content{flex:1;font-size:13px;color:var(--muted);line-height:1.5;word-break:break-word;}
     .add-source-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
     .tab-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;}
-    .tab-btn.active{background:rgba(108,99,255,.15);border-color:var(--accent);color:var(--accent);}
+    .tab-btn.active{background:rgba(var(--accent-rgb),.15);border-color:var(--accent);color:var(--accent);}
     .source-input-area{display:none;}
     .source-input-area.active{display:block;}
     .file-drop{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;color:var(--muted);font-size:14px;transition:all .2s;}
@@ -161,29 +162,29 @@
     .token-meter-text{font-size:12px;color:var(--muted);white-space:nowrap;}
 
     /* PUBLISH */
-    .publish-box{background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(255,101,132,.05));border:1px solid rgba(108,99,255,.3);border-radius:var(--radius);padding:28px;text-align:center;}
+    .publish-box{background:linear-gradient(135deg,rgba(var(--accent-rgb),.1),rgba(255,101,132,.05));border:1px solid rgba(var(--accent-rgb),.3);border-radius:var(--radius);padding:28px;text-align:center;}
     .publish-box h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;}
     .publish-box p{color:var(--muted);font-size:14px;margin-bottom:20px;}
     .btn-publish{padding:13px 32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:var(--radius);color:white;font-family:'Syne',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;}
-    .btn-publish:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,99,255,.3);}
+    .btn-publish:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(var(--accent-rgb),.3);}
     .published-url-box{margin-top:16px;padding:14px 16px;background:var(--surface2);border:1px solid var(--accent);border-radius:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
     .published-url{flex:1;font-size:13px;color:var(--accent);word-break:break-all;min-width:0;}
-    .btn-copy{padding:6px 12px;background:rgba(108,99,255,.15);border:none;border-radius:6px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
-    .btn-copy:hover{background:rgba(108,99,255,.3);}
+    .btn-copy{padding:6px 12px;background:rgba(var(--accent-rgb),.15);border:none;border-radius:6px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+    .btn-copy:hover{background:rgba(var(--accent-rgb),.3);}
 
     /* CONVERSATIONS */
     .session-item{padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;position:relative;}
     .session-item:hover{background:var(--surface2);}
-    .session-item.active{background:rgba(108,99,255,.1);border-left:3px solid var(--accent);padding-left:13px;}
+    .session-item.active{background:rgba(var(--accent-rgb),.1);border-left:3px solid var(--accent);padding-left:13px;}
     .session-ip{font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;}
-    .session-ip-badge{font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;background:rgba(108,99,255,.12);color:var(--accent);border:1px solid rgba(108,99,255,.2);}
+    .session-ip-badge{font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;background:rgba(var(--accent-rgb),.12);color:var(--accent);border:1px solid rgba(var(--accent-rgb),.2);}
     .session-preview{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .session-meta{font-size:11px;color:var(--muted);margin-top:5px;display:flex;gap:10px;flex-wrap:wrap;}
     .thread-header{padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-    .thread-ip-tag{font-size:12px;font-weight:600;color:var(--accent);background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2);padding:4px 10px;border-radius:6px;}
+    .thread-ip-tag{font-size:12px;font-weight:600;color:var(--accent);background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.2);padding:4px 10px;border-radius:6px;}
     .thread-msgs{padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
     .thread-turn{display:flex;flex-direction:column;gap:8px;}
-    .thread-q{align-self:flex-end;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.2);border-radius:12px 12px 3px 12px;padding:10px 14px;font-size:13px;color:var(--text);max-width:75%;}
+    .thread-q{align-self:flex-end;background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.2);border-radius:12px 12px 3px 12px;padding:10px 14px;font-size:13px;color:var(--text);max-width:75%;}
     .thread-a{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:12px 12px 12px 3px;padding:10px 14px;font-size:13px;color:var(--text);max-width:80%;line-height:1.6;}
     .thread-a p{margin:0 0 6px;}.thread-a p:last-child{margin:0;}.thread-a ul{padding-left:18px;}
     .thread-ts{font-size:11px;color:var(--muted);align-self:flex-end;}
@@ -203,7 +204,7 @@
     .toggle input{opacity:0;width:0;height:0;}
     .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--surface2);border:1px solid var(--border);border-radius:22px;transition:.3s;}
     .toggle-slider:before{position:absolute;content:'';height:16px;width:16px;left:2px;bottom:2px;background:var(--muted);border-radius:50%;transition:.3s;}
-    .toggle input:checked+.toggle-slider{background:rgba(108,99,255,.3);border-color:var(--accent);}
+    .toggle input:checked+.toggle-slider{background:rgba(var(--accent-rgb),.3);border-color:var(--accent);}
     .toggle input:checked+.toggle-slider:before{transform:translateX(18px);background:var(--accent);}
     .agent-limit-table{width:100%;border-collapse:collapse;}
     .agent-limit-table th{text-align:left;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px;border-bottom:1px solid var(--border);}
@@ -222,7 +223,7 @@
     .profile-avatar-wrap:hover .avatar-overlay{opacity:1;}
     .profile-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px;}
     .profile-email{font-size:13px;color:var(--muted);margin-bottom:16px;}
-    .profile-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(108,99,255,.15);border-radius:20px;font-size:12px;color:var(--accent);font-weight:500;}
+    .profile-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(var(--accent-rgb),.15);border-radius:20px;font-size:12px;color:var(--accent);font-weight:500;}
     .profile-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
     .profile-stat{background:var(--surface2);border-radius:10px;padding:12px;text-align:center;}
     .profile-stat-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
@@ -429,16 +430,41 @@
         <div class="form-section">
           <div class="form-section-title"><div class="section-num">1</div>Basic Information</div>
           <div class="form-row">
-            <div class="form-group"><label>Agent Name *</label><input type="text" id="f-name" placeholder="e.g. Springfield Coaching Bot" /></div>
+            <div class="form-group"><label>Agent Name *</label><input type="text" id="f-name" placeholder="e.g. Springfield Coaching Bot" oninput="const n=document.getElementById('acp-name');if(n)n.textContent=this.value||'Your Agent';" /></div>
             <div class="form-group"><label>Welcome Message</label><input type="text" id="f-welcome" placeholder="Hi! How can I help you today?" /></div>
           </div>
           <div class="form-group"><label>Logo URL (optional)</label><input type="text" id="f-logo" placeholder="https://yoursite.com/logo.png" /></div>
           <div class="form-group">
-            <label>Brand Color</label>
-            <div class="color-pick-row">
-              <div class="color-pick-preview" id="color-preview" style="background:#6c63ff;"></div>
-              <div style="flex:1;"><div class="color-palette" id="color-palette"></div></div>
-              <input type="color" id="f-color" value="#6c63ff" style="width:44px;height:44px;padding:2px;border-radius:8px;cursor:pointer;flex-shrink:0;" oninput="onColorInput(this.value)" />
+            <label>Agent Brand Colour <span style="font-size:11px;color:var(--muted);font-weight:400;">— shown on the public chat page</span></label>
+            <div style="display:flex;flex-direction:column;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;">
+              <div class="color-pick-row">
+                <div class="color-pick-preview" id="color-preview" style="background:#6c63ff;width:48px;height:48px;box-shadow:0 4px 14px rgba(0,0,0,.3);"></div>
+                <input type="text" id="agent-color-hex" value="#6C63FF" maxlength="7" placeholder="#6C63FF"
+                  style="flex:1;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;text-transform:uppercase;letter-spacing:.04em;outline:none;"
+                  oninput="onAgentHexInput(this.value)" />
+                <label style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" title="Open colour picker">
+                  <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  <input type="color" id="f-color" value="#6c63ff" style="opacity:0;position:absolute;width:0;height:0;" oninput="onColorInput(this.value)" />
+                </label>
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Quick picks</div>
+                <div class="color-palette" id="color-palette"></div>
+              </div>
+              <!-- Live chat preview -->
+              <div>
+                <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Live preview</div>
+                <div id="agent-color-preview-chat" style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+                  <div id="acp-header" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#6c63ff18;border-bottom:1px solid #6c63ff30;">
+                    <div style="width:7px;height:7px;border-radius:50%;background:#43e97b;animation:pulse 2s infinite;"></div>
+                    <span id="acp-name" style="font-size:12px;font-weight:600;color:var(--text);">Your Agent</span>
+                  </div>
+                  <div style="padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg);">
+                    <div style="padding:8px 12px;border-radius:10px 10px 10px 3px;font-size:12px;color:var(--text);max-width:80%;border:1px solid var(--border);background:var(--surface);">Hi! How can I help you today? 👋</div>
+                    <div id="acp-userbubble" style="padding:8px 12px;border-radius:10px 10px 3px 10px;font-size:12px;color:white;max-width:80%;align-self:flex-end;background:#6c63ff;">Sure, what are the timings?</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="form-group">
@@ -524,6 +550,31 @@
       <div class="content">
         <div class="settings-grid">
           <div>
+            <!-- DASHBOARD ACCENT COLOUR -->
+            <div class="settings-card" style="margin-bottom:20px;">
+              <div class="settings-card-title">Dashboard Colour</div>
+              <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Personalise the accent colour used across your dashboard — buttons, highlights, and active states. Saved to your account.</p>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <div id="dash-color-preview" style="width:44px;height:44px;border-radius:10px;border:2px solid rgba(255,255,255,.15);flex-shrink:0;background:#6c63ff;box-shadow:0 4px 14px rgba(0,0,0,.3);transition:background .2s;"></div>
+                  <input type="text" id="dash-color-hex" value="#6C63FF" maxlength="7"
+                    style="flex:1;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;text-transform:uppercase;letter-spacing:.04em;outline:none;"
+                    oninput="onDashHexInput(this.value)" placeholder="#6C63FF" />
+                  <label style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color .2s;" title="Open colour picker">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                    <input type="color" id="dash-color-native" value="#6c63ff" style="opacity:0;position:absolute;width:0;height:0;" oninput="onDashNativeInput(this.value)" />
+                  </label>
+                </div>
+                <div>
+                  <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Quick picks</div>
+                  <div class="color-palette" id="dash-color-palette"></div>
+                </div>
+                <button class="btn-primary" style="justify-content:center;" onclick="saveDashboardColor()">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  Save Colour
+                </button>
+              </div>
+            </div>
             <div class="settings-card" style="margin-bottom:20px;">
               <div class="settings-card-title">Account Settings</div>
               <div class="setting-row"><div><div class="setting-label">Email Notifications</div><div class="setting-sub">Receive usage alerts</div></div><label class="toggle"><input type="checkbox" id="tog-email" checked /><span class="toggle-slider"></span></label></div>
@@ -619,7 +670,65 @@
   }
   let currentUser=null, sources=[], editingAgentId=null, allAgents=[]
 
-  const BRAND_COLORS=['#6c63ff','#ff6584','#43e97b','#f7971e','#4facfe','#fa709a','#a18cd1','#ffecd2','#764ba2','#11998e','#eb3349','#f7971e','#56ccf2','#2f80ed','#b993d6']
+  const BRAND_COLORS=['#6c63ff','#7c3aed','#2563eb','#0891b2','#0d9488','#16a34a','#ca8a04','#ea580c','#dc2626','#db2777','#c8972a','#64748b','#ff6584','#43e97b','#f7971e']
+
+  // ─── Helper: hex → "r, g, b" string ───
+  function hexToRgb(hex) {
+    try { return `${parseInt(hex.slice(1,3),16)}, ${parseInt(hex.slice(3,5),16)}, ${parseInt(hex.slice(5,7),16)}` }
+    catch(e) { return '108, 99, 255' }
+  }
+  function isValidHex(h) { return /^#[0-9a-fA-F]{6}$/.test(h) }
+
+  // ─── Apply accent to entire dashboard ───
+  function applyAccent(hex) {
+    if (!isValidHex(hex)) return
+    document.documentElement.style.setProperty('--accent', hex)
+    document.documentElement.style.setProperty('--accent-rgb', hexToRgb(hex))
+    // sync dash picker UI
+    const dp = document.getElementById('dash-color-preview')
+    const dh = document.getElementById('dash-color-hex')
+    const dn = document.getElementById('dash-color-native')
+    if (dp) dp.style.background = hex
+    if (dh) dh.value = hex.toUpperCase()
+    if (dn) dn.value = hex
+    // mark selected swatch in dash palette
+    document.querySelectorAll('#dash-color-palette .color-swatch').forEach(s =>
+      s.classList.toggle('selected', s.dataset.color.toLowerCase() === hex.toLowerCase())
+    )
+  }
+
+  // ─── Dashboard colour handlers ───
+  function onDashHexInput(val) {
+    const hex = val.startsWith('#') ? val : '#'+val
+    if (!isValidHex(hex)) return
+    document.getElementById('dash-color-native').value = hex
+    document.getElementById('dash-color-preview').style.background = hex
+    applyAccent(hex)
+  }
+  function onDashNativeInput(val) {
+    document.getElementById('dash-color-hex').value = val.toUpperCase()
+    document.getElementById('dash-color-preview').style.background = val
+    applyAccent(val)
+  }
+  function pickDashColor(hex) { applyAccent(hex) }
+
+  async function saveDashboardColor() {
+    const hex = document.getElementById('dash-color-hex').value.trim()
+    if (!isValidHex(hex)) { toast('Invalid colour value', 'error'); return }
+    try {
+      const r = await apiFetch('/auth/profile', { method:'PUT', body: JSON.stringify({ dashboard_accent: hex }) })
+      if (!r.ok) throw new Error()
+      if (currentUser) currentUser.dashboard_accent = hex
+      toast('Dashboard colour saved ✓', 'success')
+    } catch(e) { toast('Failed to save colour', 'error') }
+  }
+
+  // ─── Build dash colour palette ───
+  function buildDashColorPalette() {
+    const el = document.getElementById('dash-color-palette')
+    if (!el) return
+    el.innerHTML = BRAND_COLORS.map(c => `<div class="color-swatch" data-color="${c}" style="background:${c};" title="${c}" onclick="pickDashColor('${c}')"></div>`).join('')
+  }
   const THEMES=[
     {id:'dark',label:'Dark',bg:'#0a0a0f',surface:'#111118',text:'#f0f0f8',border:'#2a2a38'},
     {id:'light',label:'Light',bg:'#f4f4fa',surface:'#ffffff',text:'#1a1a2e',border:'#e4e4f0'},
@@ -651,7 +760,14 @@
       currentUser=await res.json();
       document.getElementById('loading').style.display='none';
       document.getElementById('app').style.display='block';
-      renderUserChip();buildColorPalette();buildThemeSwatches();loadDashboard();
+      // Apply saved dashboard accent before rendering anything
+      const savedAccent = currentUser.dashboard_accent || '#6c63ff'
+      applyAccent(savedAccent)
+      buildDashColorPalette()
+      buildColorPalette()
+      buildThemeSwatches()
+      renderUserChip()
+      loadDashboard()
     } catch(e){localStorage.removeItem('aasai_token');window.location.replace('index.html')}
   }
 
@@ -688,16 +804,52 @@
     document.getElementById('f-theme').value='dark';
     document.getElementById('url-box').style.display='none';
     document.getElementById('file-queue').innerHTML='';
-    onColorInput('#6c63ff');updateThemeSwatchSelection('dark');renderSources();showPage('create');
+    pickAgentColor('#6c63ff');
+    document.getElementById('agent-color-hex').value='#6C63FF';
+    document.getElementById('f-color').value='#6c63ff';
+    updateThemeSwatchSelection('dark');renderSources();showPage('create');
   }
 
   function buildColorPalette() {
-    document.getElementById('color-palette').innerHTML=BRAND_COLORS.map(c=>`<div class="color-swatch" style="background:${c};" data-color="${c}" onclick="onColorInput('${c}');document.getElementById('f-color').value='${c}';" title="${c}"></div>`).join('');
+    const el = document.getElementById('color-palette')
+    if (!el) return
+    el.innerHTML = BRAND_COLORS.map(c => `<div class="color-swatch" data-color="${c}" style="background:${c};" title="${c}" onclick="pickAgentColor('${c}')"></div>`).join('')
   }
-  function onColorInput(hex) {
-    document.getElementById('f-color').value=hex;
-    document.getElementById('color-preview').style.background=hex;
-    document.querySelectorAll('.color-swatch').forEach(s=>s.classList.toggle('selected',s.dataset.color===hex));
+
+  // ─── Agent brand colour handlers ───
+  function onAgentHexInput(val) {
+    const hex = val.startsWith('#') ? val : '#'+val
+    if (!isValidHex(hex)) return
+    document.getElementById('f-color').value = hex
+    document.getElementById('agent-color-hex').value = hex.toUpperCase()
+    updateAgentColorPreview(hex)
+  }
+  function onColorInput(hex) {   // native picker oninput
+    if (!isValidHex(hex)) return
+    document.getElementById('f-color').value = hex
+    document.getElementById('agent-color-hex').value = hex.toUpperCase()
+    updateAgentColorPreview(hex)
+  }
+  function pickAgentColor(hex) {
+    document.getElementById('f-color').value = hex
+    document.getElementById('agent-color-hex').value = hex.toUpperCase()
+    document.getElementById('f-color').value = hex   // native picker sync
+    updateAgentColorPreview(hex)
+  }
+  function updateAgentColorPreview(hex) {
+    document.getElementById('color-preview').style.background = hex
+    const header = document.getElementById('acp-header')
+    const bubble = document.getElementById('acp-userbubble')
+    if (header) { header.style.background = hex+'18'; header.style.borderBottom = `1px solid ${hex}30` }
+    if (bubble) bubble.style.background = hex
+    // sync agent name in preview
+    const nameEl = document.getElementById('f-name')
+    const acpName = document.getElementById('acp-name')
+    if (acpName && nameEl && nameEl.value) acpName.textContent = nameEl.value
+    // mark selected in palette
+    document.querySelectorAll('#color-palette .color-swatch').forEach(s =>
+      s.classList.toggle('selected', s.dataset.color.toLowerCase() === hex.toLowerCase())
+    )
   }
   function buildThemeSwatches() {
     document.getElementById('theme-swatches').innerHTML=THEMES.map(t=>`<div class="theme-swatch-btn" data-theme="${t.id}" onclick="selectTheme('${t.id}')"><div style="width:20px;height:20px;border-radius:5px;background:${t.bg};border:1px solid ${t.border};flex-shrink:0;"></div><span style="font-size:13px;color:var(--muted);">${t.label}</span></div>`).join('');
@@ -707,7 +859,7 @@
     document.querySelectorAll('.theme-swatch-btn').forEach(el=>{
       const active=el.dataset.theme===id;
       el.style.borderColor=active?'var(--accent)':'var(--border)';
-      el.style.background=active?'rgba(108,99,255,0.1)':'transparent';
+      el.style.background=active?'rgba(var(--accent-rgb),0.1)':'transparent';
       el.querySelector('span').style.color=active?'var(--accent)':'var(--muted)';
     });
   }
@@ -743,7 +895,7 @@
     }
     const opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7a7a9a',font:{size:10},maxRotation:45}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#7a7a9a',font:{size:10}},beginAtZero:true}}};
     ['chart-tokens','chart-queries'].forEach(id=>{const e=Chart.getChart(id);if(e)e.destroy();});
-    new Chart(document.getElementById('chart-tokens'),{type:'bar',data:{labels,datasets:[{data:tokenData,backgroundColor:'rgba(108,99,255,.6)',borderColor:'#6c63ff',borderWidth:1,borderRadius:4}]},options:opts});
+    new Chart(document.getElementById('chart-tokens'),{type:'bar',data:{labels,datasets:[{data:tokenData,backgroundColor:'rgba(var(--accent-rgb),.6)',borderColor:'#6c63ff',borderWidth:1,borderRadius:4}]},options:opts});
     new Chart(document.getElementById('chart-queries'),{type:'bar',data:{labels,datasets:[{data:queryData,backgroundColor:'rgba(255,101,132,.6)',borderColor:'#ff6584',borderWidth:1,borderRadius:4}]},options:opts});
   }
 
@@ -787,7 +939,10 @@
       document.getElementById('f-logo').value=a.logo_url||'';
       document.getElementById('f-prompt').value=a.system_prompt||'';
       document.getElementById('f-theme').value=a.theme||'dark';
-      onColorInput(a.brand_color||'#6c63ff');
+      const ac = a.brand_color||'#6c63ff';
+      document.getElementById('f-color').value = ac;
+      document.getElementById('agent-color-hex').value = ac.toUpperCase();
+      pickAgentColor(ac);
       updateThemeSwatchSelection(a.theme||'dark');
       document.getElementById('file-queue').innerHTML='';
       if(a.published_url){document.getElementById('pub-url').textContent=a.published_url;document.getElementById('url-box').style.display='flex';}
@@ -882,6 +1037,17 @@
 
   // SETTINGS
   async function loadSettings() {
+    // Sync dashboard colour picker to current accent
+    const cur = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6c63ff'
+    const dp = document.getElementById('dash-color-preview')
+    const dh = document.getElementById('dash-color-hex')
+    const dn = document.getElementById('dash-color-native')
+    if (dp) dp.style.background = cur
+    if (dh) dh.value = cur.toUpperCase()
+    if (dn) dn.value = cur
+    document.querySelectorAll('#dash-color-palette .color-swatch').forEach(s =>
+      s.classList.toggle('selected', s.dataset.color.toLowerCase() === cur.toLowerCase())
+    )
     try {
       const r=await fetch(`${API}/agents`,{headers:{Authorization:`Bearer ${token}`}});
       const agents=await r.json();allAgents=agents;
