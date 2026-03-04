@@ -19,7 +19,9 @@
     /* SIDEBAR */
     .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0;z-index:100;transition:transform .3s ease;}
     .sidebar-logo{display:flex;align-items:center;gap:10px;padding:0 20px 28px;border-bottom:1px solid var(--border);margin-bottom:16px;}
-    .logo-mark{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:white;flex-shrink:0;}
+    .logo-mark{width:36px;height:36px;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .logo-mark img{width:100%;height:100%;object-fit:contain;}
+    .logo-mark-fallback{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:white;flex-shrink:0;}
     .logo-text{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
     .nav-item{display:flex;align-items:center;gap:12px;padding:11px 12px;color:var(--muted);font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;border-radius:8px;margin:1px 8px;text-decoration:none;}
     .nav-item:hover{background:var(--surface2);color:var(--text);}
@@ -36,7 +38,7 @@
 
     /* MOBILE TOPBAR */
     .mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;z-index:150;height:56px;background:var(--surface);border-bottom:1px solid var(--border);align-items:center;padding:0 16px;gap:12px;}
-    .mobile-topbar .logo-mark{width:30px;height:30px;font-size:13px;}
+    .mobile-topbar .logo-mark{width:30px;height:30px;}
     .mobile-topbar .logo-text{font-size:17px;}
     .mobile-menu-btn{background:none;border:none;cursor:pointer;color:var(--muted);padding:8px;margin-left:auto;display:flex;flex-direction:column;gap:4px;}
     .mobile-menu-btn span{display:block;width:20px;height:2px;background:var(--muted);border-radius:2px;transition:all .3s;}
@@ -336,8 +338,10 @@
 
   <!-- MOBILE TOPBAR -->
   <div class="mobile-topbar">
-    <div class="logo-mark">A</div>
-    <span class="logo-text">Aasai</span>
+    <div class="logo-mark">
+      <img src="logo.png" alt="Aasai Tech" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\' style=\'width:30px;height:30px;font-size:13px;\'>A</div>'" />
+    </div>
+    <span class="logo-text">Aasai Tech</span>
     <button class="mobile-menu-btn" id="mob-menu-btn" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -349,8 +353,10 @@
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <div class="logo-mark">A</div>
-      <span class="logo-text">Aasai</span>
+      <div class="logo-mark">
+        <img src="logo.png" alt="Aasai Tech" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\'>A</div>'" />
+      </div>
+      <span class="logo-text">Aasai Tech</span>
     </div>
     <nav>
       <a class="nav-item active" data-page="dashboard" onclick="showPage('dashboard');closeSidebar();return false;" href="#">
@@ -765,14 +771,13 @@
     {
       id: 'custom',
       label: 'Custom',
-      bg: null, // set from custom-bg-hex
+      bg: null,
     },
   ]
 
   let currentBgTheme = 'dark'
   let customBgHex = '#0a0a0f'
 
-  // ─── Apply full background theme ───
   function applyBgTheme(themeId, customHex) {
     const root = document.documentElement
     let t = BG_THEMES.find(x => x.id === themeId)
@@ -782,7 +787,6 @@
       const hex = customHex || customBgHex || '#0a0a0f'
       const [r,g,b] = [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)]
       const isDark = (r*0.299 + g*0.587 + b*0.114) < 128
-      // Derive surface/border/text from bg luminance
       const surfaceHex = isDark ? shiftHex(hex, 10) : shiftHex(hex, -10)
       const surface2Hex = isDark ? shiftHex(hex, 20) : shiftHex(hex, -20)
       const borderHex = isDark ? shiftHex(hex, 35) : shiftHex(hex, -35)
@@ -805,18 +809,14 @@
       root.style.setProperty('--muted', t.muted)
     }
     currentBgTheme = themeId
-    // Update bg-theme-btn active state
     document.querySelectorAll('.bg-theme-btn').forEach(b => b.classList.toggle('active', b.dataset.id === themeId))
-    // Show/hide custom colour picker
     const cw = document.getElementById('custom-bg-wrap')
     if (cw) cw.classList.toggle('open', themeId === 'custom')
-    // Rebuild chart with new colours if on dashboard
     const ct = Chart.getChart('chart-tokens')
     const cq = Chart.getChart('chart-queries')
     if (ct || cq) { try { loadDashboard() } catch(e){} }
   }
 
-  // Lighten/darken a hex colour by offset (positive = lighter, negative = darker)
   function shiftHex(hex, offset) {
     let r = Math.min(255,Math.max(0, parseInt(hex.slice(1,3),16) + offset))
     let g = Math.min(255,Math.max(0, parseInt(hex.slice(3,5),16) + offset))
@@ -824,7 +824,6 @@
     return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('')
   }
 
-  // ─── Build background theme picker ───
   function buildBgThemeGrid() {
     const grid = document.getElementById('bg-theme-grid')
     if (!grid) return
@@ -843,9 +842,7 @@
     }).join('')
   }
 
-  function selectBgTheme(id) {
-    applyBgTheme(id, customBgHex)
-  }
+  function selectBgTheme(id) { applyBgTheme(id, customBgHex) }
 
   function onCustomBgHex(val) {
     const hex = val.startsWith('#') ? val : '#'+val
@@ -877,32 +874,27 @@
 
   const BRAND_COLORS=['#6c63ff','#7c3aed','#2563eb','#0891b2','#0d9488','#16a34a','#ca8a04','#ea580c','#dc2626','#db2777','#c8972a','#64748b','#ff6584','#43e97b','#f7971e']
 
-  // ─── Helper: hex → "r, g, b" string ───
   function hexToRgb(hex) {
     try { return `${parseInt(hex.slice(1,3),16)}, ${parseInt(hex.slice(3,5),16)}, ${parseInt(hex.slice(5,7),16)}` }
     catch(e) { return '108, 99, 255' }
   }
   function isValidHex(h) { return /^#[0-9a-fA-F]{6}$/.test(h) }
 
-  // ─── Apply accent to entire dashboard ───
   function applyAccent(hex) {
     if (!isValidHex(hex)) return
     document.documentElement.style.setProperty('--accent', hex)
     document.documentElement.style.setProperty('--accent-rgb', hexToRgb(hex))
-    // sync dash picker UI
     const dp = document.getElementById('dash-color-preview')
     const dh = document.getElementById('dash-color-hex')
     const dn = document.getElementById('dash-color-native')
     if (dp) dp.style.background = hex
     if (dh) dh.value = hex.toUpperCase()
     if (dn) dn.value = hex
-    // mark selected swatch in dash palette
     document.querySelectorAll('#dash-color-palette .color-swatch').forEach(s =>
       s.classList.toggle('selected', s.dataset.color.toLowerCase() === hex.toLowerCase())
     )
   }
 
-  // ─── Dashboard colour handlers ───
   function onDashHexInput(val) {
     const hex = val.startsWith('#') ? val : '#'+val
     if (!isValidHex(hex)) return
@@ -928,7 +920,6 @@
     } catch(e) { toast('Failed to save colour', 'error') }
   }
 
-  // ─── Build dash colour palette ───
   function buildDashColorPalette() {
     const el = document.getElementById('dash-color-palette')
     if (!el) return
@@ -965,7 +956,6 @@
       currentUser=await res.json();
       document.getElementById('loading').style.display='none';
       document.getElementById('app').style.display='block';
-      // Apply saved appearance
       const savedAccent = currentUser.dashboard_accent || '#6c63ff'
       applyAccent(savedAccent)
       const savedBgTheme = currentUser.dashboard_bg_theme || 'dark'
@@ -1026,7 +1016,6 @@
     el.innerHTML = BRAND_COLORS.map(c => `<div class="color-swatch" data-color="${c}" style="background:${c};" title="${c}" onclick="pickAgentColor('${c}')"></div>`).join('')
   }
 
-  // ─── Agent brand colour handlers ───
   function onAgentHexInput(val) {
     const hex = val.startsWith('#') ? val : '#'+val
     if (!isValidHex(hex)) return
@@ -1034,7 +1023,7 @@
     document.getElementById('agent-color-hex').value = hex.toUpperCase()
     updateAgentColorPreview(hex)
   }
-  function onColorInput(hex) {   // native picker oninput
+  function onColorInput(hex) {
     if (!isValidHex(hex)) return
     document.getElementById('f-color').value = hex
     document.getElementById('agent-color-hex').value = hex.toUpperCase()
@@ -1043,7 +1032,7 @@
   function pickAgentColor(hex) {
     document.getElementById('f-color').value = hex
     document.getElementById('agent-color-hex').value = hex.toUpperCase()
-    document.getElementById('f-color').value = hex   // native picker sync
+    document.getElementById('f-color').value = hex
     updateAgentColorPreview(hex)
   }
   function updateAgentColorPreview(hex) {
@@ -1052,11 +1041,9 @@
     const bubble = document.getElementById('acp-userbubble')
     if (header) { header.style.background = hex+'18'; header.style.borderBottom = `1px solid ${hex}30` }
     if (bubble) bubble.style.background = hex
-    // sync agent name in preview
     const nameEl = document.getElementById('f-name')
     const acpName = document.getElementById('acp-name')
     if (acpName && nameEl && nameEl.value) acpName.textContent = nameEl.value
-    // mark selected in palette
     document.querySelectorAll('#color-palette .color-swatch').forEach(s =>
       s.classList.toggle('selected', s.dataset.color.toLowerCase() === hex.toLowerCase())
     )
@@ -1249,7 +1236,6 @@
 
   // SETTINGS
   async function loadSettings() {
-    // Sync accent colour picker
     const cur = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6c63ff'
     const dp = document.getElementById('dash-color-preview')
     const dh = document.getElementById('dash-color-hex')
@@ -1260,9 +1246,7 @@
     document.querySelectorAll('#dash-color-palette .color-swatch').forEach(s =>
       s.classList.toggle('selected', s.dataset.color.toLowerCase() === cur.toLowerCase())
     )
-    // Rebuild bg theme grid with current state
     buildBgThemeGrid()
-    // Sync custom bg picker if custom theme is active
     if (currentBgTheme === 'custom') {
       const cbp = document.getElementById('custom-bg-preview')
       const cbh = document.getElementById('custom-bg-hex')
@@ -1392,7 +1376,6 @@
     const panel=document.getElementById('conv-thread-inner');
     panel.innerHTML='<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">Loading thread…</div>';
     panel.style.flexDirection='column';panel.style.justifyContent='flex-start';panel.style.alignItems='stretch';
-    // On mobile, scroll to thread panel
     if(window.innerWidth<=768){document.getElementById('conv-thread-panel').scrollIntoView({behavior:'smooth'});}
     try {
       const r=await apiFetch(`/agents/${agentId}/conversations/${encodeURIComponent(sessionKey)}`);
