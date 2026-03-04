@@ -9,7 +9,7 @@
     :root {
       --accent: #6c63ff;
       --accent-rgb: 108, 99, 255;
-      --accent-light: rgba(108,99,255,0.08);
+      --accent-light: rgba(var(--accent-rgb), 0.08);
       --bg: #f4f4fa;
       --surface: #ffffff;
       --surface2: #f0f0f8;
@@ -103,9 +103,9 @@
       -webkit-tap-highlight-color: transparent;
     }
     .topic-btn:hover, .topic-btn:active {
-      border-color:var(--accent);
-      background:var(--accent-light);
-      color:var(--accent);
+      border-color: var(--accent);
+      background: rgba(var(--accent-rgb), 0.10);
+      color: var(--accent);
     }
     .topic-icon-wrap {
       width:28px; height:28px; border-radius:7px;
@@ -164,7 +164,7 @@
       background:var(--bg); border:1.5px solid var(--border);
       border-radius:14px; padding:7px 7px 7px 14px; transition:border-color 0.2s;
     }
-    .input-row:focus-within { border-color:var(--accent); background:var(--surface); }
+    .input-row:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12); background:var(--surface); }
     #msg-input {
       flex:1; border:none; background:transparent;
       font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text);
@@ -341,29 +341,48 @@
   }
 
   function applyBranding() {
-    const accentHex = config.brand_color || '#6c63ff'
-    const themeId = config.theme || 'light'
-    const theme = THEMES[themeId] || THEMES.light
+    const accentHex = (config.brand_color || '#6c63ff').trim()
+    const themeId   = config.theme || 'light'
+    const theme     = THEMES[themeId] || THEMES.light
+    const rgb       = hexToRgb(accentHex)
+
     const root = document.documentElement.style
-    root.setProperty('--accent', accentHex)
-    root.setProperty('--accent-rgb', hexToRgb(accentHex))
-    root.setProperty('--accent-light', `rgba(${hexToRgb(accentHex)}, 0.10)`)
-    root.setProperty('--bg', theme.bg)
+    // Accent
+    root.setProperty('--accent',       accentHex)
+    root.setProperty('--accent-rgb',   rgb)
+    root.setProperty('--accent-light', `rgba(${rgb}, 0.10)`)
+    // Theme colours
+    root.setProperty('--bg',      theme.bg)
     root.setProperty('--surface', theme.surface)
-    root.setProperty('--surface2', theme.surface2)
-    root.setProperty('--border', theme.border)
-    root.setProperty('--text', theme.text)
-    root.setProperty('--text2', theme.text2)
-    root.setProperty('--muted', theme.muted)
-    root.setProperty('--shadow', theme.shadow)
+    root.setProperty('--surface2',theme.surface2)
+    root.setProperty('--border',  theme.border)
+    root.setProperty('--text',    theme.text)
+    root.setProperty('--text2',   theme.text2)
+    root.setProperty('--muted',   theme.muted)
+    root.setProperty('--shadow',  theme.shadow)
+
+    // Body class for color-scheme dark/light
     document.body.className = `theme-${themeId}`
+
+    // Apply accent to send button directly so it's always right
+    const sendBtn = document.getElementById('send-btn')
+    if (sendBtn) sendBtn.style.background = accentHex
+
+    // Apply accent to <meta theme-color> for browser chrome on mobile
+    let meta = document.querySelector('meta[name="theme-color"]')
+    if (!meta) { meta = document.createElement('meta'); meta.name = 'theme-color'; document.head.appendChild(meta) }
+    meta.content = accentHex
+
+    // Content
     document.title = config.name || 'Chat'
-    const logo = config.logo_url ? `<img src="${config.logo_url}" onerror="this.parentElement.textContent='🤖'" />` : '🤖'
-    document.getElementById('h-name').textContent = config.name || 'Assistant'
-    document.getElementById('h-avatar').innerHTML = logo
-    document.getElementById('w-avatar').innerHTML = logo
-    document.getElementById('w-name').textContent = 'Hi there! 👋'
-    document.getElementById('w-msg').textContent = config.welcome_message || 'How can I help you today?'
+    const logo = config.logo_url
+      ? `<img src="${config.logo_url}" onerror="this.parentElement.textContent='🤖'" />`
+      : '🤖'
+    document.getElementById('h-name').textContent     = config.name || 'Assistant'
+    document.getElementById('h-avatar').innerHTML     = logo
+    document.getElementById('w-avatar').innerHTML     = logo
+    document.getElementById('w-name').textContent     = 'Hi there! 👋'
+    document.getElementById('w-msg').textContent      = config.welcome_message || 'How can I help you today?'
   }
 
   async function extractTopics() {
@@ -445,8 +464,9 @@
     const logo = config?.logo_url ? `<img src="${config.logo_url}" onerror="this.parentElement.textContent='🤖'" />` : '🤖'
     const el = document.createElement('div')
     el.className = `message ${role}`
+    const accentColor = config?.brand_color || getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6c63ff'
     if (role==='user') {
-      el.innerHTML = `<div class="msg-avatar">${logo}</div><div class="msg-body"><div class="msg-bubble">${escapeUser(content)}</div><div class="msg-time">${time}</div></div>`
+      el.innerHTML = `<div class="msg-avatar">${logo}</div><div class="msg-body"><div class="msg-bubble" style="background:${accentColor}">${escapeUser(content)}</div><div class="msg-time">${time}</div></div>`
     } else {
       el.innerHTML = `<div class="msg-avatar">${logo}</div><div class="msg-body"><div class="msg-bubble">${content}</div><div class="msg-time">${time}</div></div>`
     }
