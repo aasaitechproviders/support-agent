@@ -166,25 +166,31 @@ body::before{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;b
 .uc-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
 .pill{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;color:var(--t3);background:var(--bg3);border:1px solid var(--line);}
 
-/* PRICING */
-.pricing-section .container{padding-top:100px;padding-bottom:100px}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:56px;max-width:860px;margin-left:auto;margin-right:auto;}
-.plan{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r16);padding:32px;position:relative;overflow:hidden;}
-.plan.featured{border-color:rgba(200,151,42,.3);box-shadow:0 0 40px rgba(200,151,42,.07);}
-.plan.featured::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,var(--amber2),transparent);}
-.plan-name{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:14px;}
-.plan.featured .plan-name{color:var(--amber)}
-.plan-price{font-family:'Fraunces',serif;font-size:42px;font-weight:600;color:var(--t1);letter-spacing:-.04em;line-height:1;font-variation-settings:'opsz' 48;margin-bottom:4px;}
-.plan-price sub{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;color:var(--t3);vertical-align:bottom;letter-spacing:0;}
-.plan-cycle{font-size:12px;color:var(--t3);margin-bottom:24px}
-.plan-feats{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-.plan-feat{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--t2);}
-.plan-feat-check{width:16px;height:16px;border-radius:50%;background:var(--greenA);border:1px solid rgba(52,211,153,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.plan-btn{display:block;text-align:center;padding:11px;border-radius:var(--r8);font-size:14px;font-weight:600;transition:all .2s;}
-.plan-btn.outline{border:1px solid var(--line2);color:var(--t1);}
-.plan-btn.outline:hover{background:var(--bg3);border-color:var(--line3)}
-.plan-btn.solid{background:var(--amber);color:#09090f;}
-.plan-btn.solid:hover{background:var(--amber2)}
+/* SUPPORT */
+.support-section{background:var(--bg1);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.support-section .container{padding-top:100px;padding-bottom:100px}
+.support-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;margin-top:60px;}
+.support-channels{display:flex;flex-direction:column;gap:12px;}
+.support-channel{display:flex;align-items:center;gap:16px;padding:20px 22px;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r16);transition:all .25s;text-decoration:none;}
+.support-channel:hover{border-color:var(--line2);transform:translateX(4px);box-shadow:0 8px 32px rgba(0,0,0,.25);}
+.ch-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ch-name{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:3px;}
+.ch-sub{font-size:12.5px;color:var(--t3);}
+.ch-arrow{margin-left:auto;color:var(--t4);font-size:18px;transition:transform .2s;}
+.support-channel:hover .ch-arrow{transform:translateX(3px);color:var(--t2);}
+.support-form-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r16);padding:32px;}
+.support-form-title{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--t1);margin-bottom:6px;letter-spacing:-.02em;font-variation-settings:'opsz' 24;}
+.support-form-sub{font-size:13px;color:var(--t3);margin-bottom:24px;line-height:1.6;}
+.sf-input{width:100%;padding:11px 16px;background:var(--bg3);border:1px solid var(--line);border-radius:var(--r8);color:var(--t1);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;margin-bottom:12px;}
+.sf-input:focus{border-color:rgba(200,151,42,.4);}
+.sf-input::placeholder{color:var(--t4);}
+textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
+.sf-btn{width:100%;padding:12px;background:var(--amber);color:#09090f;border:none;border-radius:var(--r8);font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px;}
+.sf-btn:hover{background:var(--amber2);transform:translateY(-1px);}
+.sf-sent{display:none;text-align:center;padding:20px 0;}
+.sf-sent-icon{font-size:40px;margin-bottom:12px;}
+.sf-sent-text{font-size:15px;font-weight:600;color:var(--t1);margin-bottom:6px;}
+.sf-sent-sub{font-size:13px;color:var(--t3);}
 
 /* CTA */
 .cta-section{padding:120px 40px;text-align:center;position:relative;overflow:hidden;}
@@ -253,6 +259,9 @@ body::before{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;b
   .uc-section .container{padding-top:64px;padding-bottom:64px}
   .uc-grid{grid-template-columns:1fr 1fr;gap:10px;margin-top:36px;}
 
+  .support-grid{grid-template-columns:1fr;}
+  .support-section .container{padding-top:64px;padding-bottom:64px}
+
   .pricing-section .container{padding-top:64px;padding-bottom:64px}
   .pricing-grid{grid-template-columns:1fr;max-width:100%;}
 
@@ -307,7 +316,7 @@ body::before{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;b
       <a class="nav-link" href="#how">How it works</a>
       <a class="nav-link" href="#features">Features</a>
       <a class="nav-link" href="#usecases">Use cases</a>
-      <a class="nav-link" href="#pricing">Pricing</a>
+      <a class="nav-link" href="#support">Support</a>
     </div>
     <a class="nav-cta" href="https://apiv2.aasaitech.in/auth/google">
       <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
@@ -324,7 +333,7 @@ body::before{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;b
   <a class="mobile-menu-link" href="#how" onclick="closeMobileMenu()">How it works</a>
   <a class="mobile-menu-link" href="#features" onclick="closeMobileMenu()">Features</a>
   <a class="mobile-menu-link" href="#usecases" onclick="closeMobileMenu()">Use cases</a>
-  <a class="mobile-menu-link" href="#pricing" onclick="closeMobileMenu()">Pricing</a>
+  <a class="mobile-menu-link" href="#support" onclick="closeMobileMenu()">Support</a>
   <a class="mobile-menu-link" href="terms.html">Terms & Privacy</a>
   <a class="mobile-menu-cta" href="https://apiv2.aasaitech.in/auth/google">
     <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
@@ -470,52 +479,75 @@ body::before{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;b
   </div>
 </div>
 
-<!-- PRICING -->
-<section class="pricing-section" id="pricing">
-  <div class="container" style="text-align:center">
-    <div class="section-kicker reveal" style="justify-content:center">Pricing</div>
-    <h2 class="f-display section-h reveal d1">Start free. Scale as you grow.</h2>
-    <p class="section-p reveal d2" style="margin:0 auto 0">No credit card required to get started.</p>
-    <div class="pricing-grid">
-      <div class="plan reveal d1">
-        <div class="plan-name">Free</div>
-        <div class="plan-price">₹0</div>
-        <div class="plan-cycle">forever</div>
-        <div class="plan-feats">
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>1,000,000 tokens</div>
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Unlimited agents</div>
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Public chat links</div>
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Basic analytics</div>
+<!-- SUPPORT & CONTACT -->
+<div class="support-section" id="support">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-kicker reveal">Support</div>
+      <h2 class="f-display section-h reveal d1">We're here to help</h2>
+      <p class="section-p reveal d2">Got a question, ran into an issue, or just want to share feedback? Reach us however works best for you.</p>
+    </div>
+    <div class="support-grid">
+
+      <!-- Channels -->
+      <div class="support-channels reveal d1">
+        <a class="support-channel" href="mailto:hello@aasaitech.in">
+          <div class="ch-icon" style="background:rgba(200,151,42,.12);">✉️</div>
+          <div>
+            <div class="ch-name">Email us</div>
+            <div class="ch-sub">hello@aasaitech.in · We reply within 24 hrs</div>
+          </div>
+          <span class="ch-arrow">→</span>
+        </a>
+        <a class="support-channel" href="mailto:support@aasaitech.in">
+          <div class="ch-icon" style="background:rgba(96,165,250,.10);">🛠️</div>
+          <div>
+            <div class="ch-name">Technical support</div>
+            <div class="ch-sub">support@aasaitech.in · Bugs & integration help</div>
+          </div>
+          <span class="ch-arrow">→</span>
+        </a>
+        <a class="support-channel" href="terms.html">
+          <div class="ch-icon" style="background:rgba(52,211,153,.10);">🔒</div>
+          <div>
+            <div class="ch-name">Privacy & data questions</div>
+            <div class="ch-sub">Read our full privacy policy</div>
+          </div>
+          <span class="ch-arrow">→</span>
+        </a>
+        <div class="support-channel" style="cursor:default;pointer-events:none;">
+          <div class="ch-icon" style="background:rgba(167,139,250,.10);">⚡</div>
+          <div>
+            <div class="ch-name">Average response time</div>
+            <div class="ch-sub">Under 24 hours on business days</div>
+          </div>
+          <span style="margin-left:auto;font-size:11px;font-weight:600;color:var(--green);background:var(--greenA);border:1px solid rgba(52,211,153,.18);padding:3px 10px;border-radius:20px;">Fast</span>
         </div>
-        <a href="https://apiv2.aasaitech.in/auth/google" class="plan-btn outline">Get started free</a>
       </div>
-      <div class="plan featured reveal d2">
-        <div class="plan-name">Pro — Most popular</div>
-        <div class="plan-price">₹999<sub>/mo</sub></div>
-        <div class="plan-cycle">billed monthly</div>
-        <div class="plan-feats">
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>20,000,000 tokens</div>
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Everything in Free</div>
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Advanced analytics</div>
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Priority support</div>
+
+      <!-- Contact form -->
+      <div class="reveal d2">
+        <div class="support-form-card">
+          <div id="sf-form-wrap">
+            <div class="support-form-title">Send us a message</div>
+            <div class="support-form-sub">Fill in the form and we'll get back to you as soon as possible.</div>
+            <input class="sf-input" id="sf-name" type="text" placeholder="Your name" />
+            <input class="sf-input" id="sf-email" type="email" placeholder="Your email address" />
+            <input class="sf-input" id="sf-subject" type="text" placeholder="Subject — e.g. Issue with file upload" />
+            <textarea class="sf-input" id="sf-message" placeholder="Describe your question or issue in detail..."></textarea>
+            <button class="sf-btn" onclick="submitSupportForm()">Send Message →</button>
+          </div>
+          <div class="sf-sent" id="sf-sent">
+            <div class="sf-sent-icon">✅</div>
+            <div class="sf-sent-text">Message sent!</div>
+            <div class="sf-sent-sub">Thanks for reaching out. We'll reply to your email within 24 hours.</div>
+          </div>
         </div>
-        <a href="https://apiv2.aasaitech.in/auth/google" class="plan-btn solid">Start Pro</a>
       </div>
-      <div class="plan reveal d3">
-        <div class="plan-name">Enterprise</div>
-        <div class="plan-price">Custom</div>
-        <div class="plan-cycle">flat-rate monthly</div>
-        <div class="plan-feats">
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Unlimited tokens</div>
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Schools & institutions</div>
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Dedicated support</div>
-          <div class="plan-feat"><div class="plan-feat-check"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Custom integrations</div>
-        </div>
-        <a href="mailto:hello@aasaitech.in" class="plan-btn outline">Contact us</a>
-      </div>
+
     </div>
   </div>
-</section>
+</div>
 
 <!-- CTA -->
 <div class="cta-section">
@@ -608,6 +640,23 @@ function fmt(n){
   },{threshold:.5});
   cio.observe(wrap);
 })();
+
+function submitSupportForm(){
+  const name=document.getElementById('sf-name').value.trim();
+  const email=document.getElementById('sf-email').value.trim();
+  const subject=document.getElementById('sf-subject').value.trim();
+  const message=document.getElementById('sf-message').value.trim();
+  if(!name||!email||!message){
+    alert('Please fill in your name, email, and message.');return;
+  }
+  const body=`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
+  const mailtoUrl=`mailto:hello@aasaitech.in?subject=${encodeURIComponent(subject||'Aasai Support Request')}&body=${encodeURIComponent(body)}`;
+  window.location.href=mailtoUrl;
+  setTimeout(()=>{
+    document.getElementById('sf-form-wrap').style.display='none';
+    document.getElementById('sf-sent').style.display='block';
+  },800);
+}
 </script>
 </body>
 </html>
