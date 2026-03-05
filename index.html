@@ -478,8 +478,6 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
       <p class="section-p reveal d2">Got a question, ran into an issue, or just want to share feedback? Reach us however works best for you.</p>
     </div>
     <div class="support-grid">
-
-      <!-- Channels -->
       <div class="support-channels reveal d1">
         <a class="support-channel" href="mailto:hello@aasaitech.in">
           <div class="ch-icon" style="background:rgba(200,151,42,.12);">✉️</div>
@@ -514,8 +512,6 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
           <span style="margin-left:auto;font-size:11px;font-weight:600;color:var(--green);background:var(--greenA);border:1px solid rgba(52,211,153,.18);padding:3px 10px;border-radius:20px;">Fast</span>
         </div>
       </div>
-
-      <!-- Contact form -->
       <div class="reveal d2">
         <div class="support-form-card">
           <div id="sf-form-wrap">
@@ -534,7 +530,6 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -575,83 +570,142 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
 </div>
 
 <script>
-(function(){
-  const p=new URLSearchParams(location.search);
-  const tk=p.get('token');
-  if(tk){localStorage.setItem('aasai_token',tk);history.replaceState({},'',location.pathname);location.replace('home.html');return}
-  if(localStorage.getItem('aasai_token')){location.replace('home.html')}
+// ══════════════════════════════════════════════════════
+// AUTH — Fixed: validates token before redirecting
+// Prevents stale/expired token from causing a redirect loop
+// ══════════════════════════════════════════════════════
+(async function(){
+  const p = new URLSearchParams(location.search);
+  const tk = p.get('token');
+
+  // Case 1: Returning from Google OAuth with a fresh token
+  if(tk){
+    localStorage.setItem('aasai_token', tk);
+    history.replaceState({}, '', location.pathname);
+    location.replace('home.html');
+    return;
+  }
+
+  // Case 2: Already have a token stored — verify it's still valid before redirecting
+  const stored = localStorage.getItem('aasai_token');
+  if(stored){
+    try {
+      const res = await fetch('https://apiv2.aasaitech.in/auth/me', {
+        headers: { Authorization: 'Bearer ' + stored }
+      });
+      if(res.ok){
+        location.replace('home.html');
+      } else {
+        // Token expired or invalid — clear it so login page shows correctly
+        localStorage.removeItem('aasai_token');
+      }
+    } catch(e){
+      // Network error — clear token so user can try logging in again
+      localStorage.removeItem('aasai_token');
+    }
+  }
+  // No token or token cleared — page renders normally, user can click Sign in
 })();
 
-const nav=document.getElementById('nav');
-addEventListener('scroll',()=>nav.classList.toggle('solid',scrollY>20),{passive:true});
+// ══════════════════════════════════════════════════════
+// NAV scroll effect
+// ══════════════════════════════════════════════════════
+const nav = document.getElementById('nav');
+addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 20), {passive: true});
 
-const hamburger=document.getElementById('hamburger');
-const mobileMenu=document.getElementById('mobile-menu');
-hamburger.addEventListener('click',()=>{
+// ══════════════════════════════════════════════════════
+// Mobile hamburger menu
+// ══════════════════════════════════════════════════════
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+hamburger.addEventListener('click', () => {
   hamburger.classList.toggle('open');
   mobileMenu.classList.toggle('open');
 });
-function closeMobileMenu(){hamburger.classList.remove('open');mobileMenu.classList.remove('open');}
+function closeMobileMenu(){
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}
 
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.1});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+// ══════════════════════════════════════════════════════
+// Scroll reveal
+// ══════════════════════════════════════════════════════
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+}), {threshold: .1});
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-function animCount(el,target){
-  const dur=2000,s=performance.now();
+// ══════════════════════════════════════════════════════
+// Animated counters for live stats
+// ══════════════════════════════════════════════════════
+function animCount(el, target){
+  const dur = 2000, s = performance.now();
   (function run(now){
-    const t=Math.min((now-s)/dur,1);
-    const v=Math.round(target*(1-Math.pow(1-t,3)));
-    el.textContent=fmt(v);
-    if(t<1)requestAnimationFrame(run);
+    const t = Math.min((now - s) / dur, 1);
+    const v = Math.round(target * (1 - Math.pow(1 - t, 3)));
+    el.textContent = fmt(v);
+    if(t < 1) requestAnimationFrame(run);
   })(s);
 }
 function fmt(n){
-  if(n>=1e9)return(n/1e9).toFixed(1)+'B';
-  if(n>=1e6)return(n/1e6).toFixed(1)+'M';
-  if(n>=1e3)return(n/1e3).toFixed(1)+'K';
+  if(n >= 1e9) return (n/1e9).toFixed(1) + 'B';
+  if(n >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if(n >= 1e3) return (n/1e3).toFixed(1) + 'K';
   return n.toLocaleString();
 }
 
-(async()=>{
-  try{
-    const r=await fetch('https://apiv2.aasaitech.in/public/stats');
-    if(!r.ok)throw 0;
-    const d=await r.json();
-    animCount(document.getElementById('sq'),d.total_queries||0);
-    animCount(document.getElementById('st'),d.total_tokens||0);
-  }catch{
-    animCount(document.getElementById('sq'),14800);
-    animCount(document.getElementById('st'),92400000);
+(async () => {
+  try {
+    const r = await fetch('https://apiv2.aasaitech.in/public/stats');
+    if(!r.ok) throw 0;
+    const d = await r.json();
+    animCount(document.getElementById('sq'), d.total_queries || 0);
+    animCount(document.getElementById('st'), d.total_tokens || 0);
+  } catch {
+    animCount(document.getElementById('sq'), 14800);
+    animCount(document.getElementById('st'), 92400000);
   }
 })();
 
+// ══════════════════════════════════════════════════════
+// Demo bar chart animation
+// ══════════════════════════════════════════════════════
 (function(){
-  const vals=[22,38,29,51,43,60,48,70,52,80,62,88,72,95];
-  const days=['M','T','W','T','F','S','S','M','T','W','T','F','S','T'];
-  const max=Math.max(...vals);
-  const wrap=document.getElementById('demo-chart');
-  wrap.innerHTML=vals.map((v,i)=>`<div class="bar-col"><div class="bar${i===vals.length-1?' hi':''}" data-h="${Math.round(v/max*64)}" style="height:0px"></div><span class="bar-l">${days[i]}</span></div>`).join('');
-  const cio=new IntersectionObserver(([e])=>{
-    if(e.isIntersecting){wrap.querySelectorAll('.bar').forEach((b,i)=>setTimeout(()=>{b.style.height=b.dataset.h+'px'},i*40));cio.unobserve(wrap);}
-  },{threshold:.5});
+  const vals = [22,38,29,51,43,60,48,70,52,80,62,88,72,95];
+  const days = ['M','T','W','T','F','S','S','M','T','W','T','F','S','T'];
+  const max = Math.max(...vals);
+  const wrap = document.getElementById('demo-chart');
+  wrap.innerHTML = vals.map((v,i) =>
+    `<div class="bar-col"><div class="bar${i === vals.length-1 ? ' hi' : ''}" data-h="${Math.round(v/max*64)}" style="height:0px"></div><span class="bar-l">${days[i]}</span></div>`
+  ).join('');
+  const cio = new IntersectionObserver(([e]) => {
+    if(e.isIntersecting){
+      wrap.querySelectorAll('.bar').forEach((b,i) => setTimeout(() => { b.style.height = b.dataset.h + 'px'; }, i * 40));
+      cio.unobserve(wrap);
+    }
+  }, {threshold: .5});
   cio.observe(wrap);
 })();
 
+// ══════════════════════════════════════════════════════
+// Support form
+// ══════════════════════════════════════════════════════
 function submitSupportForm(){
-  const name=document.getElementById('sf-name').value.trim();
-  const email=document.getElementById('sf-email').value.trim();
-  const subject=document.getElementById('sf-subject').value.trim();
-  const message=document.getElementById('sf-message').value.trim();
-  if(!name||!email||!message){
-    alert('Please fill in your name, email, and message.');return;
+  const name    = document.getElementById('sf-name').value.trim();
+  const email   = document.getElementById('sf-email').value.trim();
+  const subject = document.getElementById('sf-subject').value.trim();
+  const message = document.getElementById('sf-message').value.trim();
+  if(!name || !email || !message){
+    alert('Please fill in your name, email, and message.');
+    return;
   }
-  const body=`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
-  const mailtoUrl=`mailto:hello@aasaitech.in?subject=${encodeURIComponent(subject||'Aasai Tech Support Request')}&body=${encodeURIComponent(body)}`;
-  window.location.href=mailtoUrl;
-  setTimeout(()=>{
-    document.getElementById('sf-form-wrap').style.display='none';
-    document.getElementById('sf-sent').style.display='block';
-  },800);
+  const body = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
+  const mailtoUrl = `mailto:hello@aasaitech.in?subject=${encodeURIComponent(subject || 'Aasai Tech Support Request')}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailtoUrl;
+  setTimeout(() => {
+    document.getElementById('sf-form-wrap').style.display = 'none';
+    document.getElementById('sf-sent').style.display = 'block';
+  }, 800);
 }
 </script>
 </body>
