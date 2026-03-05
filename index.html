@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Aasai — AI Agents from Your Knowledge</title>
+<title>Aasai Tech — AI Agents from Your Knowledge</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,600&display=swap" rel="stylesheet"/>
@@ -46,8 +46,8 @@ body::before{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;b
 .nav.solid{background:rgba(9,9,15,.85);border-bottom:1px solid var(--line);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);}
 .nav-inner{width:100%;max-width:1180px;margin:0 auto;padding:0 40px;display:flex;align-items:center;}
 .nav-logo{display:flex;align-items:center;gap:9px;flex-shrink:0;margin-right:auto;}
-.nav-logo-mark{width:32px;height:32px;background:var(--bg3);border:1px solid var(--line2);border-radius:9px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0;}
-.nav-logo-mark::after{content:'';position:absolute;inset:0;top:auto;height:50%;background:linear-gradient(to top,rgba(200,151,42,.12),transparent);}
+.nav-logo-mark{width:34px;height:34px;border-radius:9px;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--bg3);border:1px solid var(--line2);}
+.nav-logo-mark img{width:100%;height:100%;object-fit:contain;}
 .nav-logo-name{font-family:'Fraunces',serif;font-size:19px;font-weight:600;letter-spacing:-.025em;color:var(--t1);font-variation-settings:'opsz' 24;}
 .nav-links{display:flex;align-items:center;gap:2px;position:absolute;left:50%;transform:translateX(-50%);}
 .nav-link{padding:7px 15px;font-size:14px;font-weight:500;color:var(--t3);border-radius:var(--r8);transition:color .15s,background .15s;white-space:nowrap;}
@@ -204,7 +204,10 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
 /* FOOTER */
 .footer-wrap{border-top:1px solid var(--line)}
 .footer{max-width:1180px;margin:0 auto;padding:28px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
-.footer-brand{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--t1);letter-spacing:-.02em;font-variation-settings:'opsz' 20;}
+.footer-brand{display:flex;align-items:center;gap:9px;}
+.footer-brand-logo{width:26px;height:26px;border-radius:7px;overflow:hidden;background:var(--bg3);border:1px solid var(--line2);}
+.footer-brand-logo img{width:100%;height:100%;object-fit:contain;}
+.footer-brand-name{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--t1);letter-spacing:-.02em;font-variation-settings:'opsz' 20;}
 .footer-links{display:flex;gap:20px;flex-wrap:wrap;}
 .footer-link{font-size:13px;color:var(--t3);transition:color .15s}
 .footer-link:hover{color:var(--t1)}
@@ -262,9 +265,6 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
   .support-grid{grid-template-columns:1fr;}
   .support-section .container{padding-top:64px;padding-bottom:64px}
 
-  .pricing-section .container{padding-top:64px;padding-bottom:64px}
-  .pricing-grid{grid-template-columns:1fr;max-width:100%;}
-
   .cta-section{padding:80px 20px;}
   .cta-p{font-size:15px;}
 
@@ -296,21 +296,11 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
 <!-- NAV -->
 <nav class="nav" id="nav" role="navigation">
   <div class="nav-inner">
-    <a href="#" class="nav-logo">
+    <a href="https://www.aasaitech.in" class="nav-logo">
       <div class="nav-logo-mark">
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="3" fill="#c8972a"/>
-          <circle cx="3" cy="5" r="1.4" fill="rgba(255,255,255,.2)"/>
-          <circle cx="17" cy="5" r="1.4" fill="rgba(255,255,255,.2)"/>
-          <circle cx="3" cy="15" r="1.4" fill="rgba(255,255,255,.2)"/>
-          <circle cx="17" cy="15" r="1.4" fill="rgba(255,255,255,.2)"/>
-          <line x1="6.8" y1="8.5" x2="4.2" y2="6.4" stroke="rgba(200,151,42,.4)" stroke-width="1.2" stroke-linecap="round"/>
-          <line x1="13.2" y1="8.5" x2="15.8" y2="6.4" stroke="rgba(200,151,42,.4)" stroke-width="1.2" stroke-linecap="round"/>
-          <line x1="6.8" y1="11.5" x2="4.2" y2="13.6" stroke="rgba(200,151,42,.4)" stroke-width="1.2" stroke-linecap="round"/>
-          <line x1="13.2" y1="11.5" x2="15.8" y2="13.6" stroke="rgba(200,151,42,.4)" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
+        <img src="./logo.png" alt="Aasai Tech logo" onerror="this.parentElement.innerHTML='<svg width=\'16\' height=\'16\' viewBox=\'0 0 20 20\' fill=\'none\'><circle cx=\'10\' cy=\'10\' r=\'3\' fill=\'#c8972a\'/><circle cx=\'3\' cy=\'5\' r=\'1.4\' fill=\'rgba(255,255,255,.2)\'/><circle cx=\'17\' cy=\'5\' r=\'1.4\' fill=\'rgba(255,255,255,.2)\'/><circle cx=\'3\' cy=\'15\' r=\'1.4\' fill=\'rgba(255,255,255,.2)\'/><circle cx=\'17\' cy=\'15\' r=\'1.4\' fill=\'rgba(255,255,255,.2)\'/><line x1=\'6.8\' y1=\'8.5\' x2=\'4.2\' y2=\'6.4\' stroke=\'rgba(200,151,42,.4)\' stroke-width=\'1.2\' stroke-linecap=\'round\'/><line x1=\'13.2\' y1=\'8.5\' x2=\'15.8\' y2=\'6.4\' stroke=\'rgba(200,151,42,.4)\' stroke-width=\'1.2\' stroke-linecap=\'round\'/><line x1=\'6.8\' y1=\'11.5\' x2=\'4.2\' y2=\'13.6\' stroke=\'rgba(200,151,42,.4)\' stroke-width=\'1.2\' stroke-linecap=\'round\'/><line x1=\'13.2\' y1=\'11.5\' x2=\'15.8\' y2=\'13.6\' stroke=\'rgba(200,151,42,.4)\' stroke-width=\'1.2\' stroke-linecap=\'round\'/></svg>'"/>
       </div>
-      <span class="nav-logo-name">Aasai</span>
+      <span class="nav-logo-name">Aasai Tech</span>
     </a>
     <div class="nav-links">
       <a class="nav-link" href="#how">How it works</a>
@@ -334,7 +324,7 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
   <a class="mobile-menu-link" href="#features" onclick="closeMobileMenu()">Features</a>
   <a class="mobile-menu-link" href="#usecases" onclick="closeMobileMenu()">Use cases</a>
   <a class="mobile-menu-link" href="#support" onclick="closeMobileMenu()">Support</a>
-  <a class="mobile-menu-link" href="terms.html">Terms & Privacy</a>
+  <a class="mobile-menu-link" href="terms.html">Terms &amp; Privacy</a>
   <a class="mobile-menu-cta" href="https://apiv2.aasaitech.in/auth/google">
     <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
     Sign in with Google
@@ -348,7 +338,7 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
     Turn your knowledge into<br>
     <span class="line-accent f-display-italic">a 24/7 AI assistant</span>
   </h1>
-  <p class="hero-sub">Upload PDFs, paste text, add URLs — Aasai converts your organisation's knowledge into a conversational AI agent that answers questions instantly, around the clock.</p>
+  <p class="hero-sub">Upload PDFs, paste text, add URLs — Aasai Tech converts your organisation's knowledge into a conversational AI agent that answers questions instantly, around the clock.</p>
   <div class="hero-actions">
     <a href="https://apiv2.aasaitech.in/auth/google" class="btn-main">
       <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
@@ -376,7 +366,7 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
       <div class="step reveal d1">
         <div class="step-circle"><span class="step-n">01</span></div>
         <h3 class="step-title">Upload your knowledge</h3>
-        <p class="step-body">Add PDFs, Word docs, images, plain text, or live URLs. Aasai extracts and indexes everything automatically.</p>
+        <p class="step-body">Add PDFs, Word docs, images, plain text, or live URLs. Aasai Tech extracts and indexes everything automatically.</p>
       </div>
       <div class="step reveal d2">
         <div class="step-circle"><span class="step-n">02</span></div>
@@ -423,7 +413,7 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
           <div class="chat-topbar">
             <span class="chat-status-dot"></span>
             <span class="chat-agent-name">Springfield Coaching Bot</span>
-            <span class="chat-agent-sub">Online · Powered by Aasai</span>
+            <span class="chat-agent-sub">Online · Powered by Aasai Tech</span>
           </div>
           <div class="chat-msgs">
             <div class="bubble bot">Hello! I can answer questions about batches, fees, and admissions. How can I help? 👋</div>
@@ -468,13 +458,13 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
     <div class="section-head">
       <div class="section-kicker reveal">Use cases</div>
       <h2 class="f-display section-h reveal d1">Built for teams who answer the same questions daily</h2>
-      <p class="section-p reveal d2">If your staff fields repetitive queries, Aasai handles them automatically — 24 hours a day.</p>
+      <p class="section-p reveal d2">If your staff fields repetitive queries, Aasai Tech handles them automatically — 24 hours a day.</p>
     </div>
     <div class="uc-grid">
       <div class="uc-card reveal d1"><span class="uc-emoji">🏫</span><div class="uc-name">Coaching Centres</div><div class="uc-desc">Admissions, batch timings, fee structures, and results — answered instantly without staff overhead.</div><div class="uc-pills"><span class="pill">Admissions</span><span class="pill">Fee info</span><span class="pill">Timings</span></div></div>
-      <div class="uc-card reveal d2"><span class="uc-emoji">🏥</span><div class="uc-name">Clinics & Hospitals</div><div class="uc-desc">Appointment procedures, services, visiting hours, and doctor availability — on demand.</div><div class="uc-pills"><span class="pill">Appointments</span><span class="pill">Services</span><span class="pill">Hours</span></div></div>
-      <div class="uc-card reveal d3"><span class="uc-emoji">🛍️</span><div class="uc-name">E-commerce & Retail</div><div class="uc-desc">Product FAQs, return policies, shipping timelines, and order status — all automated.</div><div class="uc-pills"><span class="pill">Returns</span><span class="pill">Shipping</span><span class="pill">FAQs</span></div></div>
-      <div class="uc-card reveal d4"><span class="uc-emoji">🏢</span><div class="uc-name">SMBs & Startups</div><div class="uc-desc">Customer support from your docs, pricing pages, or help centre — deployed in minutes.</div><div class="uc-pills"><span class="pill">Support</span><span class="pill">Pricing</span><span class="pill">Onboarding</span></div></div>
+      <div class="uc-card reveal d2"><span class="uc-emoji">🏥</span><div class="uc-name">Clinics &amp; Hospitals</div><div class="uc-desc">Appointment procedures, services, visiting hours, and doctor availability — on demand.</div><div class="uc-pills"><span class="pill">Appointments</span><span class="pill">Services</span><span class="pill">Hours</span></div></div>
+      <div class="uc-card reveal d3"><span class="uc-emoji">🛍️</span><div class="uc-name">E-commerce &amp; Retail</div><div class="uc-desc">Product FAQs, return policies, shipping timelines, and order status — all automated.</div><div class="uc-pills"><span class="pill">Returns</span><span class="pill">Shipping</span><span class="pill">FAQs</span></div></div>
+      <div class="uc-card reveal d4"><span class="uc-emoji">🏢</span><div class="uc-name">SMBs &amp; Startups</div><div class="uc-desc">Customer support from your docs, pricing pages, or help centre — deployed in minutes.</div><div class="uc-pills"><span class="pill">Support</span><span class="pill">Pricing</span><span class="pill">Onboarding</span></div></div>
     </div>
   </div>
 </div>
@@ -503,14 +493,14 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
           <div class="ch-icon" style="background:rgba(96,165,250,.10);">🛠️</div>
           <div>
             <div class="ch-name">Technical support</div>
-            <div class="ch-sub">support@aasaitech.in · Bugs & integration help</div>
+            <div class="ch-sub">support@aasaitech.in · Bugs &amp; integration help</div>
           </div>
           <span class="ch-arrow">→</span>
         </a>
         <a class="support-channel" href="terms.html">
           <div class="ch-icon" style="background:rgba(52,211,153,.10);">🔒</div>
           <div>
-            <div class="ch-name">Privacy & data questions</div>
+            <div class="ch-name">Privacy &amp; data questions</div>
             <div class="ch-sub">Read our full privacy policy</div>
           </div>
           <span class="ch-arrow">→</span>
@@ -554,7 +544,7 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
   <div class="cta-inner">
     <div class="section-kicker reveal" style="justify-content:center;margin-bottom:14px">Get started today</div>
     <h2 class="f-display cta-h reveal d1">Your knowledge deserves to work <em class="f-display-italic" style="color:var(--amber2)">around the clock</em></h2>
-    <p class="cta-p reveal d2">Join coaching centres, businesses, and institutions already using Aasai to deliver instant, accurate answers — without hiring more staff.</p>
+    <p class="cta-p reveal d2">Join coaching centres, businesses, and institutions already using Aasai Tech to deliver instant, accurate answers — without hiring more staff.</p>
     <div class="cta-btns reveal d3">
       <a href="https://apiv2.aasaitech.in/auth/google" class="btn-main">
         <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
@@ -568,8 +558,14 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
 <!-- FOOTER -->
 <div class="footer-wrap">
   <div class="footer">
-    <span class="footer-brand">Aasai</span>
+    <a href="https://www.aasaitech.in" class="footer-brand">
+      <div class="footer-brand-logo">
+        <img src="logo.png" alt="Aasai Tech" onerror="this.style.display='none'"/>
+      </div>
+      <span class="footer-brand-name">Aasai Tech</span>
+    </a>
     <div class="footer-links">
+      <a class="footer-link" href="https://www.aasaitech.in">www.aasaitech.in</a>
       <a class="footer-link" href="terms.html">Privacy Policy</a>
       <a class="footer-link" href="terms.html">Terms of Service</a>
       <a class="footer-link" href="mailto:hello@aasaitech.in">Contact</a>
@@ -650,7 +646,7 @@ function submitSupportForm(){
     alert('Please fill in your name, email, and message.');return;
   }
   const body=`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
-  const mailtoUrl=`mailto:hello@aasaitech.in?subject=${encodeURIComponent(subject||'Aasai Support Request')}&body=${encodeURIComponent(body)}`;
+  const mailtoUrl=`mailto:hello@aasaitech.in?subject=${encodeURIComponent(subject||'Aasai Tech Support Request')}&body=${encodeURIComponent(body)}`;
   window.location.href=mailtoUrl;
   setTimeout(()=>{
     document.getElementById('sf-form-wrap').style.display='none';
