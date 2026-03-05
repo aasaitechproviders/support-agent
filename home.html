@@ -113,7 +113,7 @@
     .empty-state h3{font-family:'Syne',sans-serif;font-size:18px;color:var(--text);margin-bottom:8px;}
     .empty-state p{font-size:14px;margin-bottom:24px;}
 
-    /* ═══ CREATE AGENT — IMPROVED 2-COLUMN LAYOUT ═══ */
+    /* CREATE AGENT */
     .create-layout{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;max-width:1200px;}
     .create-main{display:flex;flex-direction:column;gap:20px;}
     .create-side{display:flex;flex-direction:column;gap:20px;position:sticky;top:80px;}
@@ -130,6 +130,18 @@
     input[type="text"]:focus,input[type="number"]:focus,textarea:focus,select:focus{border-color:var(--accent);}
     select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a7a9a' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;}
     textarea{resize:vertical;min-height:100px;}
+
+    /* ═══ LOGO UPLOADER ═══ */
+    .logo-upload-zone{display:flex;align-items:center;gap:16px;}
+    .logo-preview-box{width:60px;height:60px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden;transition:border-color .2s;}
+    .logo-preview-box img{width:100%;height:100%;object-fit:contain;border-radius:12px;}
+    .logo-upload-actions{display:flex;flex-direction:column;gap:8px;flex:1;}
+    .logo-upload-btn{display:flex;align-items:center;gap:8px;padding:9px 14px;background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.25);border-radius:8px;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;width:fit-content;}
+    .logo-upload-btn:hover{background:rgba(var(--accent-rgb),.2);border-color:var(--accent);}
+    .logo-upload-hint{font-size:11px;color:var(--muted);line-height:1.5;}
+    .logo-remove-btn{display:none;align-items:center;gap:5px;padding:5px 10px;background:rgba(255,101,132,.1);border:1px solid rgba(255,101,132,.25);border-radius:6px;color:var(--accent2);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;width:fit-content;transition:all .15s;}
+    .logo-remove-btn:hover{background:rgba(255,101,132,.2);}
+    .logo-remove-btn.visible{display:flex;}
 
     /* COLOR */
     .color-palette{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
@@ -202,7 +214,7 @@
     .conv-stat-chip{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:20px;}
     .conv-stat-chip strong{color:var(--text);}
 
-    /* ═══ SETTINGS ═══ */
+    /* SETTINGS */
     .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
     .settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;}
     .settings-card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
@@ -223,12 +235,9 @@
     .limit-input{width:90px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;text-align:right;}
     .limit-input:focus{border-color:var(--accent);}
 
-    /* ═══ PROFILE — IMPROVED LAYOUT ═══ */
+    /* PROFILE */
     .profile-layout{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start;}
-
-    /* Left column: stacked cards */
     .profile-left{display:flex;flex-direction:column;gap:16px;}
-
     .profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;}
     .profile-avatar-wrap{position:relative;width:80px;height:80px;margin:0 auto 16px;cursor:pointer;}
     .profile-avatar-large{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:white;overflow:hidden;border:2px solid var(--border);}
@@ -242,27 +251,16 @@
     .profile-stat{background:var(--surface2);border-radius:10px;padding:12px;text-align:center;}
     .profile-stat-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
     .profile-stat-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
-
-    /* Account info card in left column */
     .profile-info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
     .profile-info-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
-
-    /* Right column */
     .profile-right{display:flex;flex-direction:column;gap:16px;}
-
     .profile-details{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;}
     .profile-details-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
-
-    /* Edit form fields in 2 columns */
     .profile-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-    .profile-form-full{grid-column:1/-1;}
-
     .btn-save{width:100%;padding:12px;background:var(--accent);border:none;border-radius:10px;color:white;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;margin-top:8px;}
     .btn-save:hover{background:#5a52e0;}
     .btn-danger{padding:10px 18px;background:rgba(255,101,132,.1);border:1px solid rgba(255,101,132,.3);border-radius:var(--radius);color:var(--accent2);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:all .15s;}
     .btn-danger:hover{background:rgba(255,101,132,.2);}
-
-    /* Info rows */
     .info-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
     .info-row:last-child{border-bottom:none;}
     .info-label{font-size:13px;font-weight:500;color:var(--muted);}
@@ -270,8 +268,6 @@
 
     /* THEME SWATCHES */
     .theme-swatch-btn{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;cursor:pointer;border:1.5px solid var(--border);transition:all .15s;}
-
-    /* BACKGROUND THEME PICKER */
     .bg-theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
     .bg-theme-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 8px;border-radius:12px;cursor:pointer;border:2px solid var(--border);transition:all .18s;background:transparent;}
     .bg-theme-btn:hover{border-color:var(--muted);}
@@ -299,18 +295,14 @@
     ::-webkit-scrollbar{width:6px;}
     ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
-    /* ═══ RESPONSIVE ═══ */
-    @media(max-width:1200px){
-      .create-layout{grid-template-columns:1fr 340px;}
-    }
+    /* RESPONSIVE */
+    @media(max-width:1200px){.create-layout{grid-template-columns:1fr 340px;}}
     @media(max-width:1024px){
       .stats-grid{grid-template-columns:repeat(2,1fr);}
       .charts-grid{grid-template-columns:1fr;}
       .settings-grid{grid-template-columns:1fr;}
       .create-layout{grid-template-columns:1fr;}
-      .create-side{position:static;}
-      /* On tablet, create side becomes a row of 2 cards */
-      .create-side{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+      .create-side{position:static;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
       .create-side > *:last-child{grid-column:1/-1;}
       .profile-layout{grid-template-columns:260px 1fr;}
       .profile-form-grid{grid-template-columns:1fr;}
@@ -330,21 +322,14 @@
       .form-row{grid-template-columns:1fr;}
       .form-section{padding:18px;}
       .page-title{font-size:17px;}
-
-      /* Create Agent — fully stacked on mobile */
       .create-layout{grid-template-columns:1fr;gap:16px;}
       .create-side{grid-template-columns:1fr;display:flex;flex-direction:column;}
-
-      /* Profile — stacked on mobile */
       .profile-layout{grid-template-columns:1fr;gap:16px;}
       .profile-form-grid{grid-template-columns:1fr;}
       .profile-stats{grid-template-columns:repeat(2,1fr);}
-
-      /* Conversations mobile */
       #conv-body{flex-direction:column;height:auto;padding:0;}
       #conv-session-list{width:100%;border-radius:12px 12px 0 0;max-height:300px;overflow-y:auto;}
       #conv-thread-panel{border-left:1px solid var(--border);border-radius:0 0 12px 12px;}
-
       .settings-grid{grid-template-columns:1fr;gap:14px;}
       #conv-stats-chips{display:flex;flex-wrap:wrap;gap:6px;}
       .toast{bottom:16px;right:16px;left:16px;max-width:none;}
@@ -433,7 +418,7 @@
   <!-- MAIN -->
   <main class="main">
 
-    <!-- ═══ DASHBOARD ═══ -->
+    <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
       <div class="topbar">
         <div class="page-title">Dashboard</div>
@@ -466,7 +451,7 @@
       </div>
     </div>
 
-    <!-- ═══ AGENTS ═══ -->
+    <!-- AGENTS -->
     <div id="page-agents" class="page">
       <div class="topbar">
         <div class="page-title">My Agents</div>
@@ -475,7 +460,7 @@
       <div class="content"><div class="agents-grid" id="all-agents"></div></div>
     </div>
 
-    <!-- ═══ CREATE / EDIT — 2-COLUMN LAYOUT ═══ -->
+    <!-- CREATE / EDIT -->
     <div id="page-create" class="page">
       <div class="topbar">
         <div class="page-title" id="create-title">Create Agent</div>
@@ -500,7 +485,28 @@
                 <div class="form-group"><label>Agent Name *</label><input type="text" id="f-name" placeholder="e.g. Springfield Coaching Bot" oninput="const n=document.getElementById('acp-name');if(n)n.textContent=this.value||'Your Agent';" /></div>
                 <div class="form-group"><label>Welcome Message</label><input type="text" id="f-welcome" placeholder="Hi! How can I help you today?" /></div>
               </div>
-              <div class="form-group" style="margin-bottom:0;"><label>Logo URL <span style="font-size:11px;color:var(--muted);font-weight:400;">(optional)</span></label><input type="text" id="f-logo" placeholder="https://yoursite.com/logo.png" /></div>
+
+              <!-- ═══ LOGO UPLOADER — replaces old Logo URL input ═══ -->
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Agent Logo <span style="font-size:11px;color:var(--muted);font-weight:400;">(PNG, JPG, WebP — max 2MB)</span></label>
+                <div class="logo-upload-zone">
+                  <div class="logo-preview-box" id="logo-preview-box">🤖</div>
+                  <div class="logo-upload-actions">
+                    <label class="logo-upload-btn" for="logo-file-input">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      Upload Logo
+                    </label>
+                    <input type="file" id="logo-file-input" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none;" onchange="handleLogoUpload(this)" />
+                    <div class="logo-upload-hint">Square image recommended · Will appear in chat header and agent cards</div>
+                    <button type="button" class="logo-remove-btn" id="logo-remove-btn" onclick="removeLogo()">
+                      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+                <!-- Hidden field stores base64 -->
+                <input type="hidden" id="f-logo-base64" value="" />
+              </div>
             </div>
 
             <!-- Section 2: AI Behaviour -->
@@ -544,13 +550,12 @@
 
           </div><!-- /create-main -->
 
-          <!-- RIGHT: Branding + Publish (sticky sidebar) -->
+          <!-- RIGHT: Branding + Publish -->
           <div class="create-side">
 
             <!-- Branding card -->
             <div class="form-section">
               <div class="form-section-title"><div class="section-num">4</div>Branding</div>
-
               <div class="form-group">
                 <label>Brand Colour</label>
                 <div style="display:flex;flex-direction:column;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;">
@@ -567,7 +572,6 @@
                   <div class="color-palette" id="color-palette"></div>
                 </div>
               </div>
-
               <div class="form-group" style="margin-bottom:0;">
                 <label>Chat Portal Theme</label>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;" id="theme-swatches"></div>
@@ -580,7 +584,8 @@
               <div class="preview-card-title">Live Preview</div>
               <div id="agent-color-preview-chat" style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
                 <div id="acp-header" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#6c63ff18;border-bottom:1px solid #6c63ff30;">
-                  <div style="width:7px;height:7px;border-radius:50%;background:#43e97b;animation:pulse 2s infinite;"></div>
+                  <div id="acp-avatar" style="width:22px;height:22px;border-radius:6px;background:#6c63ff22;display:flex;align-items:center;justify-content:center;font-size:12px;overflow:hidden;">🤖</div>
+                  <div style="width:6px;height:6px;border-radius:50%;background:#43e97b;animation:pulse 2s infinite;"></div>
                   <span id="acp-name" style="font-size:12px;font-weight:600;color:var(--text);">Your Agent</span>
                 </div>
                 <div style="padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg);">
@@ -606,7 +611,7 @@
       </div>
     </div>
 
-    <!-- ═══ CONVERSATIONS ═══ -->
+    <!-- CONVERSATIONS -->
     <div id="page-conversations" class="page">
       <div class="topbar"><div class="page-title">Conversations</div></div>
       <div style="padding:16px 28px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
@@ -630,7 +635,7 @@
       </div>
     </div>
 
-    <!-- ═══ SETTINGS ═══ -->
+    <!-- SETTINGS -->
     <div id="page-settings" class="page">
       <div class="topbar"><div class="page-title">Settings</div></div>
       <div class="content">
@@ -711,16 +716,12 @@
       </div>
     </div>
 
-    <!-- ═══ PROFILE — IMPROVED 2-COLUMN LAYOUT ═══ -->
+    <!-- PROFILE -->
     <div id="page-profile" class="page">
       <div class="topbar"><div class="page-title">Profile</div></div>
       <div class="content">
         <div class="profile-layout">
-
-          <!-- LEFT COLUMN -->
           <div class="profile-left">
-
-            <!-- Avatar + identity card -->
             <div class="profile-card">
               <div class="profile-avatar-wrap" onclick="document.getElementById('avatar-upload').click()">
                 <div class="profile-avatar-large" id="profile-avatar-large">?</div>
@@ -739,120 +740,60 @@
                 <div class="profile-stat"><div class="profile-stat-val" id="ps-member">—</div><div class="profile-stat-lbl">Member Since</div></div>
               </div>
             </div>
-
-            <!-- Account info card -->
             <div class="profile-info-card">
               <div class="profile-info-title">Account Info</div>
-              <div class="info-row">
-                <span class="info-label">Plan</span>
-                <span class="info-value" id="pi-plan" style="color:var(--accent3);font-weight:500;">Free</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Member since</span>
-                <span class="info-value" id="pi-created">—</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Last login</span>
-                <span class="info-value" id="pi-login">—</span>
-              </div>
-              <div class="info-row">
-                <span class="info-label">Google account</span>
-                <span class="info-value" style="display:flex;align-items:center;gap:5px;justify-content:flex-end;"><span style="color:var(--accent3);font-size:11px;font-weight:600;">✓ Verified</span></span>
-              </div>
-              <div class="info-row" style="border-bottom:none;">
-                <span class="info-label">Connected as</span>
-                <span class="info-value" id="pi-google" style="font-size:12px;word-break:break-all;">—</span>
-              </div>
+              <div class="info-row"><span class="info-label">Plan</span><span class="info-value" id="pi-plan" style="color:var(--accent3);font-weight:500;">Free</span></div>
+              <div class="info-row"><span class="info-label">Member since</span><span class="info-value" id="pi-created">—</span></div>
+              <div class="info-row"><span class="info-label">Last login</span><span class="info-value" id="pi-login">—</span></div>
+              <div class="info-row"><span class="info-label">Google account</span><span class="info-value" style="display:flex;align-items:center;gap:5px;justify-content:flex-end;"><span style="color:var(--accent3);font-size:11px;font-weight:600;">✓ Verified</span></span></div>
+              <div class="info-row" style="border-bottom:none;"><span class="info-label">Connected as</span><span class="info-value" id="pi-google" style="font-size:12px;word-break:break-all;">—</span></div>
             </div>
-
-            <!-- Privacy card -->
             <div class="profile-info-card">
               <div class="profile-info-title">Privacy & Data</div>
-              <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:12px;">Your data is never used for AI training or research. We store only what's needed to operate the service.</p>
+              <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:12px;">Your data is never used for AI training or research.</p>
               <a href="terms.html" style="font-size:13px;color:var(--accent);display:flex;align-items:center;gap:5px;">
                 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 View Terms &amp; Privacy Policy
               </a>
             </div>
-
-          </div><!-- /profile-left -->
-
-          <!-- RIGHT COLUMN -->
+          </div>
           <div class="profile-right">
-
-            <!-- Edit Profile form -->
             <div class="profile-details">
               <div class="profile-details-title">Edit Profile</div>
               <div class="profile-form-grid">
-                <div class="form-group" style="margin-bottom:0;">
-                  <label>Display Name</label>
-                  <input type="text" id="p-name" placeholder="Your name" />
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                  <label>Email</label>
-                  <input type="text" id="p-email" placeholder="your@email.com" />
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                  <label>Organisation / Company</label>
-                  <input type="text" id="p-org" placeholder="e.g. Springfield Academy" />
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                  <label>Phone <span style="font-size:11px;color:var(--muted);font-weight:400;">(optional)</span></label>
-                  <input type="text" id="p-phone" placeholder="+91 99999 99999" />
-                </div>
+                <div class="form-group" style="margin-bottom:0;"><label>Display Name</label><input type="text" id="p-name" placeholder="Your name" /></div>
+                <div class="form-group" style="margin-bottom:0;"><label>Email</label><input type="text" id="p-email" placeholder="your@email.com" /></div>
+                <div class="form-group" style="margin-bottom:0;"><label>Organisation / Company</label><input type="text" id="p-org" placeholder="e.g. Springfield Academy" /></div>
+                <div class="form-group" style="margin-bottom:0;"><label>Phone <span style="font-size:11px;color:var(--muted);font-weight:400;">(optional)</span></label><input type="text" id="p-phone" placeholder="+91 99999 99999" /></div>
               </div>
               <button class="btn-save" onclick="saveProfile()">
                 <svg width="14" height="14" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24" style="display:inline;vertical-align:middle;margin-right:6px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                 Save Changes
               </button>
             </div>
-
-            <!-- Usage breakdown -->
             <div class="profile-details">
               <div class="profile-details-title">Usage Overview</div>
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-                <div style="background:var(--surface2);border-radius:10px;padding:16px;text-align:center;border:1px solid var(--border);">
-                  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;" id="uo-agents">0</div>
-                  <div style="font-size:11px;color:var(--muted);margin-top:4px;">Agents created</div>
-                </div>
-                <div style="background:var(--surface2);border-radius:10px;padding:16px;text-align:center;border:1px solid var(--border);">
-                  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--accent);" id="uo-queries">0</div>
-                  <div style="font-size:11px;color:var(--muted);margin-top:4px;">Total queries</div>
-                </div>
-                <div style="background:var(--surface2);border-radius:10px;padding:16px;text-align:center;border:1px solid var(--border);">
-                  <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--accent2);" id="uo-tokens">0</div>
-                  <div style="font-size:11px;color:var(--muted);margin-top:4px;">Tokens used</div>
-                </div>
+                <div style="background:var(--surface2);border-radius:10px;padding:16px;text-align:center;border:1px solid var(--border);"><div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;" id="uo-agents">0</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">Agents created</div></div>
+                <div style="background:var(--surface2);border-radius:10px;padding:16px;text-align:center;border:1px solid var(--border);"><div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--accent);" id="uo-queries">0</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">Total queries</div></div>
+                <div style="background:var(--surface2);border-radius:10px;padding:16px;text-align:center;border:1px solid var(--border);"><div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--accent2);" id="uo-tokens">0</div><div style="font-size:11px;color:var(--muted);margin-top:4px;">Tokens used</div></div>
               </div>
-              <!-- Token usage bar -->
               <div style="margin-top:16px;">
-                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-                  <span style="font-size:12px;color:var(--muted);">Token quota</span>
-                  <span style="font-size:12px;color:var(--muted);" id="uo-token-pct">0%</span>
-                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:12px;color:var(--muted);">Token quota</span><span style="font-size:12px;color:var(--muted);" id="uo-token-pct">0%</span></div>
                 <div class="token-bar-bg"><div class="token-bar-fill" id="uo-token-bar" style="width:0%"></div></div>
                 <div class="token-counts" style="margin-top:6px;"><span id="uo-used">0 used</span><span id="uo-limit">1,000,000 total</span></div>
               </div>
             </div>
-
-            <!-- Danger zone -->
             <div class="profile-details">
               <div class="profile-details-title" style="color:var(--accent2);">Danger Zone</div>
               <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">These actions are permanent and cannot be undone.</p>
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <button class="btn-danger" onclick="confirmClearAllConversations()">
-                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline;vertical-align:middle;margin-right:4px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                  Clear All Conversations
-                </button>
-                <button class="btn-danger" onclick="confirmDeleteAccount()">
-                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:inline;vertical-align:middle;margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="18" y1="6" x2="23" y2="11"/><line x1="23" y1="6" x2="18" y2="11"/></svg>
-                  Delete Account
-                </button>
+                <button class="btn-danger" onclick="confirmClearAllConversations()">Clear All Conversations</button>
+                <button class="btn-danger" onclick="confirmDeleteAccount()">Delete Account</button>
               </div>
             </div>
-
-          </div><!-- /profile-right -->
-        </div><!-- /profile-layout -->
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1066,7 +1007,7 @@
   function startCreate(){
     editingAgentId=null;sources=[]
     document.getElementById('create-title').textContent='Create Agent'
-    ;['f-name','f-welcome','f-logo','f-prompt'].forEach(id=>document.getElementById(id).value='')
+    ;['f-name','f-welcome','f-prompt'].forEach(id=>document.getElementById(id).value='')
     document.getElementById('f-color').value='#6c63ff'
     document.getElementById('f-theme').value='dark'
     document.getElementById('url-box').style.display='none'
@@ -1074,8 +1015,52 @@
     pickAgentColor('#6c63ff')
     document.getElementById('agent-color-hex').value='#6C63FF'
     document.getElementById('f-color').value='#6c63ff'
+    removeLogo() // reset logo state
     updateThemeSwatchSelection('dark');renderSources();showPage('create')
   }
+
+  // ═══════════════════════════════════════════════
+  // LOGO UPLOAD — NEW FUNCTIONS
+  // ═══════════════════════════════════════════════
+  function handleLogoUpload(input) {
+    const file = input.files[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) { toast('Please upload an image file','error'); return }
+    if (file.size > 2 * 1024 * 1024) { toast('Image too large — max 2MB','error'); return }
+    const reader = new FileReader()
+    reader.onload = function(e) {
+      const base64 = e.target.result
+      document.getElementById('f-logo-base64').value = base64
+      setLogoPreview(base64)
+      toast('Logo uploaded ✓','success')
+    }
+    reader.readAsDataURL(file)
+    // Reset input so same file can be re-selected
+    input.value = ''
+  }
+
+  function setLogoPreview(base64OrUrl) {
+    const box = document.getElementById('logo-preview-box')
+    const removeBtn = document.getElementById('logo-remove-btn')
+    if (base64OrUrl) {
+      box.innerHTML = `<img src="${base64OrUrl}" alt="logo" />`
+      removeBtn.classList.add('visible')
+      // Also update live preview avatar
+      const acpAvatar = document.getElementById('acp-avatar')
+      if (acpAvatar) acpAvatar.innerHTML = `<img src="${base64OrUrl}" style="width:100%;height:100%;object-fit:contain;border-radius:6px;" />`
+    } else {
+      box.innerHTML = '🤖'
+      removeBtn.classList.remove('visible')
+      const acpAvatar = document.getElementById('acp-avatar')
+      if (acpAvatar) acpAvatar.innerHTML = '🤖'
+    }
+  }
+
+  function removeLogo() {
+    document.getElementById('f-logo-base64').value = ''
+    setLogoPreview(null)
+  }
+  // ═══════════════════════════════════════════════
 
   function buildColorPalette(){
     const el=document.getElementById('color-palette')
@@ -1154,10 +1139,17 @@
   function renderCards(list,id){
     const c=document.getElementById(id)
     if(!list.length){c.innerHTML=`<div class="empty-state"><div class="empty-icon">🤖</div><h3>No agents yet</h3><p>Create your first AI agent</p><button class="btn-primary" onclick="startCreate()">Create Agent</button></div>`;return}
-    c.innerHTML=list.map(a=>`
+    c.innerHTML=list.map(a=>{
+      // Use logo_base64 if available, fallback to logo_url, fallback to emoji
+      const logoHtml = a.logo_base64
+        ? `<img src="${a.logo_base64}" style="width:100%;height:100%;object-fit:contain;" />`
+        : a.logo_url
+          ? `<img src="${a.logo_url}" />`
+          : '🤖'
+      return `
       <div class="agent-card" onclick="editAgent('${a._id}')">
         <div class="agent-card-header">
-          <div class="agent-avatar" style="background:${a.brand_color||'#6c63ff'}22;">${a.logo_url?`<img src="${a.logo_url}"/>`:'🤖'}</div>
+          <div class="agent-avatar" style="background:${a.brand_color||'#6c63ff'}22;">${logoHtml}</div>
           <div><div class="agent-name">${a.name}</div><div class="agent-desc">${a.sources_count||0} sources · ${(a.query_count||0).toLocaleString()} queries</div></div>
         </div>
         <div class="agent-footer">
@@ -1167,8 +1159,10 @@
             <button class="btn-icon" onclick="event.stopPropagation();deleteAgent('${a._id}')" title="Delete"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
           </div>
         </div>
-      </div>`).join('')
+      </div>`
+    }).join('')
   }
+
   async function editAgent(id){
     try{
       const [ar,sr]=await Promise.all([fetch(`${API}/agents/${id}`,{headers:{Authorization:`Bearer ${token}`}}),fetch(`${API}/agents/${id}/sources`,{headers:{Authorization:`Bearer ${token}`}})])
@@ -1178,7 +1172,6 @@
       document.getElementById('f-name').value=a.name||''
       document.getElementById('f-color').value=a.brand_color||'#6c63ff'
       document.getElementById('f-welcome').value=a.welcome_message||''
-      document.getElementById('f-logo').value=a.logo_url||''
       document.getElementById('f-prompt').value=a.system_prompt||''
       document.getElementById('f-theme').value=a.theme||'dark'
       const ac=a.brand_color||'#6c63ff'
@@ -1187,15 +1180,34 @@
       pickAgentColor(ac)
       updateThemeSwatchSelection(a.theme||'dark')
       document.getElementById('file-queue').innerHTML=''
+
+      // ── Load saved logo ──
+      if(a.logo_base64){
+        document.getElementById('f-logo-base64').value=a.logo_base64
+        setLogoPreview(a.logo_base64)
+      } else {
+        removeLogo()
+      }
+
       if(a.published_url){const pl=document.getElementById('pub-url');pl.textContent=a.published_url;pl.href=a.published_url;document.getElementById('url-box').style.display='flex';}
       else document.getElementById('url-box').style.display='none'
       renderSources();showPage('create')
     }catch(e){toast('Failed to load agent','error')}
   }
+
   async function saveAgent(){
     const name=document.getElementById('f-name').value.trim()
     if(!name){toast('Agent name is required','error');return}
-    const body={name,brand_color:document.getElementById('f-color').value,welcome_message:document.getElementById('f-welcome').value||'Hi! How can I help you today?',logo_url:document.getElementById('f-logo').value,system_prompt:document.getElementById('f-prompt').value||`You are a helpful assistant for ${name}. Answer only from the provided knowledge. Be friendly and concise.`,theme:document.getElementById('f-theme').value}
+    const logoBase64=document.getElementById('f-logo-base64').value||null
+    const body={
+      name,
+      brand_color:document.getElementById('f-color').value,
+      welcome_message:document.getElementById('f-welcome').value||'Hi! How can I help you today?',
+      logo_url:'',  // keep for backward compat — always empty now
+      logo_base64:logoBase64,
+      system_prompt:document.getElementById('f-prompt').value||`You are a helpful assistant for ${name}. Answer only from the provided knowledge. Be friendly and concise.`,
+      theme:document.getElementById('f-theme').value
+    }
     try{
       const r=await fetch(editingAgentId?`${API}/agents/${editingAgentId}`:`${API}/agents`,{method:editingAgentId?'PUT':'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(body)})
       const d=await r.json()
@@ -1203,6 +1215,7 @@
       toast('Agent saved!','success')
     }catch(e){toast('Failed to save','error')}
   }
+
   async function deleteAgent(id){
     if(!confirm('Delete this agent? This cannot be undone.'))return
     await fetch(`${API}/agents/${id}`,{method:'DELETE',headers:{Authorization:`Bearer ${token}`}})
@@ -1319,12 +1332,10 @@
     try{
       const r=await fetch(`${API}/dashboard`,{headers:{Authorization:`Bearer ${token}`}})
       const d=await r.json()
-      // Left column stats
       document.getElementById('ps-agents').textContent=d.agents_count||0
       document.getElementById('ps-queries').textContent=fmt(d.total_queries||0)
       document.getElementById('ps-tokens').textContent=fmt(d.tokens_used||0)
       if(currentUser.created_at){const date=new Date(currentUser.created_at);document.getElementById('ps-member').textContent=date.toLocaleDateString('en',{month:'short',year:'numeric'})}
-      // Right column usage overview
       document.getElementById('uo-agents').textContent=d.agents_count||0
       document.getElementById('uo-queries').textContent=fmt(d.total_queries||0)
       document.getElementById('uo-tokens').textContent=fmt(d.tokens_used||0)
