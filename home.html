@@ -330,9 +330,22 @@
       .profile-layout{grid-template-columns:1fr;gap:16px;}
       .profile-form-grid{grid-template-columns:1fr;}
       .profile-stats{grid-template-columns:repeat(2,1fr);}
-      #conv-body{flex-direction:column;height:auto;padding:0;}
-      #conv-session-list{width:100%;border-radius:12px 12px 0 0;max-height:300px;overflow-y:auto;}
-      #conv-thread-panel{border-left:1px solid var(--border);border-radius:0 0 12px 12px;}
+      #conv-body{flex-direction:column;height:auto;padding:0 14px 20px;overflow:visible;gap:0;}
+      #conv-session-list{width:100%;border-radius:12px 12px 0 0;border-bottom:none;overflow:visible;max-height:none;}
+      #conv-list-inner.mobile-strip-mode{padding:14px 0 10px!important;}
+      #conv-thread-panel{border-left:1px solid var(--border);border-radius:0 0 12px 12px;min-height:60vh;}
+      .mobile-conv-strip{display:flex;gap:10px;overflow-x:auto;padding:0 14px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+      .mobile-conv-strip::-webkit-scrollbar{display:none;}
+      .mobile-session-card{flex-shrink:0;width:200px;background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:12px 13px;cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent;}
+      .mobile-session-card.active,.mobile-session-card:active{border-color:var(--accent);background:rgba(var(--accent-rgb),.07);}
+      .mobile-session-card-ip{font-size:11px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:5px;margin-bottom:5px;}
+      .mobile-session-card-preview{font-size:12.5px;color:var(--accent);font-weight:500;line-height:1.4;margin-bottom:7px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+      .mobile-session-card-meta{font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;}
+      .mobile-session-badge{background:rgba(var(--accent-rgb),.15);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
+      .mobile-thread-topbar{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;}
+      .mobile-back-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;-webkit-tap-highlight-color:transparent;}
+      .mobile-thread-title{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+      .mobile-strip-label{padding:0 14px 8px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;justify-content:space-between;}
       .settings-layout{grid-template-columns:1fr;gap:16px;}
       .settings-side{position:static;}
       #conv-stats-chips{display:flex;flex-wrap:wrap;gap:6px;}
@@ -618,24 +631,35 @@
     <!-- CONVERSATIONS -->
     <div id="page-conversations" class="page">
       <div class="topbar"><div class="page-title">Conversations</div></div>
-      <div style="padding:16px 28px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <label style="font-size:13px;color:var(--muted);font-weight:500;">Agent</label>
-        <select id="conv-agent-select" onchange="loadConversations()" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;min-width:200px;cursor:pointer;">
+
+      <!-- ── Filter bar ── -->
+      <div style="padding:12px 28px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border);">
+        <label style="font-size:13px;color:var(--muted);font-weight:500;white-space:nowrap;">Agent</label>
+        <select id="conv-agent-select" onchange="loadConversations()" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;min-width:200px;cursor:pointer;outline:none;">
           <option value="">— Select an agent —</option>
         </select>
         <div id="conv-stats-chips" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"></div>
         <button id="conv-clear-btn" onclick="confirmClearAgentConversations()" style="display:none;padding:7px 14px;background:transparent;border:1px solid rgba(239,68,68,.3);color:#ef4444;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s;margin-left:auto;" onmouseover="this.style.background='rgba(239,68,68,.08)'" onmouseout="this.style.background='transparent'">Clear history</button>
       </div>
-      <div id="conv-body" style="display:flex;gap:0;height:calc(100vh - 220px);padding:0 28px 28px;overflow:hidden;">
+
+      <!-- ── Desktop: side-by-side │ Mobile: stacked panels with tab nav ── -->
+      <div id="conv-body" style="display:flex;gap:0;height:calc(100vh - 170px);padding:0 28px 28px;overflow:hidden;">
+
+        <!-- Sessions list -->
         <div id="conv-session-list" style="width:340px;flex-shrink:0;overflow-y:auto;border:1px solid var(--border);border-radius:12px 0 0 12px;background:var(--surface);">
-          <div id="conv-list-inner" style="padding:0;"><div style="padding:48px 24px;text-align:center;color:var(--muted);font-size:13px;">Select an agent to view conversations</div></div>
+          <div id="conv-list-inner" style="padding:0;">
+            <div style="padding:48px 24px;text-align:center;color:var(--muted);font-size:13px;">Select an agent to view conversations</div>
+          </div>
         </div>
+
+        <!-- Thread panel -->
         <div id="conv-thread-panel" style="flex:1;overflow-y:auto;border:1px solid var(--border);border-left:none;border-radius:0 12px 12px 0;background:var(--surface2);display:flex;flex-direction:column;">
           <div id="conv-thread-inner" style="flex:1;padding:28px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;color:var(--muted);">
             <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:.3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             <span style="font-size:14px;">Select a conversation to view the full thread</span>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -1463,23 +1487,47 @@
       const clearBtn=document.getElementById('conv-clear-btn')
       if(clearBtn)clearBtn.style.display=sessions.length>0?'block':'none'
       if(sessions.length===0){listEl.innerHTML='<div class="conv-empty">No conversations yet.<br>Share your chat link to start receiving messages.</div>';return}
-      listEl.innerHTML=sessions.map(s=>{
-        const key=s.session_id||s.visitor_id||s.visitor_ip
-        const ago=timeAgo(s.last_active)
-        const preview=s.first_question.length>55?s.first_question.slice(0,55)+'…':s.first_question
-        const ip=s.visitor_ip||'Unknown'
-        const shortIp=ip.length>15?ip.slice(0,15)+'…':ip
-        return `<div class="session-item" data-key="${escHtml(key)}" onclick="loadThread('${agentId}','${escHtml(key)}',this)"><div class="session-ip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>${escHtml(shortIp)}<span class="session-ip-badge">${s.message_count} msg${s.message_count!==1?'s':''}</span></div><div class="session-preview">${escHtml(preview)}</div><div class="session-meta"><span>${ago}</span><span>Started ${timeAgo(s.started_at)}</span></div></div>`
-      }).join('')
+      const isMobile=window.innerWidth<=768
+      if(isMobile){
+        listEl.classList.add('mobile-strip-mode')
+        listEl.innerHTML=`<div class="mobile-strip-label"><span>Sessions</span><span style="color:var(--accent);font-size:11px;">Scroll →</span></div><div class="mobile-conv-strip">${sessions.map(s=>{
+          const key=s.session_id||s.visitor_id||s.visitor_ip
+          const ago=timeAgo(s.last_active)
+          const preview=s.first_question.length>60?s.first_question.slice(0,60)+'…':s.first_question
+          const ip=s.visitor_ip||'Unknown'
+          return `<div class="mobile-session-card" data-key="${escHtml(key)}" onclick="loadThread('${agentId}','${escHtml(key)}',this)">
+            <div class="mobile-session-card-ip">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
+              ${escHtml(ip.length>14?ip.slice(0,14)+'…':ip)}
+            </div>
+            <div class="mobile-session-card-preview">${escHtml(preview)}</div>
+            <div class="mobile-session-card-meta"><span>${ago}</span><span class="mobile-session-badge">${s.message_count} msg${s.message_count!==1?'s':''}</span></div>
+          </div>`
+        }).join('')}</div>`
+      } else {
+        listEl.classList.remove('mobile-strip-mode')
+        listEl.innerHTML=sessions.map(s=>{
+          const key=s.session_id||s.visitor_id||s.visitor_ip
+          const ago=timeAgo(s.last_active)
+          const preview=s.first_question.length>55?s.first_question.slice(0,55)+'…':s.first_question
+          const ip=s.visitor_ip||'Unknown'
+          const shortIp=ip.length>15?ip.slice(0,15)+'…':ip
+          return `<div class="session-item" data-key="${escHtml(key)}" onclick="loadThread('${agentId}','${escHtml(key)}',this)"><div class="session-ip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>${escHtml(shortIp)}<span class="session-ip-badge">${s.message_count} msg${s.message_count!==1?'s':''}</span></div><div class="session-preview">${escHtml(preview)}</div><div class="session-meta"><span>${ago}</span><span>Started ${timeAgo(s.started_at)}</span></div></div>`
+        }).join('')
+      }
     }catch(e){listEl.innerHTML='<div class="conv-empty">Failed to load conversations.</div>'}
   }
   async function loadThread(agentId,sessionKey,itemEl){
-    document.querySelectorAll('.session-item').forEach(x=>x.classList.remove('active'))
+    document.querySelectorAll('.session-item,.mobile-session-card').forEach(x=>x.classList.remove('active'))
     itemEl.classList.add('active');activeSessionKey=sessionKey
     const panel=document.getElementById('conv-thread-inner')
     panel.innerHTML='<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">Loading thread…</div>'
     panel.style.flexDirection='column';panel.style.justifyContent='flex-start';panel.style.alignItems='stretch'
-    if(window.innerWidth<=768){document.getElementById('conv-thread-panel').scrollIntoView({behavior:'smooth'})}
+    const isMobile=window.innerWidth<=768
+    if(isMobile){
+      // Scroll thread into view smoothly
+      setTimeout(()=>document.getElementById('conv-thread-panel').scrollIntoView({behavior:'smooth',block:'start'}),80)
+    }
     try{
       const r=await apiFetch(`/agents/${agentId}/conversations/${encodeURIComponent(sessionKey)}`)
       const d=await r.json();const msgs=d.messages||[]
@@ -1487,7 +1535,25 @@
       const ip=msgs[0].visitor_ip||'Unknown'
       const startTime=new Date(msgs[0].created_at).toLocaleString()
       const totalTok=msgs.reduce((a,m)=>a+(m.tokens_used||0),0)
-      panel.innerHTML=`<div class="thread-header"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg><span class="thread-ip-tag">${escHtml(ip)}</span><span style="font-size:12px;color:var(--muted);">Started ${startTime}</span><span style="margin-left:auto;font-size:12px;color:var(--muted);">${msgs.length} messages · ${fmt(totalTok)} tokens</span></div><div class="thread-msgs">${msgs.map(m=>`<div class="thread-turn"><div class="thread-q">${escHtml(m.question)}</div><div class="thread-a">${m.answer}</div><div class="thread-ts">${new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div></div>`).join('')}</div>`
+      // Mobile topbar with back button
+      const mobileTopbar=isMobile?`<div class="mobile-thread-topbar">
+        <div class="mobile-back-btn" onclick="document.getElementById('conv-session-list').scrollIntoView({behavior:'smooth',block:'start'})">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <div class="mobile-thread-title">${escHtml(ip)} · ${msgs.length} message${msgs.length!==1?'s':''}</div>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted);white-space:nowrap;">${fmt(totalTok)} tok</span>
+      </div>`:'';
+      const threadHeader=isMobile?'':`<div class="thread-header"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg><span class="thread-ip-tag">${escHtml(ip)}</span><span style="font-size:12px;color:var(--muted);">Started ${startTime}</span><span style="margin-left:auto;font-size:12px;color:var(--muted);">${msgs.length} messages · ${fmt(totalTok)} tokens</span></div>`
+      const threadPanel=document.getElementById('conv-thread-panel')
+      // Insert mobile topbar before inner panel
+      const existingTopbar=threadPanel.querySelector('.mobile-thread-topbar')
+      if(existingTopbar)existingTopbar.remove()
+      if(isMobile){
+        const topbarEl=document.createElement('div')
+        topbarEl.innerHTML=mobileTopbar
+        threadPanel.insertBefore(topbarEl.firstElementChild,panel)
+      }
+      panel.innerHTML=`${threadHeader}<div class="thread-msgs">${msgs.map(m=>`<div class="thread-turn"><div class="thread-q">${escHtml(m.question)}</div><div class="thread-a">${m.answer}</div><div class="thread-ts">${new Date(m.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div></div>`).join('')}</div>`
     }catch(e){panel.innerHTML='<div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">Failed to load thread.</div>'}
   }
   function timeAgo(dateStr){const diff=Date.now()-new Date(dateStr).getTime();const s=Math.floor(diff/1000);if(s<60)return'just now';const m=Math.floor(s/60);if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';const day=Math.floor(h/24);if(day<30)return day+'d ago';return new Date(dateStr).toLocaleDateString()}
