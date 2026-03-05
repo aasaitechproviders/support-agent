@@ -173,7 +173,8 @@
     .btn-publish{padding:13px 32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:var(--radius);color:white;font-family:'Syne',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;}
     .btn-publish:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(var(--accent-rgb),.3);}
     .published-url-box{margin-top:16px;padding:14px 16px;background:var(--surface2);border:1px solid var(--accent);border-radius:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-    .published-url{flex:1;font-size:13px;color:var(--accent);word-break:break-all;min-width:0;}
+    .published-url{flex:1;font-size:13px;color:var(--accent);word-break:break-all;min-width:0;text-decoration:none;}
+    .published-url:hover{text-decoration:underline;}
     .btn-copy{padding:6px 12px;background:rgba(var(--accent-rgb),.15);border:none;border-radius:6px;color:var(--accent);font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
     .btn-copy:hover{background:rgba(var(--accent-rgb),.3);}
 
@@ -595,7 +596,7 @@
               <p>Publish your agent and get a shareable chat link instantly.</p>
               <button class="btn-publish" onclick="publishAgent()">🚀 Publish Agent</button>
               <div class="published-url-box" id="url-box" style="display:none;">
-                <span class="published-url" id="pub-url"></span>
+                <a class="published-url" id="pub-url" href="#" target="_blank" rel="noopener" style="text-decoration:none;"></a>
                 <button class="btn-copy" onclick="copyUrl()">Copy</button>
               </div>
             </div>
@@ -1186,7 +1187,7 @@
       pickAgentColor(ac)
       updateThemeSwatchSelection(a.theme||'dark')
       document.getElementById('file-queue').innerHTML=''
-      if(a.published_url){document.getElementById('pub-url').textContent=a.published_url;document.getElementById('url-box').style.display='flex';}
+      if(a.published_url){const pl=document.getElementById('pub-url');pl.textContent=a.published_url;pl.href=a.published_url;document.getElementById('url-box').style.display='flex';}
       else document.getElementById('url-box').style.display='none'
       renderSources();showPage('create')
     }catch(e){toast('Failed to load agent','error')}
@@ -1263,12 +1264,12 @@
       const r=await fetch(`${API}/agents/${editingAgentId}/publish`,{method:'POST',headers:{Authorization:`Bearer ${token}`}})
       const d=await r.json()
       if(!r.ok){toast(d.error||'Publish failed','error');return}
-      document.getElementById('pub-url').textContent=d.url
+      const pl=document.getElementById('pub-url');pl.textContent=d.url;pl.href=d.url
       document.getElementById('url-box').style.display='flex'
       toast('Agent published! 🚀','success')
     }catch(e){toast('Failed to publish','error')}
   }
-  function copyUrl(){navigator.clipboard.writeText(document.getElementById('pub-url').textContent);toast('URL copied! ✓','success')}
+  function copyUrl(){const pl=document.getElementById('pub-url');navigator.clipboard.writeText(pl.href||pl.textContent);toast('URL copied! ✓','success')}
 
   // SETTINGS
   async function loadSettings(){
