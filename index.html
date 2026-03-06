@@ -632,7 +632,7 @@ function fmt(n){
 
 (async () => {
   try {
-    const r = await fetch('https://apiv2.aasaitech.in/public/stats');
+    const r = await fetch('https://fypouhme3gqldqk6sk75b75udy0ltonb.lambda-url.ap-southeast-2.on.aws/public/stats');
     if(!r.ok) throw 0;
     const d = await r.json();
     animCount(document.getElementById('sq'), d.total_queries || 0);
