@@ -586,7 +586,7 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
   const stored = localStorage.getItem('aasai_token');
   if(stored){
     try {
-      const res = await fetch('https://apiv2.aasaitech.in/auth/me', {
+      const res = await fetch('https://fypouhme3gqldqk6sk75b75udy0ltonb.lambda-url.ap-southeast-2.on.aws/auth/me', {
         headers: { Authorization: 'Bearer ' + stored }
       });
       if(res.ok){ location.replace('home.html'); }
