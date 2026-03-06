@@ -144,6 +144,18 @@
     .msg-bubble li { margin:2px 0; font-size:12px; color:var(--text2); }
     .msg-bubble strong { font-weight:600; color:var(--text); }
 
+    /* ── STREAMING CURSOR ── */
+    .streaming-cursor {
+      display:inline-block;
+      width:2px; height:14px;
+      background:var(--accent);
+      margin-left:2px;
+      vertical-align:middle;
+      border-radius:1px;
+      animation:blink 0.8s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
     /* ── TYPING ── */
     .typing-wrap { display:flex; gap:8px; align-self:flex-start; animation:msgIn 0.2s ease; }
     .typing-bubble { padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); border-bottom-left-radius:5px; display:flex; align-items:center; gap:5px; box-shadow:var(--shadow); }
@@ -322,8 +334,7 @@
     } catch(e) { return '108, 99, 255' }
   }
 
-  // ── Build logo HTML from config (prefers base64, falls back to url, then emoji) ──
-  function buildLogoHtml(size) {
+  function buildLogoHtml() {
     if (config.logo_base64) {
       return `<img src="${config.logo_base64}" onerror="this.parentElement.textContent='🤖'" />`
     }
@@ -376,7 +387,6 @@
     if (!meta) { meta = document.createElement('meta'); meta.name = 'theme-color'; document.head.appendChild(meta) }
     meta.content = accentHex
 
-    // ── Apply logo (base64 → url → emoji fallback) ──
     const logoHtml = buildLogoHtml()
     document.title                              = config.name || 'Chat'
     document.getElementById('h-name').textContent  = config.name || 'Assistant'
@@ -428,33 +438,130 @@
     send()
   }
 
+  // ══════════════════════════════════════════════════════
+  // SEND — uses SSE streaming endpoint /chat/:id/stream
+  // ══════════════════════════════════════════════════════
   async function send() {
     const input = document.getElementById('msg-input')
     const text = input.value.trim()
     if (!text || busy) return
+
+    // Hide welcome screen on first message
     const ww = document.getElementById('welcome-wrap')
     if (ww) { ww.style.transition='opacity 0.2s'; ww.style.opacity='0'; setTimeout(()=>ww.remove(),200) }
+
     addMsg('user', text)
-    input.value=''; input.style.height='auto'
+    input.value = ''; input.style.height = 'auto'
     if (window.innerWidth <= 600) input.blur()
+
     busy = true
     document.getElementById('send-btn').disabled = true
+
+    // Show typing indicator until first chunk arrives
     const typing = showTyping()
+
+    // Create the bot bubble that we'll stream into
+    let botBubble = null
+    let fullAnswer = ''
+    let firstChunk = true
+
     try {
-      const r = await fetch(`${API}/chat/${agentId}`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ question:text, history:conversationHistory, session_id, visitor_id })
+      const response = await fetch(`${API}/chat/${agentId}/stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: text, history: conversationHistory, session_id, visitor_id })
       })
-      const d = await r.json()
-      typing.remove()
-      const answer = d.answer || '<p>Sorry, I could not find an answer to that.</p>'
-      addMsg('bot', answer)
-      conversationHistory.push({role:'user',content:text})
-      conversationHistory.push({role:'assistant',content:answer})
-      if (conversationHistory.length>20) conversationHistory = conversationHistory.slice(-20)
-    } catch(e) { typing.remove(); addMsg('bot','<p>Sorry, I\'m having trouble connecting. Please try again.</p>') }
+
+      if (!response.ok) {
+        throw new Error('Stream request failed: ' + response.status)
+      }
+
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let sseBuffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        sseBuffer += decoder.decode(value, { stream: true })
+
+        // SSE lines come as "data: {...}\n\n"
+        const lines = sseBuffer.split('\n')
+        sseBuffer = lines.pop() // keep any incomplete line
+
+        for (const line of lines) {
+          if (!line.startsWith('data:')) continue
+          const raw = line.slice(5).trim()
+          if (!raw) continue
+
+          let event
+          try { event = JSON.parse(raw) } catch { continue }
+
+          if (event.type === 'chunk') {
+            // On first chunk: remove typing indicator, create streaming bubble
+            if (firstChunk) {
+              typing.remove()
+              botBubble = createStreamingBubble()
+              firstChunk = false
+            }
+            fullAnswer += event.html
+            // Update bubble innerHTML with accumulated answer + cursor
+            botBubble.innerHTML = fullAnswer + '<span class="streaming-cursor"></span>'
+            scrollToBottom()
+
+          } else if (event.type === 'done') {
+            // Stream complete — finalise bubble, remove cursor
+            if (botBubble) {
+              botBubble.innerHTML = fullAnswer
+            }
+            // Save to history
+            conversationHistory.push({ role: 'user', content: text })
+            conversationHistory.push({ role: 'assistant', content: fullAnswer })
+            if (conversationHistory.length > 20) conversationHistory = conversationHistory.slice(-20)
+            scrollToBottom()
+
+          } else if (event.type === 'error') {
+            if (firstChunk) typing.remove()
+            if (botBubble) botBubble.innerHTML = `<p>${event.message || 'Sorry, something went wrong.'}</p>`
+            else addMsg('bot', `<p>${event.message || 'Sorry, something went wrong.'}</p>`)
+          }
+        }
+      }
+
+      // If stream ended without any chunks (empty response)
+      if (firstChunk) {
+        typing.remove()
+        addMsg('bot', '<p>Sorry, I could not find an answer to that.</p>')
+      }
+
+    } catch (e) {
+      console.error('Stream error:', e)
+      if (firstChunk) typing.remove()
+      if (botBubble) botBubble.innerHTML = '<p>Sorry, I\'m having trouble connecting. Please try again.</p>'
+      else addMsg('bot', '<p>Sorry, I\'m having trouble connecting. Please try again.</p>')
+    }
+
     busy = false
     document.getElementById('send-btn').disabled = false
+  }
+
+  // Creates a bot message bubble and returns the inner .msg-bubble div for streaming into
+  function createStreamingBubble() {
+    const container = document.getElementById('msgs-inner')
+    const time = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })
+    const logoHtml = buildLogoHtml()
+    const el = document.createElement('div')
+    el.className = 'message bot'
+    el.innerHTML = `
+      <div class="msg-avatar">${logoHtml}</div>
+      <div class="msg-body">
+        <div class="msg-bubble"></div>
+        <div class="msg-time">${time}</div>
+      </div>`
+    container.appendChild(el)
+    scrollToBottom()
+    return el.querySelector('.msg-bubble')
   }
 
   function addMsg(role, content) {
