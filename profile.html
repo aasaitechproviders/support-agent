@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile — Aasai Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="_shared.css"/>
+  <style>
+    ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+    .profile-grid{display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start;}
+
+    /* ── Left card ── */
+    .profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;position:sticky;top:24px;}
+    .profile-avatar-wrap{position:relative;width:96px;height:96px;flex-shrink:0;}
+    .profile-avatar{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;color:#fff;overflow:hidden;border:3px solid var(--border);}
+    .profile-avatar img{width:100%;height:100%;object-fit:cover;}
+    .avatar-edit-btn{position:absolute;bottom:2px;right:2px;width:28px;height:28px;background:var(--accent);border:2px solid var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+    .avatar-edit-btn:hover{background:var(--accent2);}
+    .avatar-edit-btn svg{width:12px;height:12px;color:#fff;}
+    #avatar-input{display:none;}
+    .profile-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
+    .profile-email{font-size:13px;color:var(--muted);}
+    .plan-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.3);border-radius:100px;font-size:12px;font-weight:600;color:var(--accent);}
+
+    /* stats row */
+    .profile-stats{display:flex;gap:0;width:100%;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;}
+    .pstat{flex:1;padding:14px 10px;text-align:center;}
+    .pstat+.pstat{border-left:1px solid var(--border);}
+    .pstat-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
+    .pstat-lbl{font-size:11px;color:var(--muted);margin-top:3px;}
+
+    /* token bar */
+    .token-mini{width:100%;text-align:left;}
+    .token-mini-header{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;}
+    .token-mini-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+    .token-mini-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .5s ease;}
+
+    /* ── Right section ── */
+    .form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;}
+    .form-card-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+    .form-card-title svg{color:var(--accent);}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .form-group{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+    .form-group:last-child{margin-bottom:0;}
+    .form-label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+    .form-input{padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s;}
+    .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.12);}
+    .form-input:disabled{opacity:.5;cursor:not-allowed;}
+    .form-input::placeholder{color:var(--muted);}
+    .form-hint{font-size:11.5px;color:var(--muted);margin-top:3px;}
+
+    /* save btn row */
+    .save-row{display:flex;justify-content:flex-end;margin-top:20px;}
+
+    /* danger zone */
+    .danger-card{background:var(--surface);border:1px solid rgba(255,101,132,.3);border-radius:var(--radius);padding:28px;}
+    .danger-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--accent2);margin-bottom:6px;}
+    .danger-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+    .danger-actions{display:flex;flex-direction:column;gap:12px;}
+    .danger-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;}
+    .danger-row-info{}
+    .danger-row-label{font-size:14px;font-weight:500;margin-bottom:3px;}
+    .danger-row-desc{font-size:12px;color:var(--muted);}
+    .btn-danger{padding:8px 18px;background:rgba(255,101,132,.1);border:1px solid rgba(255,101,132,.3);color:var(--accent2);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+    .btn-danger:hover{background:rgba(255,101,132,.2);border-color:var(--accent2);}
+
+    /* skeleton */
+    .skel-profile-left{display:flex;flex-direction:column;align-items:center;gap:16px;}
+
+    @media(max-width:900px){
+      .profile-grid{grid-template-columns:1fr;}
+      .profile-card{position:static;}
+    }
+    @media(max-width:600px){
+      .form-row{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="mobile-topbar">
+  <div class="logo-mark"><img src="logo.png" alt="Aasai" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\' style=\'width:30px;height:30px;font-size:13px;\'>A</div>'"/></div>
+  <span class="logo-text">Aasai Tech</span>
+  <button class="mobile-menu-btn" id="mob-menu-btn"><span></span><span></span><span></span></button>
+</div>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark"><img src="logo.png" alt="Aasai" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\'>A</div>'"/></div>
+    <span class="logo-text">Aasai Tech</span>
+  </div>
+  <nav>
+    <a class="nav-item" data-page="dashboard" href="home.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" data-page="agents" href="agents.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      My Agents
+    </a>
+    <a class="nav-item" data-page="conversations" href="conversations.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Conversations
+    </a>
+    <a class="nav-item" data-page="create" href="create-agent.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Create Agent
+    </a>
+    <a class="nav-item" data-page="settings" href="settings.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+    <a class="nav-item active" data-page="profile" href="profile.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-chip" onclick="location.href='profile.html'">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div style="flex:1;min-width:0;">
+        <div class="user-name" id="user-name">…</div>
+        <div class="user-plan" id="user-plan">Free Plan</div>
+      </div>
+      <button class="btn-logout" onclick="event.stopPropagation();logout()" title="Logout">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="page-title">Profile</div>
+  </div>
+
+  <!-- SKELETON -->
+  <div class="content" id="skel-content">
+    <div class="profile-grid">
+      <div class="profile-card skel-profile-left">
+        <div class="skel" style="width:96px;height:96px;border-radius:50%;"></div>
+        <div class="skel" style="height:20px;width:60%;"></div>
+        <div class="skel" style="height:14px;width:80%;"></div>
+        <div class="skel" style="height:28px;width:50%;border-radius:100px;"></div>
+      </div>
+      <div>
+        <div class="form-card"><div class="skel" style="height:18px;width:40%;margin-bottom:20px;"></div><div class="skel" style="height:44px;margin-bottom:16px;"></div><div class="skel" style="height:44px;"></div></div>
+        <div class="form-card"><div class="skel" style="height:18px;width:40%;margin-bottom:20px;"></div><div class="skel" style="height:44px;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REAL CONTENT -->
+  <div class="content page-enter" id="main-content" style="display:none;">
+    <div class="profile-grid">
+
+      <!-- LEFT: Avatar + Stats -->
+      <div>
+        <div class="profile-card">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar" id="prof-avatar">?</div>
+            <label class="avatar-edit-btn" for="avatar-input" title="Change photo">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M9 13l6.5-6.5a2 2 0 0 1 2.828 2.828L11 16H9v-2.5z"/></svg>
+            </label>
+            <input type="file" id="avatar-input" accept="image/*" onchange="uploadAvatar(this)"/>
+          </div>
+          <div class="profile-name" id="prof-name">—</div>
+          <div class="profile-email" id="prof-email">—</div>
+          <div class="plan-badge" id="prof-plan">🆓 Free Plan</div>
+
+          <div class="profile-stats">
+            <div class="pstat">
+              <div class="pstat-val" id="prof-agents">—</div>
+              <div class="pstat-lbl">Agents</div>
+            </div>
+            <div class="pstat">
+              <div class="pstat-val" id="prof-queries">—</div>
+              <div class="pstat-lbl">Queries</div>
+            </div>
+            <div class="pstat">
+              <div class="pstat-val" id="prof-tokens">—</div>
+              <div class="pstat-lbl">Tokens</div>
+            </div>
+          </div>
+
+          <div class="token-mini">
+            <div class="token-mini-header">
+              <span>Token Usage</span>
+              <span id="prof-token-pct">0%</span>
+            </div>
+            <div class="token-mini-bar">
+              <div class="token-mini-fill" id="prof-token-bar" style="width:0%"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px;">
+              <span id="prof-token-used">0 used</span>
+              <span id="prof-token-limit">1M total</span>
+            </div>
+          </div>
+
+          <div style="font-size:11px;color:var(--muted);text-align:center;line-height:1.6;" id="prof-joined">—</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Edit forms -->
+      <div>
+
+        <!-- Personal Info -->
+        <div class="form-card">
+          <div class="form-card-title">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Personal Information
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input class="form-input" id="f-name" type="text" placeholder="Your full name"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input class="form-input" id="f-email" type="email" disabled placeholder="your@email.com"/>
+              <div class="form-hint">Email is linked to Google and cannot be changed.</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Organisation</label>
+              <input class="form-input" id="f-org" type="text" placeholder="Company or school name"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input class="form-input" id="f-phone" type="tel" placeholder="+91 98765 43210"/>
+            </div>
+          </div>
+          <div class="save-row">
+            <button class="btn-primary" id="btn-save-profile" onclick="saveProfile()">Save Changes</button>
+          </div>
+        </div>
+
+        <!-- Account Info -->
+        <div class="form-card">
+          <div class="form-card-title">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Account Details
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Account ID</label>
+              <input class="form-input" id="f-id" disabled/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Plan</label>
+              <input class="form-input" id="f-plan-display" disabled/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Member Since</label>
+              <input class="form-input" id="f-since" disabled/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Login</label>
+              <input class="form-input" id="f-last-login" disabled/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="danger-card">
+          <div class="danger-title">⚠️ Danger Zone</div>
+          <div class="danger-sub">These actions are irreversible. Please proceed with caution.</div>
+          <div class="danger-actions">
+            <div class="danger-row">
+              <div class="danger-row-info">
+                <div class="danger-row-label">Clear All Conversations</div>
+                <div class="danger-row-desc">Removes all conversation history across all your agents.</div>
+              </div>
+              <button class="btn-danger" id="btn-clear-all" onclick="clearAllConversations()">Clear All</button>
+            </div>
+            <div class="danger-row">
+              <div class="danger-row-info">
+                <div class="danger-row-label">Sign Out</div>
+                <div class="danger-row-desc">Log out from this device.</div>
+              </div>
+              <button class="btn-danger" onclick="logout()">Sign Out</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="_shared.js"></script>
+<script>
+let currentUser = null
+
+async function init() {
+  currentUser = await requireAuthPage()
+  if (!currentUser) return
+  renderUserChip(currentUser)
+  initMobileSidebar()
+  await loadProfile()
+  document.getElementById('skel-content').style.display = 'none'
+  document.getElementById('main-content').style.display = 'block'
+}
+
+async function loadProfile() {
+  const u = currentUser
+
+  // Avatar
+  const avatarEl = document.getElementById('prof-avatar')
+  if (u.avatar) {
+    avatarEl.innerHTML = `<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`
+  } else {
+    avatarEl.textContent = u.name ? u.name[0].toUpperCase() : '?'
+  }
+
+  document.getElementById('prof-name').textContent = u.name || '—'
+  document.getElementById('prof-email').textContent = u.email || '—'
+  document.getElementById('prof-plan').textContent = u.plan === 'pro' ? '⭐ Pro Plan' : '🆓 Free Plan'
+  document.getElementById('prof-joined').textContent = u.created_at
+    ? 'Member since ' + new Date(u.created_at).toLocaleDateString('en', { month: 'long', year: 'numeric' })
+    : ''
+
+  // Form fields
+  document.getElementById('f-name').value = u.name || ''
+  document.getElementById('f-email').value = u.email || ''
+  document.getElementById('f-org').value = u.organisation || ''
+  document.getElementById('f-phone').value = u.phone || ''
+  document.getElementById('f-id').value = u._id || ''
+  document.getElementById('f-plan-display').value = u.plan === 'pro' ? 'Pro Plan' : 'Free Plan'
+  document.getElementById('f-since').value = u.created_at ? new Date(u.created_at).toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'
+  document.getElementById('f-last-login').value = u.last_login ? new Date(u.last_login).toLocaleDateString('en', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'
+
+  // Token stats
+  const used = u.tokens_used || 0
+  const limit = u.token_limit || 1000000
+  const pct = Math.min((used / limit) * 100, 100).toFixed(1)
+  document.getElementById('prof-token-bar').style.width = pct + '%'
+  document.getElementById('prof-token-pct').textContent = pct + '%'
+  document.getElementById('prof-token-used').textContent = fmt(used) + ' used'
+  document.getElementById('prof-token-limit').textContent = fmt(limit) + ' total'
+  document.getElementById('prof-tokens').textContent = fmt(used)
+
+  // Fetch agent + query counts from dashboard
+  try {
+    const r = await apiFetch('/dashboard')
+    const d = await r.json()
+    document.getElementById('prof-agents').textContent = d.agents_count || 0
+    document.getElementById('prof-queries').textContent = fmt(d.total_queries || 0)
+  } catch (e) {
+    document.getElementById('prof-agents').textContent = '—'
+    document.getElementById('prof-queries').textContent = '—'
+  }
+}
+
+async function saveProfile() {
+  const btn = document.getElementById('btn-save-profile')
+  btnLoading(btn, 'Saving…')
+  try {
+    const body = {
+      name: document.getElementById('f-name').value.trim(),
+      organisation: document.getElementById('f-org').value.trim(),
+      phone: document.getElementById('f-phone').value.trim()
+    }
+    const r = await apiFetch('/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify(body)
+    })
+    if (!r.ok) throw new Error()
+    // Update sidebar chip name
+    document.getElementById('user-name').textContent = body.name || currentUser.email
+    document.getElementById('prof-name').textContent = body.name || '—'
+    toast('Profile saved', 'success')
+  } catch (e) {
+    toast('Failed to save profile', 'error')
+  } finally {
+    btnReset(btn)
+  }
+}
+
+async function uploadAvatar(input) {
+  const file = input.files[0]
+  if (!file) return
+  if (file.size > 2 * 1024 * 1024) { toast('Image too large (max 2MB)', 'error'); return }
+
+  const formData = new FormData()
+  formData.append('avatar', file)
+
+  const btn = document.querySelector('.avatar-edit-btn')
+  btn.style.opacity = '0.5'
+  try {
+    const r = await fetch(API + '/auth/avatar', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + getToken() },
+      body: formData
+    })
+    const d = await r.json()
+    if (!r.ok) throw new Error(d.error)
+    // Update avatar everywhere
+    const imgHtml = `<img src="${d.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`
+    document.getElementById('prof-avatar').innerHTML = imgHtml
+    document.getElementById('user-avatar').innerHTML = imgHtml
+    toast('Avatar updated', 'success')
+  } catch (e) {
+    toast(e.message || 'Failed to upload avatar', 'error')
+  } finally {
+    btn.style.opacity = '1'
+    input.value = ''
+  }
+}
+
+async function clearAllConversations() {
+  if (!confirm('Clear all conversation history across all agents? This cannot be undone.')) return
+  const btn = document.getElementById('btn-clear-all')
+  btnLoading(btn, 'Clearing…')
+  try {
+    const r = await apiFetch('/conversations/clear-all', { method: 'POST' })
+    if (!r.ok) throw new Error()
+    toast('All conversations cleared', 'success')
+  } catch (e) {
+    toast('Failed to clear conversations', 'error')
+  } finally {
+    btnReset(btn)
+  }
+}
+
+init()
+</script>
+</body>
+</html>
