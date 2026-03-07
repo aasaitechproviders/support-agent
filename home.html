@@ -129,6 +129,16 @@ let currentUser = null
 async function init() {
   currentUser = await requireAuthPage()
   if (!currentUser) return
+
+  // Apply theme + accent from DB on landing — this is the source of truth after login
+  // requireAuthPage() already calls applyAccent/applyBgTheme BUT we also force-sync
+  // localStorage here so every other page picks it up instantly without an API call
+  const accent = currentUser.dashboard_accent || '#6c63ff'
+  const bgTheme = currentUser.dashboard_bg_theme || 'dark'
+  const bgCustom = currentUser.dashboard_bg_custom || '#0a0a0f'
+  applyAccent(accent)
+  applyBgTheme(bgTheme, bgCustom)  // also writes to localStorage
+
   renderUserChip(currentUser)
   initMobileSidebar()
   await loadDashboard()
