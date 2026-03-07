@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Settings — Aasai Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="_shared.css"/>
+  <style>
+    ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+    .settings-layout{display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start;max-width:1200px;}
+    .settings-main{display:flex;flex-direction:column;gap:20px;}
+    .settings-side{display:flex;flex-direction:column;gap:20px;position:sticky;top:80px;}
+    .settings-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;}
+    .settings-card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+    .settings-card-icon{width:28px;height:28px;border-radius:8px;background:rgba(var(--accent-rgb),.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);}
+    .setting-row:last-child{border-bottom:none;}
+    .setting-label{font-size:14px;font-weight:500;}
+    .setting-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+    .toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--surface2);border:1px solid var(--border);border-radius:22px;transition:.3s;}
+    .toggle-slider:before{position:absolute;content:'';height:16px;width:16px;left:2px;bottom:2px;background:var(--muted);border-radius:50%;transition:.3s;}
+    .toggle input:checked+.toggle-slider{background:rgba(var(--accent-rgb),.3);border-color:var(--accent);}
+    .toggle input:checked+.toggle-slider:before{transform:translateX(18px);background:var(--accent);}
+    .agent-limit-table{width:100%;border-collapse:collapse;}
+    .agent-limit-table th{text-align:left;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:8px 12px;border-bottom:1px solid var(--border);}
+    .agent-limit-table td{padding:10px 12px;border-bottom:1px solid rgba(42,42,56,.5);font-size:13px;vertical-align:middle;}
+    .agent-limit-table tr:last-child td{border-bottom:none;}
+    .limit-input{width:90px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;text-align:right;}
+    .limit-input:focus{border-color:var(--accent);}
+    .color-palette{display:flex;gap:8px;flex-wrap:wrap;}
+    .color-swatch{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .18s;flex-shrink:0;position:relative;}
+    .color-swatch:hover{transform:scale(1.18);border-color:rgba(255,255,255,.5);}
+    .color-swatch.selected{border-color:white !important;box-shadow:0 0 0 2px var(--accent),0 3px 12px rgba(0,0,0,.3);}
+    .color-swatch.selected::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:white;text-shadow:0 1px 3px rgba(0,0,0,.6);}
+    .bg-theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+    .bg-theme-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 8px;border-radius:12px;cursor:pointer;border:2px solid var(--border);transition:all .18s;background:transparent;}
+    .bg-theme-btn:hover{border-color:var(--muted);}
+    .bg-theme-btn.active{border-color:var(--accent);background:rgba(var(--accent-rgb),.08);}
+    .bg-theme-preview{width:100%;height:44px;border-radius:8px;border:1px solid var(--border);overflow:hidden;position:relative;}
+    .bg-theme-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+    .bg-theme-btn.active .bg-theme-label{color:var(--accent);}
+    .custom-bg-wrap{display:none;flex-direction:column;gap:12px;padding-top:4px;}
+    .custom-bg-wrap.open{display:flex;}
+    .btn-danger{padding:10px 18px;background:rgba(255,101,132,.1);border:1px solid rgba(255,101,132,.3);border-radius:var(--radius);color:var(--accent2);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;}
+    .btn-danger:hover{background:rgba(255,101,132,.2);}
+    @media(max-width:1024px){.settings-layout{grid-template-columns:1fr;}}
+    @media(max-width:768px){.settings-side{position:static;}.agent-limit-table{font-size:12px;}.agent-limit-table th,.agent-limit-table td{padding:8px 6px;}.limit-input{width:70px;}}
+  </style>
+</head>
+<body>
+
+<div class="mobile-topbar">
+  <div class="logo-mark"><img src="logo.png" alt="" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\' style=\'width:30px;height:30px;font-size:13px;\'>A</div>'"/></div>
+  <span class="logo-text">Aasai Tech</span>
+  <button class="mobile-menu-btn" id="mob-menu-btn"><span></span><span></span><span></span></button>
+</div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark"><img src="logo.png" alt="" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\'>A</div>'"/></div>
+    <span class="logo-text">Aasai Tech</span>
+  </div>
+  <nav>
+    <a class="nav-item" href="home.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a class="nav-item" href="agents.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>My Agents</a>
+    <a class="nav-item" href="conversations.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Conversations</a>
+    <a class="nav-item" href="create-agent.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Create Agent</a>
+    <a class="nav-item active" href="settings.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
+    <a class="nav-item" href="profile.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-chip" onclick="location.href='profile.html'">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div style="flex:1;min-width:0;"><div class="user-name" id="user-name">…</div><div class="user-plan" id="user-plan">Free Plan</div></div>
+      <button class="btn-logout" onclick="event.stopPropagation();logout()" title="Logout"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar"><div class="page-title">Settings</div></div>
+  <div class="content page-enter">
+    <div class="settings-layout">
+
+      <!-- LEFT -->
+      <div class="settings-main">
+
+        <!-- Background Theme -->
+        <div class="settings-card">
+          <div class="settings-card-title"><div class="section-num">1</div>Background Theme</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6;">Choose how your dashboard looks. Affects only your personal view.</p>
+          <div class="bg-theme-grid" id="bg-theme-grid"></div>
+          <div class="custom-bg-wrap" id="custom-bg-wrap" style="margin-top:18px;">
+            <label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Custom Background Colour</label>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div id="custom-bg-preview" style="width:44px;height:44px;border-radius:10px;border:2px solid var(--border);flex-shrink:0;background:#0a0a0f;"></div>
+              <input type="text" id="custom-bg-hex" value="#0A0A0F" maxlength="7" placeholder="#0A0A0F" oninput="onCustomBgHex(this.value)"/>
+              <label style="width:44px;height:44px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" title="Pick colour">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                <input type="color" id="custom-bg-native" value="#0a0a0f" style="opacity:0;position:absolute;width:0;height:0;" oninput="onCustomBgNative(this.value)"/>
+              </label>
+            </div>
+          </div>
+          <button class="btn-primary" id="save-appearance-btn" style="margin-top:20px;" onclick="saveAppearance()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Appearance
+          </button>
+        </div>
+
+        <!-- Accent Colour -->
+        <div class="settings-card">
+          <div class="settings-card-title"><div class="section-num">2</div>Accent Colour</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6;">Personalise buttons, active nav states, and highlights across your dashboard.</p>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+            <div id="dash-color-preview" style="width:44px;height:44px;border-radius:10px;border:2px solid var(--border);flex-shrink:0;background:#6c63ff;"></div>
+            <input type="text" id="dash-color-hex" value="#6C63FF" maxlength="7" oninput="onDashHexInput(this.value)" placeholder="#6C63FF"/>
+            <label style="width:44px;height:44px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              <input type="color" id="dash-color-native" value="#6c63ff" style="opacity:0;position:absolute;width:0;height:0;" oninput="onDashNativeInput(this.value)"/>
+            </label>
+          </div>
+          <div class="color-palette" id="dash-color-palette"></div>
+          <button class="btn-primary" id="save-color-btn" style="margin-top:20px;" onclick="saveDashboardColor()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Accent Colour
+          </button>
+        </div>
+
+        <!-- Per-Agent Limits -->
+        <div class="settings-card">
+          <div class="settings-card-title"><div class="section-num">3</div>Per-Agent Limits</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6;">Set custom token and query caps per agent. Leave blank to allow unlimited usage.</p>
+          <div style="overflow-x:auto;">
+            <table class="agent-limit-table">
+              <thead><tr><th>Agent</th><th>Token Limit</th><th>Query Limit</th><th>Status</th></tr></thead>
+              <tbody id="limits-table"><tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;"><div class="skel" style="height:16px;"></div></td></tr></tbody>
+            </table>
+          </div>
+          <button class="btn-primary" id="save-limits-btn" style="margin-top:18px;" onclick="saveLimits()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Limits
+          </button>
+        </div>
+
+      </div><!-- /settings-main -->
+
+      <!-- RIGHT -->
+      <div class="settings-side">
+        <div class="settings-card">
+          <div class="settings-card-title">
+            <div class="settings-card-icon"><svg width="13" height="13" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+            Account Settings
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Email Notifications</div><div class="setting-sub">Receive usage alerts</div></div>
+            <label class="toggle"><input type="checkbox" id="tog-email" checked/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Token Warning Alerts</div><div class="setting-sub">Warn at 80% usage</div></div>
+            <label class="toggle"><input type="checkbox" id="tog-warn" checked/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">Allow Anonymous Chats</div><div class="setting-sub">Public users can chat without login</div></div>
+            <label class="toggle"><input type="checkbox" id="tog-anon" checked/><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+
+        <div class="settings-card" style="border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.03);">
+          <div class="settings-card-title" style="border-color:rgba(239,68,68,.15);">
+            <div class="settings-card-icon" style="background:rgba(239,68,68,.12);">
+              <svg width="13" height="13" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <span style="color:#ef4444;">Danger Zone</span>
+          </div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">These actions are permanent and cannot be undone.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button class="btn-danger" onclick="confirmClearAllConversations()">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+              Clear All Conversations
+            </button>
+            <button class="btn-danger" onclick="confirmDeleteAccount()">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="18" y1="6" x2="23" y2="11"/><line x1="23" y1="6" x2="18" y2="11"/></svg>
+              Delete Account
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script src="_shared.js"></script>
+<script>
+const BRAND_COLORS_LIST = ['#6c63ff','#7c3aed','#2563eb','#0891b2','#0d9488','#16a34a','#ca8a04','#ea580c','#dc2626','#db2777','#c8972a','#64748b','#ff6584','#43e97b','#f7971e']
+const BG_THEMES = [
+  {id:'dark',label:'Dark',bg:'#0a0a0f',bgRgb:'10,10,15',surface:'#111118',surface2:'#1a1a24',border:'#2a2a38',text:'#f0f0f8',muted:'#7a7a9a'},
+  {id:'light',label:'Light',bg:'#f5f5fa',bgRgb:'245,245,250',surface:'#ffffff',surface2:'#ededf5',border:'#e0e0ec',text:'#1a1a2e',muted:'#6868a0'},
+  {id:'midnight',label:'Midnight',bg:'#05050d',bgRgb:'5,5,13',surface:'#0d0d1a',surface2:'#12122a',border:'#1e1e30',text:'#e8e8ff',muted:'#6868a0'},
+  {id:'slate',label:'Slate',bg:'#0f172a',bgRgb:'15,23,42',surface:'#1e293b',surface2:'#263044',border:'#334155',text:'#f1f5f9',muted:'#64748b'},
+  {id:'white',label:'Pure White',bg:'#ffffff',bgRgb:'255,255,255',surface:'#f8f8fc',surface2:'#f0f0f8',border:'#e4e4f0',text:'#1a1a2e',muted:'#6868a0'},
+  {id:'custom',label:'Custom',bg:null},
+]
+
+let currentBgTheme = 'dark', customBgHex = '#0a0a0f', allAgents = [], currentUser = null
+
+function shiftHex(hex, offset) {
+  let r = Math.min(255, Math.max(0, parseInt(hex.slice(1,3),16)+offset))
+  let g = Math.min(255, Math.max(0, parseInt(hex.slice(3,5),16)+offset))
+  let b = Math.min(255, Math.max(0, parseInt(hex.slice(5,7),16)+offset))
+  return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('')
+}
+
+function applyBgTheme(themeId, customHex) {
+  const root = document.documentElement
+  let t = BG_THEMES.find(x => x.id === themeId)
+  if (!t) t = BG_THEMES[0]
+  if (themeId === 'custom') {
+    const hex = customHex || '#0a0a0f'
+    const [r,g,b] = [parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)]
+    const isDark = (r*0.299+g*0.587+b*0.114) < 128
+    root.style.setProperty('--bg', hex)
+    root.style.setProperty('--bg-rgb', `${r},${g},${b}`)
+    root.style.setProperty('--surface', isDark ? shiftHex(hex,10) : shiftHex(hex,-10))
+    root.style.setProperty('--surface2', isDark ? shiftHex(hex,20) : shiftHex(hex,-20))
+    root.style.setProperty('--border', isDark ? shiftHex(hex,35) : shiftHex(hex,-35))
+    root.style.setProperty('--text', isDark ? '#f0f0f8' : '#1a1a2e')
+    root.style.setProperty('--muted', isDark ? '#7a7a9a' : '#6868a0')
+  } else {
+    root.style.setProperty('--bg', t.bg)
+    root.style.setProperty('--bg-rgb', t.bgRgb)
+    root.style.setProperty('--surface', t.surface)
+    root.style.setProperty('--surface2', t.surface2)
+    root.style.setProperty('--border', t.border)
+    root.style.setProperty('--text', t.text)
+    root.style.setProperty('--muted', t.muted)
+  }
+  currentBgTheme = themeId
+  document.querySelectorAll('.bg-theme-btn').forEach(b => b.classList.toggle('active', b.dataset.id === themeId))
+  const cw = document.getElementById('custom-bg-wrap')
+  if (cw) cw.classList.toggle('open', themeId === 'custom')
+}
+
+function buildBgThemeGrid() {
+  const grid = document.getElementById('bg-theme-grid'); if (!grid) return
+  grid.innerHTML = BG_THEMES.map(t => {
+    const previewContent = t.id === 'custom'
+      ? `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;">🎨</div>`
+      : `<div style="width:100%;height:100%;background:${t.bg};display:flex;flex-direction:column;justify-content:flex-start;padding:5px 6px;gap:3px;">
+          <div style="height:4px;border-radius:2px;background:${t.surface};width:100%;"></div>
+          <div style="height:4px;border-radius:2px;background:${t.surface2};width:70%;"></div>
+        </div>`
+    return `<button class="bg-theme-btn ${t.id===currentBgTheme?'active':''}" data-id="${t.id}" onclick="selectBgTheme('${t.id}')">
+      <div class="bg-theme-preview">${previewContent}</div>
+      <span class="bg-theme-label">${t.label}</span>
+    </button>`
+  }).join('')
+}
+
+function selectBgTheme(id) { applyBgTheme(id, customBgHex) }
+function onCustomBgHex(val) {
+  const hex = val.startsWith('#') ? val : '#' + val
+  if (!isValidHex(hex)) return
+  customBgHex = hex
+  document.getElementById('custom-bg-native').value = hex
+  document.getElementById('custom-bg-preview').style.background = hex
+  applyBgTheme('custom', hex)
+}
+function onCustomBgNative(val) {
+  customBgHex = val
+  document.getElementById('custom-bg-hex').value = val.toUpperCase()
+  document.getElementById('custom-bg-preview').style.background = val
+  applyBgTheme('custom', val)
+}
+
+async function saveAppearance() {
+  const btn = document.getElementById('save-appearance-btn')
+  btnLoading(btn, 'Saving…')
+  try {
+    const r = await apiFetch('/auth/profile', { method: 'PUT', body: JSON.stringify({ dashboard_bg_theme: currentBgTheme, dashboard_bg_custom: currentBgTheme === 'custom' ? customBgHex : null }) })
+    if (!r.ok) throw new Error()
+    toast('Appearance saved ✓', 'success')
+  } catch { toast('Failed to save appearance', 'error') }
+  btnReset(btn)
+}
+
+function buildDashColorPalette() {
+  const el = document.getElementById('dash-color-palette'); if (!el) return
+  el.innerHTML = BRAND_COLORS_LIST.map(c =>
+    `<div class="color-swatch" data-color="${c}" style="background:${c};" onclick="pickDashColor('${c}')"></div>`
+  ).join('')
+}
+
+function pickDashColor(hex) {
+  applyAccent(hex)
+  document.getElementById('dash-color-hex').value = hex.toUpperCase()
+  document.getElementById('dash-color-native').value = hex
+  document.getElementById('dash-color-preview').style.background = hex
+  document.querySelectorAll('#dash-color-palette .color-swatch').forEach(s => s.classList.toggle('selected', s.dataset.color.toLowerCase() === hex.toLowerCase()))
+}
+
+function onDashHexInput(val) {
+  const hex = val.startsWith('#') ? val : '#' + val
+  if (!isValidHex(hex)) return
+  document.getElementById('dash-color-native').value = hex
+  document.getElementById('dash-color-preview').style.background = hex
+  applyAccent(hex)
+}
+function onDashNativeInput(val) {
+  document.getElementById('dash-color-hex').value = val.toUpperCase()
+  document.getElementById('dash-color-preview').style.background = val
+  applyAccent(val)
+}
+
+async function saveDashboardColor() {
+  const hex = document.getElementById('dash-color-hex').value.trim()
+  if (!isValidHex(hex)) { toast('Invalid colour value', 'error'); return }
+  const btn = document.getElementById('save-color-btn')
+  btnLoading(btn, 'Saving…')
+  try {
+    const r = await apiFetch('/auth/profile', { method: 'PUT', body: JSON.stringify({ dashboard_accent: hex }) })
+    if (!r.ok) throw new Error()
+    toast('Accent colour saved ✓', 'success')
+  } catch { toast('Failed to save colour', 'error') }
+  btnReset(btn)
+}
+
+async function loadLimitsTable() {
+  try {
+    const r = await apiFetch('/agents')
+    allAgents = await r.json()
+    const tbody = document.getElementById('limits-table')
+    if (!allAgents.length) { tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;">No agents yet</td></tr>`; return }
+    tbody.innerHTML = allAgents.map(a =>
+      `<tr>
+        <td style="font-weight:500;">${escHtml(a.name)}</td>
+        <td><input class="limit-input" type="number" id="tl-${a._id}" value="${a.token_limit||''}" placeholder="∞" min="0"/></td>
+        <td><input class="limit-input" type="number" id="ql-${a._id}" value="${a.query_limit||''}" placeholder="∞" min="0"/></td>
+        <td><span style="font-size:11px;color:${a.published?'var(--accent3)':'var(--muted)'};">${a.published?'Live':'Draft'}</span></td>
+      </tr>`
+    ).join('')
+  } catch (e) { console.error(e) }
+}
+
+async function saveLimits() {
+  const btn = document.getElementById('save-limits-btn')
+  btnLoading(btn, 'Saving…')
+  try {
+    await Promise.all(allAgents.map(a => {
+      const tl = document.getElementById(`tl-${a._id}`)?.value
+      const ql = document.getElementById(`ql-${a._id}`)?.value
+      return apiFetch('/agents/' + a._id, {
+        method: 'PUT',
+        body: JSON.stringify({ name: a.name, brand_color: a.brand_color, welcome_message: a.welcome_message, logo_url: a.logo_url, system_prompt: a.system_prompt, token_limit: tl ? parseInt(tl) : null, query_limit: ql ? parseInt(ql) : null })
+      })
+    }))
+    toast('Limits saved ✓', 'success')
+  } catch { toast('Failed to save limits', 'error') }
+  btnReset(btn)
+}
+
+async function confirmClearAllConversations() {
+  if (!confirm('Clear conversation history for ALL your agents?\n\nYour data is kept safely and never deleted.')) return
+  try {
+    const r = await apiFetch('/conversations/clear-all', { method: 'POST' })
+    if (!r.ok) throw new Error()
+    toast('All conversation histories cleared', 'success')
+  } catch { toast('Failed to clear conversations', 'error') }
+}
+
+function confirmDeleteAccount() {
+  if (confirm('Are you sure you want to delete your account? All data will be lost permanently.')) {
+    toast('Contact support to complete account deletion', 'error')
+  }
+}
+
+async function init() {
+  currentUser = await requireAuthPage()
+  if (!currentUser) return
+  renderUserChip(currentUser)
+  initMobileSidebar()
+
+  // Restore saved settings
+  const savedAccent = currentUser.dashboard_accent || '#6c63ff'
+  applyAccent(savedAccent)
+  pickDashColor(savedAccent)
+
+  const savedBgTheme = currentUser.dashboard_bg_theme || 'dark'
+  const savedBgCustom = currentUser.dashboard_bg_custom || '#0a0a0f'
+  customBgHex = savedBgCustom
+  applyBgTheme(savedBgTheme, savedBgCustom)
+
+  buildBgThemeGrid()
+  buildDashColorPalette()
+
+  if (savedBgTheme === 'custom') {
+    document.getElementById('custom-bg-preview').style.background = customBgHex
+    document.getElementById('custom-bg-hex').value = customBgHex.toUpperCase()
+    document.getElementById('custom-bg-native').value = customBgHex
+  }
+
+  await loadLimitsTable()
+}
+
+init()
+</script>
+</body>
+</html>
