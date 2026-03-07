@@ -38,7 +38,6 @@ img{display:block;max-width:100%}
 
 .container{max-width:1180px;margin:0 auto;padding:0 40px}
 
-/* subtle grain overlay — lighter for light theme */
 body::before{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.025'/%3E%3C/svg%3E");opacity:.25;}
 
 .bg-glow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
@@ -59,8 +58,8 @@ body::before{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;b
 .nav-cta{display:flex;align-items:center;gap:8px;padding:8px 18px;background:var(--t1);color:#ffffff;border-radius:var(--r8);font-size:13.5px;font-weight:600;transition:all .2s;white-space:nowrap;flex-shrink:0;margin-left:auto;}
 .nav-cta:hover{background:#000;transform:translateY(-1px);box-shadow:var(--shadow)}
 
-/* HAMBURGER */
-.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;margin-left:auto;background:none;border:none;}
+/* HAMBURGER — hidden on desktop */
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;flex-shrink:0;}
 .nav-hamburger span{display:block;width:22px;height:2px;background:var(--t2);border-radius:2px;transition:all .3s;}
 .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
 .nav-hamburger.open span:nth-child(2){opacity:0;}
@@ -237,10 +236,15 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
 
 @media(max-width:768px){
   .container{padding:0 20px}
-  .nav-inner{padding:0 20px}
+  .nav-inner{padding:0 16px}
   .nav-links{display:none}
   .nav-cta{display:none}
   .nav-hamburger{display:flex}
+
+  /* Mobile nav: hamburger LEFT, logo+name centered */
+  .nav-logo{margin-right:0;position:absolute;left:50%;transform:translateX(-50%);}
+  .nav-logo-mark{width:30px;height:30px;}
+  .nav-logo-name{font-size:20px;font-weight:700;}
 
   .hero{padding:calc(var(--nav) + 48px) 20px 72px;min-height:auto;}
   .hero-badge{font-size:11px;margin-bottom:24px;}
@@ -300,9 +304,13 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
 <!-- NAV -->
 <nav class="nav" id="nav" role="navigation">
   <div class="nav-inner">
+    <!-- Hamburger FIRST (left) on mobile -->
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
     <a href="https://www.aasaitech.in" class="nav-logo">
       <div class="nav-logo-mark">
-        <img src="./logo.png" alt="Aasai Tech logo" onerror="this.parentElement.innerHTML='<svg width=\'16\' height=\'16\' viewBox=\'0 0 20 20\' fill=\'none\'><circle cx=\'10\' cy=\'10\' r=\'3\' fill=\'#b8830a\'/><circle cx=\'3\' cy=\'5\' r=\'1.4\' fill=\'rgba(0,0,0,.15)\'/><circle cx=\'17\' cy=\'5\' r=\'1.4\' fill=\'rgba(0,0,0,.15)\'/><circle cx=\'3\' cy=\'15\' r=\'1.4\' fill=\'rgba(0,0,0,.15)\'/><circle cx=\'17\' cy=\'15\' r=\'1.4\' fill=\'rgba(0,0,0,.15)\'/><line x1=\'6.8\' y1=\'8.5\' x2=\'4.2\' y2=\'6.4\' stroke=\'rgba(184,131,10,.5)\' stroke-width=\'1.2\' stroke-linecap=\'round\'/><line x1=\'13.2\' y1=\'8.5\' x2=\'15.8\' y2=\'6.4\' stroke=\'rgba(184,131,10,.5)\' stroke-width=\'1.2\' stroke-linecap=\'round\'/><line x1=\'6.8\' y1=\'11.5\' x2=\'4.2\' y2=\'13.6\' stroke=\'rgba(184,131,10,.5)\' stroke-width=\'1.2\' stroke-linecap=\'round\'/><line x1=\'13.2\' y1=\'11.5\' x2=\'15.8\' y2=\'13.6\' stroke=\'rgba(184,131,10,.5)\' stroke-width=\'1.2\' stroke-linecap=\'round\'/></svg>'"/>
+        <img src="./logo.png" alt="Aasai Tech logo" onerror="this.parentElement.innerHTML='<svg width=\'16\' height=\'16\' viewBox=\'0 0 20 20\' fill=\'none\'><circle cx=\'10\' cy=\'10\' r=\'3\' fill=\'#b8830a\'/></svg>'"/>
       </div>
       <span class="nav-logo-name">Aasai Tech</span>
     </a>
@@ -316,9 +324,6 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
       <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z"/></svg>
       Sign in
     </a>
-    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
   </div>
 </nav>
 
@@ -485,34 +490,22 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
       <div class="support-channels reveal d1">
         <a class="support-channel" href="mailto:hello@aasaitech.in">
           <div class="ch-icon" style="background:rgba(184,131,10,.1);">✉️</div>
-          <div>
-            <div class="ch-name">Email us</div>
-            <div class="ch-sub">hello@aasaitech.in · We reply within 24 hrs</div>
-          </div>
+          <div><div class="ch-name">Email us</div><div class="ch-sub">hello@aasaitech.in · We reply within 24 hrs</div></div>
           <span class="ch-arrow">→</span>
         </a>
         <a class="support-channel" href="mailto:support@aasaitech.in">
           <div class="ch-icon" style="background:rgba(59,130,246,.1);">🛠️</div>
-          <div>
-            <div class="ch-name">Technical support</div>
-            <div class="ch-sub">support@aasaitech.in · Bugs &amp; integration help</div>
-          </div>
+          <div><div class="ch-name">Technical support</div><div class="ch-sub">support@aasaitech.in · Bugs &amp; integration help</div></div>
           <span class="ch-arrow">→</span>
         </a>
         <a class="support-channel" href="terms.html">
           <div class="ch-icon" style="background:rgba(22,163,105,.1);">🔒</div>
-          <div>
-            <div class="ch-name">Privacy &amp; data questions</div>
-            <div class="ch-sub">Read our full privacy policy</div>
-          </div>
+          <div><div class="ch-name">Privacy &amp; data questions</div><div class="ch-sub">Read our full privacy policy</div></div>
           <span class="ch-arrow">→</span>
         </a>
         <div class="support-channel" style="cursor:default;pointer-events:none;">
           <div class="ch-icon" style="background:rgba(124,58,237,.1);">⚡</div>
-          <div>
-            <div class="ch-name">Average response time</div>
-            <div class="ch-sub">Under 24 hours on business days</div>
-          </div>
+          <div><div class="ch-name">Average response time</div><div class="ch-sub">Under 24 hours on business days</div></div>
           <span style="margin-left:auto;font-size:11px;font-weight:600;color:var(--green);background:var(--greenA);border:1px solid rgba(22,163,105,.2);padding:3px 10px;border-radius:20px;">Fast</span>
         </div>
       </div>
@@ -558,9 +551,7 @@ textarea.sf-input{resize:vertical;min-height:100px;line-height:1.6;}
 <div class="footer-wrap">
   <div class="footer">
     <a href="https://www.aasaitech.in" class="footer-brand">
-      <div class="footer-brand-logo">
-        <img src="logo.png" alt="Aasai Tech" onerror="this.style.display='none'"/>
-      </div>
+      <div class="footer-brand-logo"><img src="logo.png" alt="Aasai Tech" onerror="this.style.display='none'"/></div>
       <span class="footer-brand-name">Aasai Tech</span>
     </a>
     <div class="footer-links">
