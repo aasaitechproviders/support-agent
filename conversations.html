@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Conversations — Aasai Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="_shared.css"/>
+  <style>
+    ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+    .conv-filter-bar{padding:14px 28px 12px;border-bottom:1px solid var(--border);}
+    .conv-filter-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+    .conv-agent-label{font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap;}
+    .conv-agent-select{padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;min-width:220px;cursor:pointer;outline:none;font-family:'DM Sans',sans-serif;}
+    .conv-filter-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .conv-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+    .conv-stat-chip{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:20px;}
+    .conv-stat-chip strong{color:var(--text);}
+    .conv-clear-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:transparent;border:1px solid rgba(239,68,68,.3);color:#ef4444;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;margin-left:auto;}
+    .conv-clear-btn:hover{background:rgba(239,68,68,.08);}
+    #conv-body{display:flex;gap:0;height:calc(100vh - 162px);padding:0 28px 28px;overflow:hidden;}
+    #conv-session-list{width:340px;flex-shrink:0;overflow-y:auto;border:1px solid var(--border);border-radius:12px 0 0 12px;background:var(--surface);}
+    #conv-thread-panel{flex:1;overflow-y:auto;border:1px solid var(--border);border-left:none;border-radius:0 12px 12px 0;background:var(--surface2);display:flex;flex-direction:column;}
+    .session-item{padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+    .session-item:hover{background:var(--surface2);}
+    .session-item.active{background:rgba(var(--accent-rgb),.1);border-left:3px solid var(--accent);padding-left:13px;}
+    .session-ip{font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px;}
+    .session-ip-badge{font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;background:rgba(var(--accent-rgb),.12);color:var(--accent);border:1px solid rgba(var(--accent-rgb),.2);}
+    .session-preview{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .session-meta{font-size:11px;color:var(--muted);margin-top:5px;display:flex;gap:10px;}
+    .thread-header{padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .thread-ip-tag{font-size:12px;font-weight:600;color:var(--accent);background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.2);padding:4px 10px;border-radius:6px;}
+    .thread-msgs{padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
+    .thread-turn{display:flex;flex-direction:column;gap:8px;}
+    .thread-q{align-self:flex-end;background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.2);border-radius:12px 12px 3px 12px;padding:10px 14px;font-size:13px;color:var(--text);max-width:75%;}
+    .thread-a{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:12px 12px 12px 3px;padding:10px 14px;font-size:13px;color:var(--text);max-width:80%;line-height:1.6;}
+    .thread-ts{font-size:11px;color:var(--muted);align-self:flex-end;}
+    .conv-empty{padding:40px 24px;text-align:center;color:var(--muted);font-size:13px;line-height:1.7;}
+    .conv-thread-empty-state{flex:1;padding:40px 24px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;color:var(--muted);font-size:14px;text-align:center;}
+
+    /* Mobile */
+    @media(max-width:768px){
+      .conv-filter-bar{padding:14px 16px 10px;}
+      .conv-agent-select{flex:1;}
+      #conv-body{flex-direction:column;height:auto;padding:12px 14px 24px;gap:14px;overflow:visible;}
+      #conv-session-list{width:100%;border-radius:12px;max-height:340px;}
+      #conv-thread-panel{width:100%;flex:none;min-height:60vh;border-left:1px solid var(--border);border-radius:12px;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="mobile-topbar">
+  <div class="logo-mark"><img src="logo.png" alt="" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\' style=\'width:30px;height:30px;font-size:13px;\'>A</div>'"/></div>
+  <span class="logo-text">Aasai Tech</span>
+  <button class="mobile-menu-btn" id="mob-menu-btn"><span></span><span></span><span></span></button>
+</div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark"><img src="logo.png" alt="" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\'>A</div>'"/></div>
+    <span class="logo-text">Aasai Tech</span>
+  </div>
+  <nav>
+    <a class="nav-item" href="home.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a class="nav-item" href="agents.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>My Agents</a>
+    <a class="nav-item active" href="conversations.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Conversations</a>
+    <a class="nav-item" href="create-agent.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Create Agent</a>
+    <a class="nav-item" href="settings.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
+    <a class="nav-item" href="profile.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-chip" onclick="location.href='profile.html'">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div style="flex:1;min-width:0;"><div class="user-name" id="user-name">…</div><div class="user-plan" id="user-plan">Free Plan</div></div>
+      <button class="btn-logout" onclick="event.stopPropagation();logout()" title="Logout"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar"><div class="page-title">Conversations</div></div>
+
+  <div class="conv-filter-bar">
+    <div class="conv-filter-row">
+      <label class="conv-agent-label">Agent</label>
+      <select id="conv-agent-select" onchange="loadConversations()" class="conv-agent-select">
+        <option value="">— Select an agent —</option>
+      </select>
+    </div>
+    <div class="conv-filter-meta">
+      <div id="conv-stats-chips" class="conv-chips"></div>
+      <button id="conv-clear-btn" onclick="confirmClearAgentConversations()" class="conv-clear-btn" style="display:none;">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        Clear history
+      </button>
+    </div>
+  </div>
+
+  <div id="conv-body">
+    <div id="conv-session-list">
+      <div class="conv-empty">Select an agent to view conversations</div>
+    </div>
+    <div id="conv-thread-panel">
+      <div class="conv-thread-empty-state">
+        <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:.25"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Select a conversation to view the full thread</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="_shared.js"></script>
+<script>
+async function init() {
+  const user = await requireAuthPage()
+  if (!user) return
+  renderUserChip(user)
+  initMobileSidebar()
+  await loadAgentList()
+}
+
+async function loadAgentList() {
+  try {
+    const r = await apiFetch('/agents')
+    const agents = await r.json()
+    const sel = document.getElementById('conv-agent-select')
+    agents.forEach(a => {
+      const opt = document.createElement('option')
+      opt.value = a._id; opt.textContent = a.name
+      sel.appendChild(opt)
+    })
+    if (agents.length === 1) { sel.value = agents[0]._id; loadConversations() }
+  } catch (e) { console.error(e) }
+}
+
+async function loadConversations() {
+  const agentId = document.getElementById('conv-agent-select').value
+  if (!agentId) return
+  const listEl = document.getElementById('conv-session-list')
+  listEl.innerHTML = '<div class="conv-empty">Loading sessions…</div>'
+  document.getElementById('conv-stats-chips').innerHTML = ''
+  document.getElementById('conv-thread-panel').innerHTML = '<div class="conv-thread-empty-state"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:.3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Select a conversation</span></div>'
+
+  try {
+    const r = await apiFetch('/agents/' + agentId + '/conversations')
+    const d = await r.json()
+    const sessions = d.sessions || []
+    const totalMsgs = sessions.reduce((a, s) => a + s.message_count, 0)
+    const uniqueIPs = new Set(sessions.map(s => s.visitor_ip)).size
+    document.getElementById('conv-stats-chips').innerHTML =
+      `<div class="conv-stat-chip"><strong>${sessions.length}</strong> sessions</div>
+       <div class="conv-stat-chip"><strong>${totalMsgs}</strong> messages</div>
+       <div class="conv-stat-chip"><strong>${uniqueIPs}</strong> unique IPs</div>`
+    const clearBtn = document.getElementById('conv-clear-btn')
+    if (clearBtn) clearBtn.style.display = sessions.length > 0 ? 'flex' : 'none'
+    if (!sessions.length) { listEl.innerHTML = '<div class="conv-empty">No conversations yet.<br>Share your chat link to start receiving messages.</div>'; return }
+    listEl.innerHTML = sessions.map(s => {
+      const key = s.session_id || s.visitor_id || s.visitor_ip
+      const preview = s.first_question.length > 55 ? s.first_question.slice(0, 55) + '…' : s.first_question
+      const ip = s.visitor_ip || 'Unknown'
+      return `<div class="session-item" data-key="${escHtml(key)}" onclick="loadThread('${agentId}','${escHtml(key)}',this)">
+        <div class="session-ip">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
+          ${escHtml(ip.length > 16 ? ip.slice(0, 16) + '…' : ip)}
+          <span class="session-ip-badge">${s.message_count} msg${s.message_count !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="session-preview">${escHtml(preview)}</div>
+        <div class="session-meta"><span>${timeAgo(s.last_active)}</span><span>Started ${timeAgo(s.started_at)}</span></div>
+      </div>`
+    }).join('')
+  } catch (e) { listEl.innerHTML = '<div class="conv-empty">Failed to load conversations.</div>' }
+}
+
+async function loadThread(agentId, sessionKey, itemEl) {
+  document.querySelectorAll('.session-item').forEach(x => x.classList.remove('active'))
+  itemEl.classList.add('active')
+  const panel = document.getElementById('conv-thread-panel')
+  panel.innerHTML = '<div class="conv-thread-empty-state"><div style="width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;"></div><span>Loading…</span></div>'
+  try {
+    const r = await apiFetch('/agents/' + agentId + '/conversations/' + encodeURIComponent(sessionKey))
+    const d = await r.json()
+    const msgs = d.messages || []
+    if (!msgs.length) { panel.innerHTML = '<div class="conv-thread-empty-state">No messages found.</div>'; return }
+    const ip = msgs[0].visitor_ip || 'Unknown'
+    const totalTok = msgs.reduce((a, m) => a + (m.tokens_used || 0), 0)
+    panel.innerHTML = `
+      <div class="thread-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/></svg>
+        <span class="thread-ip-tag">${escHtml(ip)}</span>
+        <span style="font-size:12px;color:var(--muted);">Started ${new Date(msgs[0].created_at).toLocaleString()}</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--muted);">${msgs.length} messages · ${fmt(totalTok)} tokens</span>
+      </div>
+      <div class="thread-msgs">
+        ${msgs.map(m => `<div class="thread-turn">
+          <div class="thread-q">${escHtml(m.question)}</div>
+          <div class="thread-a">${m.answer}</div>
+          <div class="thread-ts">${new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+        </div>`).join('')}
+      </div>`
+  } catch (e) { panel.innerHTML = '<div class="conv-thread-empty-state">Failed to load thread.</div>' }
+}
+
+async function confirmClearAgentConversations() {
+  const agentId = document.getElementById('conv-agent-select').value
+  if (!agentId) return
+  const name = document.getElementById('conv-agent-select').selectedOptions[0]?.text || 'this agent'
+  if (!confirm(`Clear conversation history for "${name}"?\n\nData is kept safely in the database.`)) return
+  try {
+    const r = await apiFetch('/agents/' + agentId + '/clear-conversations', { method: 'POST' })
+    if (!r.ok) throw new Error()
+    toast('Conversation history cleared', 'success')
+    loadConversations()
+  } catch { toast('Failed to clear conversations', 'error') }
+}
+
+init()
+</script>
+</body>
+</html>
