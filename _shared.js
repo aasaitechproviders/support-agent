@@ -175,7 +175,19 @@ function applyBgTheme(themeId, customHex) {
     root.style.setProperty('--text', t.text)
     root.style.setProperty('--muted', t.muted)
   }
+  // Persist to localStorage for instant apply on next page load
+  localStorage.setItem('aasai_bg_theme', themeId)
+  if (customHex) localStorage.setItem('aasai_bg_custom', customHex)
 }
+
+// Apply theme instantly from localStorage (before API call, no flash)
+;(function() {
+  const t = localStorage.getItem('aasai_bg_theme')
+  const c = localStorage.getItem('aasai_bg_custom')
+  if (t) applyBgTheme(t, c)
+  const accent = localStorage.getItem('aasai_accent')
+  if (accent) applyAccent(accent)
+})()
 
 
 const BRAND_COLORS = ['#6c63ff','#7c3aed','#2563eb','#0891b2','#0d9488','#16a34a','#ca8a04','#ea580c','#dc2626','#db2777','#c8972a','#64748b','#ff6584','#43e97b','#f7971e']
@@ -184,6 +196,7 @@ function applyAccent(hex) {
   if (!isValidHex(hex)) return
   document.documentElement.style.setProperty('--accent', hex)
   document.documentElement.style.setProperty('--accent-rgb', hexToRgb(hex))
+  localStorage.setItem('aasai_accent', hex)
 }
 
 // ── Guard: redirect if not authed ──
