@@ -209,6 +209,15 @@ function renderCharts(daily) {
   new Chart(document.getElementById('chart-queries'), { type: 'bar', data: { labels, datasets: [{ data: queryData, backgroundColor: 'rgba(255,101,132,.6)', borderColor: '#ff6584', borderWidth: 1, borderRadius: 4 }] }, options: opts })
 }
 
+;(function() {
+  const p = new URLSearchParams(location.search)
+  const tk = p.get('token')
+  if (tk) {
+    localStorage.setItem('aasai_token', tk)
+    history.replaceState({}, '', location.pathname)
+  }
+})()
+
 init()
 </script>
 </body>
