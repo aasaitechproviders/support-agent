@@ -195,49 +195,23 @@
 
 <script src="_shared.js"></script>
 <script>
+// BG_THEMES and applyBgTheme come from _shared.js
+// Local additions for settings UI only
 const BRAND_COLORS_LIST = ['#6c63ff','#7c3aed','#2563eb','#0891b2','#0d9488','#16a34a','#ca8a04','#ea580c','#dc2626','#db2777','#c8972a','#64748b','#ff6584','#43e97b','#f7971e']
-const BG_THEMES = [
-  {id:'dark',label:'Dark',bg:'#0a0a0f',bgRgb:'10,10,15',surface:'#111118',surface2:'#1a1a24',border:'#2a2a38',text:'#f0f0f8',muted:'#7a7a9a'},
-  {id:'light',label:'Light',bg:'#f5f5fa',bgRgb:'245,245,250',surface:'#ffffff',surface2:'#ededf5',border:'#e0e0ec',text:'#1a1a2e',muted:'#6868a0'},
-  {id:'midnight',label:'Midnight',bg:'#05050d',bgRgb:'5,5,13',surface:'#0d0d1a',surface2:'#12122a',border:'#1e1e30',text:'#e8e8ff',muted:'#6868a0'},
-  {id:'slate',label:'Slate',bg:'#0f172a',bgRgb:'15,23,42',surface:'#1e293b',surface2:'#263044',border:'#334155',text:'#f1f5f9',muted:'#64748b'},
-  {id:'white',label:'Pure White',bg:'#ffffff',bgRgb:'255,255,255',surface:'#f8f8fc',surface2:'#f0f0f8',border:'#e4e4f0',text:'#1a1a2e',muted:'#6868a0'},
-  {id:'custom',label:'Custom',bg:null},
+const BG_THEMES_UI = [
+  {id:'dark',    label:'Dark'},
+  {id:'light',   label:'Light'},
+  {id:'midnight',label:'Midnight'},
+  {id:'slate',   label:'Slate'},
+  {id:'white',   label:'Pure White'},
+  {id:'custom',  label:'Custom'},
 ]
 
 let currentBgTheme = 'dark', customBgHex = '#0a0a0f', allAgents = [], currentUser = null
 
-function shiftHex(hex, offset) {
-  let r = Math.min(255, Math.max(0, parseInt(hex.slice(1,3),16)+offset))
-  let g = Math.min(255, Math.max(0, parseInt(hex.slice(3,5),16)+offset))
-  let b = Math.min(255, Math.max(0, parseInt(hex.slice(5,7),16)+offset))
-  return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('')
-}
-
-function applyBgTheme(themeId, customHex) {
-  const root = document.documentElement
-  let t = BG_THEMES.find(x => x.id === themeId)
-  if (!t) t = BG_THEMES[0]
-  if (themeId === 'custom') {
-    const hex = customHex || '#0a0a0f'
-    const [r,g,b] = [parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)]
-    const isDark = (r*0.299+g*0.587+b*0.114) < 128
-    root.style.setProperty('--bg', hex)
-    root.style.setProperty('--bg-rgb', `${r},${g},${b}`)
-    root.style.setProperty('--surface', isDark ? shiftHex(hex,10) : shiftHex(hex,-10))
-    root.style.setProperty('--surface2', isDark ? shiftHex(hex,20) : shiftHex(hex,-20))
-    root.style.setProperty('--border', isDark ? shiftHex(hex,35) : shiftHex(hex,-35))
-    root.style.setProperty('--text', isDark ? '#f0f0f8' : '#1a1a2e')
-    root.style.setProperty('--muted', isDark ? '#7a7a9a' : '#6868a0')
-  } else {
-    root.style.setProperty('--bg', t.bg)
-    root.style.setProperty('--bg-rgb', t.bgRgb)
-    root.style.setProperty('--surface', t.surface)
-    root.style.setProperty('--surface2', t.surface2)
-    root.style.setProperty('--border', t.border)
-    root.style.setProperty('--text', t.text)
-    root.style.setProperty('--muted', t.muted)
-  }
+function selectBgThemeUI(themeId) {
+  // Use shared applyBgTheme which also saves to localStorage
+  applyBgTheme(themeId, customBgHex)
   currentBgTheme = themeId
   document.querySelectorAll('.bg-theme-btn').forEach(b => b.classList.toggle('active', b.dataset.id === themeId))
   const cw = document.getElementById('custom-bg-wrap')
@@ -246,34 +220,35 @@ function applyBgTheme(themeId, customHex) {
 
 function buildBgThemeGrid() {
   const grid = document.getElementById('bg-theme-grid'); if (!grid) return
-  grid.innerHTML = BG_THEMES.map(t => {
+  grid.innerHTML = BG_THEMES_UI.map(t => {
+    const shared = BG_THEMES.find(x => x.id === t.id)
     const previewContent = t.id === 'custom'
       ? `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;">🎨</div>`
-      : `<div style="width:100%;height:100%;background:${t.bg};display:flex;flex-direction:column;justify-content:flex-start;padding:5px 6px;gap:3px;">
-          <div style="height:4px;border-radius:2px;background:${t.surface};width:100%;"></div>
-          <div style="height:4px;border-radius:2px;background:${t.surface2};width:70%;"></div>
+      : `<div style="width:100%;height:100%;background:${shared.bg};display:flex;flex-direction:column;justify-content:flex-start;padding:5px 6px;gap:3px;">
+          <div style="height:4px;border-radius:2px;background:${shared.surface};width:100%;"></div>
+          <div style="height:4px;border-radius:2px;background:${shared.surface2};width:70%;"></div>
         </div>`
-    return `<button class="bg-theme-btn ${t.id===currentBgTheme?'active':''}" data-id="${t.id}" onclick="selectBgTheme('${t.id}')">
+    return `<button class="bg-theme-btn ${t.id===currentBgTheme?'active':''}" data-id="${t.id}" onclick="selectBgThemeUI('${t.id}')">
       <div class="bg-theme-preview">${previewContent}</div>
       <span class="bg-theme-label">${t.label}</span>
     </button>`
   }).join('')
 }
 
-function selectBgTheme(id) { applyBgTheme(id, customBgHex) }
+function selectBgTheme(id) { selectBgThemeUI(id) }
 function onCustomBgHex(val) {
   const hex = val.startsWith('#') ? val : '#' + val
   if (!isValidHex(hex)) return
   customBgHex = hex
   document.getElementById('custom-bg-native').value = hex
   document.getElementById('custom-bg-preview').style.background = hex
-  applyBgTheme('custom', hex)
+  selectBgThemeUI('custom')
 }
 function onCustomBgNative(val) {
   customBgHex = val
   document.getElementById('custom-bg-hex').value = val.toUpperCase()
   document.getElementById('custom-bg-preview').style.background = val
-  applyBgTheme('custom', val)
+  selectBgThemeUI('custom')
 }
 
 async function saveAppearance() {
@@ -391,7 +366,8 @@ async function init() {
   const savedBgTheme = currentUser.dashboard_bg_theme || 'dark'
   const savedBgCustom = currentUser.dashboard_bg_custom || '#0a0a0f'
   customBgHex = savedBgCustom
-  applyBgTheme(savedBgTheme, savedBgCustom)
+  currentBgTheme = savedBgTheme
+  applyBgTheme(savedBgTheme, savedBgCustom)  // shared fn — saves to localStorage too
 
   buildBgThemeGrid()
   buildDashColorPalette()
