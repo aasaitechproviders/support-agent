@@ -5,277 +5,508 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Chat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
+    /* ── Design tokens ─────────────────────────────────────────────────────── */
     :root {
-      --bg:#0f0f13;--bg2:#16161d;--surface:#1c1c26;--surface2:#232330;--surface3:#2a2a3a;
-      --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-      --text:#f0eff8;--text2:#9e9db8;--text3:#5e5d7a;
-      --accent:#7c6aff;--accent-rgb:124,106,255;
-      --accent-l:rgba(124,106,255,0.12);--accent-b:rgba(124,106,255,0.28);
-      --green:#22c55e;--red:#f87171;--yellow:#fbbf24;--pink:#f472b6;--cyan:#22d3ee;--orange:#fb923c;
-      --font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
-      --pad-x:20px;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
-      --radius:18px;--sh:0 4px 24px rgba(0,0,0,0.4);
+      /* Dark theme defaults */
+      --bg:       #0d0d12;
+      --bg2:      #13131a;
+      --surface:  #1a1a24;
+      --surface2: #20202c;
+      --surface3: #272736;
+      --border:   rgba(255,255,255,0.06);
+      --border2:  rgba(255,255,255,0.11);
+      --text:     #eeedf8;
+      --text2:    #9997b8;
+      --text3:    #56547a;
+      --accent:   #7c6aff;
+      --accent-rgb: 124,106,255;
+      --accent-l: rgba(124,106,255,0.10);
+      --accent-b: rgba(124,106,255,0.25);
+      --green:    #22c55e;
+      --red:      #f87171;
+      --yellow:   #fbbf24;
+      --pink:     #f472b6;
+      --cyan:     #22d3ee;
+      --font:     'Sora', sans-serif;
+      --mono:     'JetBrains Mono', monospace;
+      --pad-x:    20px;
+      --safe-b:   env(safe-area-inset-bottom, 0px);
+      --safe-t:   env(safe-area-inset-top, 0px);
+      --radius:   20px;
+      --shadow:   0 4px 28px rgba(0,0,0,0.5);
     }
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    html,body{height:100%}
-    body{font-family:var(--font);background:var(--bg);color:var(--text);height:100dvh;display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased;}
-    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");opacity:0.6;}
 
-    /* HEADER */
-    .hdr{position:relative;z-index:20;background:rgba(22,22,29,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 var(--pad-x);padding-top:var(--safe-t);height:calc(64px + var(--safe-t));display:flex;align-items:center;gap:13px;flex-shrink:0;}
-    .hdr::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--accent-rgb),0.4),transparent);}
-    .hdr-logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--pink));display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;box-shadow:0 0 0 1px rgba(var(--accent-rgb),0.3),0 4px 16px rgba(var(--accent-rgb),0.3);}
-    .hdr-logo img{width:100%;height:100%;object-fit:contain;border-radius:12px;}
-    .hdr-fb{font-size:16px;color:white;font-weight:800;}
-    .hdr-info{flex:1;min-width:0;}
-    .hdr-name{font-size:14px;font-weight:700;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
-    .hdr-status{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);margin-top:2px;font-family:var(--mono);}
-    .sdot{width:6px;height:6px;background:var(--green);border-radius:50%;flex-shrink:0;box-shadow:0 0 6px var(--green);animation:pulse 2.4s ease infinite;}
-    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.65)}}
-    .hdr-by{font-size:10px;color:var(--text3);font-family:var(--mono);white-space:nowrap;flex-shrink:0;}
-    .hdr-by a{color:var(--accent);text-decoration:none;font-weight:600;}
+    /* Light theme */
+    body.theme-light {
+      --bg:       #f4f3ef;
+      --bg2:      #ebe9e4;
+      --surface:  #ffffff;
+      --surface2: #f0eeeb;
+      --surface3: #e5e3de;
+      --border:   rgba(0,0,0,0.07);
+      --border2:  rgba(0,0,0,0.13);
+      --text:     #18171a;
+      --text2:    #555360;
+      --text3:    #a09ea8;
+      --shadow:   0 2px 16px rgba(0,0,0,0.07),0 6px 28px rgba(0,0,0,0.04);
+    }
+    body.theme-light .hdr            { background: rgba(255,255,255,0.9); }
+    body.theme-light .input-area     { background: rgba(244,243,239,0.96); }
+    body.theme-light .bubble         { background: var(--surface); }
+    body.theme-light body::before    { opacity: 0.3; }
 
-    /* SCROLL */
-    .scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;position:relative;z-index:1;}
-    .scroll::-webkit-scrollbar{width:3px;}
-    .scroll::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px;}
-    .pad{padding-left:var(--pad-x);padding-right:var(--pad-x);}
+    /* Midnight theme */
+    body.theme-midnight {
+      --bg:       #05050e;
+      --bg2:      #0a0a18;
+      --surface:  #0e0e1c;
+      --surface2: #141428;
+      --surface3: #1b1b34;
+      --border:   rgba(255,255,255,0.05);
+      --border2:  rgba(255,255,255,0.09);
+    }
 
-    /* WELCOME */
-    .welcome{padding-top:28px;padding-bottom:24px;display:flex;flex-direction:column;gap:16px;animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both;}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-    .w-card{background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);border:1px solid var(--border2);border-radius:22px;padding:22px 20px;display:flex;align-items:center;gap:16px;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;}
-    .w-card::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(var(--accent-rgb),0.15) 0%,transparent 70%);}
-    .w-logo{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--pink));flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 0 1px rgba(var(--accent-rgb),0.3),0 8px 24px rgba(var(--accent-rgb),0.35);}
-    .w-logo img{width:100%;height:100%;object-fit:contain;border-radius:16px;}
-    .w-logo-fb{font-size:22px;color:white;font-weight:800;}
-    .w-text-wrap{flex:1;min-width:0;position:relative;}
-    .w-name{font-size:17px;font-weight:800;letter-spacing:-.025em;margin-bottom:5px;color:var(--text);}
-    .w-sub{font-size:13px;color:var(--text2);line-height:1.65;}
+    /* ── Reset ──────────────────────────────────────────────────────────────── */
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Noise grain */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.7;
+    }
 
-    /* IMAGE UPLOAD HINT in welcome */
-    .img-hint{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;font-size:12px;color:var(--text3);}
-    .img-hint-icon{width:32px;height:32px;border-radius:9px;background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
-    .img-hint-text strong{display:block;color:var(--text2);font-size:12px;font-weight:600;margin-bottom:2px;}
+    /* ── Header ─────────────────────────────────────────────────────────────── */
+    .hdr {
+      position: relative; z-index: 20;
+      background: rgba(13,13,18,0.9);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 var(--pad-x);
+      padding-top: var(--safe-t);
+      height: calc(62px + var(--safe-t));
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+    }
+    .hdr::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb),0.45), transparent);
+    }
+    .hdr-logo {
+      width: 38px; height: 38px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; flex-shrink: 0;
+      box-shadow: 0 0 0 1px rgba(var(--accent-rgb),0.35), 0 4px 14px rgba(var(--accent-rgb),0.3);
+    }
+    .hdr-logo img { width:100%; height:100%; object-fit:contain; border-radius:11px; }
+    .hdr-fb { font-size:15px; color:white; font-weight:800; }
+    .hdr-info { flex:1; min-width:0; }
+    .hdr-name {
+      font-size: 14px; font-weight: 700; letter-spacing: -.02em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text);
+    }
+    .hdr-status {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 10px; color: var(--text3); margin-top: 2px;
+      font-family: var(--mono);
+    }
+    .sdot {
+      width: 6px; height: 6px; background: var(--green);
+      border-radius: 50%; flex-shrink: 0;
+      box-shadow: 0 0 6px var(--green);
+      animation: pulse 2.4s ease infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.6)} }
+    .hdr-by { font-size:10px; color:var(--text3); font-family:var(--mono); white-space:nowrap; flex-shrink:0; }
+    .hdr-by a { color:var(--accent); text-decoration:none; font-weight:600; }
 
-    /* ══════════════════════════════════
-       TOPICS SECTION
-       ══════════════════════════════════ */
-    .topics-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;font-family:var(--mono);padding:0 2px;}
+    /* ── Scroll ─────────────────────────────────────────────────────────────── */
+    .scroll {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      position: relative; z-index: 1;
+    }
+    .scroll::-webkit-scrollbar { width: 3px; }
+    .scroll::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+    .pad { padding-left: var(--pad-x); padding-right: var(--pad-x); }
 
-    /* Grid: 4 cols on desktop, responsive below */
-    .topics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+    /* ── Welcome ────────────────────────────────────────────────────────────── */
+    .welcome {
+      padding-top: 28px; padding-bottom: 24px;
+      display: flex; flex-direction: column; gap: 14px;
+      animation: fadeUp .4s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
 
-    /* Each topic card */
-    .topic-card{
-      background:var(--surface);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:14px 13px 13px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      cursor:pointer;
-      text-align:left;
-      transition:all .22s cubic-bezier(.22,1,.36,1);
+    .w-card {
+      background: linear-gradient(135deg, var(--surface), var(--surface2));
+      border: 1px solid var(--border2);
+      border-radius: 22px;
+      padding: 20px 18px;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.04);
+      position: relative; overflow: hidden;
+    }
+    .w-card::before {
+      content: ''; position: absolute; top: -50px; right: -50px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(var(--accent-rgb),0.13) 0%, transparent 70%);
+    }
+    .w-logo {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(var(--accent-rgb),0.3), 0 8px 22px rgba(var(--accent-rgb),0.35);
+    }
+    .w-logo img { width:100%; height:100%; object-fit:contain; border-radius:14px; }
+    .w-logo-fb { font-size:20px; color:white; font-weight:800; }
+    .w-text { flex:1; min-width:0; }
+    .w-name { font-size:16px; font-weight:800; letter-spacing:-.025em; margin-bottom:4px; color:var(--text); }
+    .w-sub  { font-size:13px; color:var(--text2); line-height:1.65; }
+
+    /* Image hint */
+    .img-hint {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 13px;
+      font-size: 12px; color: var(--text3);
+    }
+    .img-hint-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: rgba(var(--accent-rgb),0.1); border: 1px solid rgba(var(--accent-rgb),0.2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 14px;
+    }
+    .img-hint-text strong { display:block; color:var(--text2); font-size:12px; font-weight:600; margin-bottom:1px; }
+
+    /* ── Topics ─────────────────────────────────────────────────────────────── */
+    .topics-label {
+      font-size: 10px; font-weight: 700; color: var(--text3);
+      text-transform: uppercase; letter-spacing: .12em;
+      font-family: var(--mono); padding: 0 2px;
+    }
+    .topics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+
+    .topic-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 13px 12px 12px;
+      display: flex; flex-direction: column; gap: 9px;
+      cursor: pointer; text-align: left;
+      transition: all .22s cubic-bezier(.22,1,.36,1);
+      -webkit-tap-highlight-color: transparent;
+      position: relative; overflow: hidden;
+      animation: cardIn .36s cubic-bezier(.22,1,.36,1) both;
+    }
+    .topic-card:nth-child(1){animation-delay:.04s} .topic-card:nth-child(2){animation-delay:.08s}
+    .topic-card:nth-child(3){animation-delay:.12s} .topic-card:nth-child(4){animation-delay:.16s}
+    .topic-card:nth-child(5){animation-delay:.20s} .topic-card:nth-child(6){animation-delay:.24s}
+    .topic-card:nth-child(7){animation-delay:.28s} .topic-card:nth-child(8){animation-delay:.32s}
+    @keyframes cardIn { from{opacity:0;transform:translateY(12px) scale(.97)} to{opacity:1;transform:none} }
+    .topic-card::before {
+      content: ''; position:absolute; inset:0; border-radius:16px;
+      background: linear-gradient(135deg, rgba(var(--accent-rgb),.09) 0%, transparent 60%);
+      opacity: 0; transition: opacity .2s;
+    }
+    .topic-card:hover { border-color:rgba(var(--accent-rgb),.45); transform:translateY(-3px); box-shadow:0 8px 32px rgba(var(--accent-rgb),.16),0 2px 8px rgba(0,0,0,.25); }
+    .topic-card:hover::before { opacity:1; }
+    .topic-card:active { transform:translateY(-1px) scale(.98); }
+    .tc-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: var(--surface2); border: 1px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; flex-shrink: 0;
+      transition: transform .2s cubic-bezier(.22,1,.36,1);
+    }
+    .topic-card:hover .tc-icon { transform: scale(1.1); }
+    .tc-title { font-size: 12.5px; font-weight: 700; color: var(--text); line-height: 1.3; letter-spacing: -.01em; }
+    .tc-desc  { font-size: 11px; color: var(--text3); line-height: 1.5; margin-top: -3px; }
+    .tc-cta   {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 9.5px; color: var(--accent); font-family: var(--mono);
+      font-weight: 600; letter-spacing: .04em;
+      opacity: 0; transform: translateY(4px);
+      transition: all .18s ease; margin-top: -3px;
+    }
+    .topic-card:hover .tc-cta { opacity:1; transform:none; }
+
+    /* Skeleton */
+    .topics-skeleton { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+    .skel-card {
+      height: 108px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 16px;
+      position: relative; overflow: hidden;
+    }
+    .skel-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+      animation: shimmer 1.6s ease infinite; background-size: 200% 100%;
+    }
+    @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+
+    /* ── Messages ───────────────────────────────────────────────────────────── */
+    .msgs {
+      padding-top: 20px; padding-bottom: 24px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .msg {
+      display: flex; gap: 11px;
+      animation: msgIn .28s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes msgIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+    .msg.bot  { flex-direction: row; align-items: flex-start; }
+    .msg.user { flex-direction: row-reverse; align-items: flex-start; }
+    .av {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0; overflow: hidden;
+    }
+    .av.bot {
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      box-shadow: 0 0 0 2px rgba(var(--accent-rgb),.25), 0 4px 12px rgba(var(--accent-rgb),.28);
+      align-self: flex-start;
+    }
+    .av.bot img { width:100%; height:100%; object-fit:contain; border-radius:50%; }
+    .av.user {
+      background: var(--surface2); border: 1.5px solid var(--border2);
+      align-self: flex-end; margin-bottom: 2px;
+    }
+    .msg-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; }
+    .msg.bot .msg-body  { align-items: flex-start; }
+    .msg.user .msg-body { align-items: flex-end; }
+    .msg-meta {
+      font-size: 10.5px; color: var(--text3);
+      font-family: var(--mono);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .msg-badge {
+      font-size: 8px; font-weight: 700; letter-spacing: .06em;
+      background: rgba(var(--accent-rgb),.14); color: var(--accent);
+      border: 1px solid rgba(var(--accent-rgb),.3);
+      padding: 1px 6px; border-radius: 4px;
+    }
+    .msg-topic-badge {
+      font-size: 8px; font-weight: 700; letter-spacing: .05em;
+      background: rgba(34,197,94,.1); color: var(--green);
+      border: 1px solid rgba(34,197,94,.25);
+      padding: 1px 6px; border-radius: 4px;
+    }
+
+    /* ── Bot bubble — this is where the rich HTML from Gemini renders ── */
+    .bubble {
+      width: 100%;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 4px 18px 18px 18px;
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.035);
+      overflow-x: auto;
+      /* Expose all CSS variables to the injected HTML */
+      --text: var(--text);
+      --text2: var(--text2);
+      --text3: var(--text3);
+      --accent: var(--accent);
+      --accent-l: var(--accent-l);
+      --accent-b: var(--accent-b);
+      --surface: var(--surface);
+      --surface2: var(--surface2);
+      --surface3: var(--surface3);
+      --border: var(--border);
+      --border2: var(--border2);
+      --green: var(--green);
+      --red: var(--red);
+      --font: var(--font);
+      --mono: var(--mono);
+    }
+    /* Ensure the AI's HTML uses the correct font */
+    .bubble * { font-family: var(--font); }
+    .bubble code, .bubble pre, .bubble .mono { font-family: var(--mono) !important; }
+
+    /* Tighten first/last element margins inside bubble */
+    .bubble > *:first-child { margin-top: 0 !important; }
+    .bubble > *:last-child  { margin-bottom: 0 !important; }
+
+    /* Ensure tables are responsive */
+    .bubble table { max-width: 100%; }
+    .bubble img   { max-width: 100%; border-radius: 8px; }
+
+    /* ── User bubble ──────────────────────────────────────────────────────── */
+    .bubble.user-b {
+      width: auto; max-width: 72%; min-width: 40px;
+      padding: 11px 15px;
+      background: linear-gradient(135deg, rgba(var(--accent-rgb),.2) 0%, rgba(var(--accent-rgb),.13) 100%);
+      border: 1px solid rgba(var(--accent-rgb),.28);
+      border-radius: 18px 4px 18px 18px;
+      color: var(--text); font-size: 14px; line-height: 1.75;
+      box-shadow: 0 4px 16px rgba(var(--accent-rgb),.12);
+    }
+    .msg-img {
+      max-width: 210px; max-height: 190px;
+      border-radius: 11px; object-fit: cover;
+      display: block; margin-bottom: 7px;
+      border: 1px solid rgba(var(--accent-rgb),.28);
+    }
+
+    /* ── Cursor / typing ──────────────────────────────────────────────────── */
+    .cursor {
+      display: inline-block; width: 2px; height: 14px;
+      background: var(--accent); margin-left: 2px;
+      vertical-align: middle; border-radius: 1px;
+      animation: blink .8s step-end infinite;
+      box-shadow: 0 0 6px var(--accent);
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .typing-row { display:flex; gap:11px; align-items:flex-start; animation:msgIn .28s cubic-bezier(.22,1,.36,1) both; }
+    .typing-bub {
+      padding: 14px 18px;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 4px 18px 18px 18px;
+      display: flex; align-items: center; gap: 5px;
+      box-shadow: var(--shadow);
+    }
+    .tdot {
+      width: 7px; height: 7px;
+      background: var(--text3); border-radius: 50%;
+      animation: tdot 1.3s ease infinite;
+    }
+    .tdot:nth-child(2){animation-delay:.15s} .tdot:nth-child(3){animation-delay:.3s}
+    @keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:.3} 30%{transform:translateY(-5px);opacity:1} }
+
+    /* ── Input area ─────────────────────────────────────────────────────────── */
+    .input-area {
+      flex-shrink: 0; position: relative; z-index: 10;
+      background: rgba(13,13,18,.97);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid var(--border);
+      padding: 12px var(--pad-x);
+      padding-bottom: calc(12px + var(--safe-b));
+    }
+    .input-area::before {
+      content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb),.22), transparent);
+    }
+
+    /* Image preview */
+    .img-strip { display:none; padding:0 0 10px; gap:8px; align-items:center; }
+    .img-strip.on { display:flex; }
+    .img-thumb { position:relative; width:58px; height:58px; border-radius:10px; overflow:hidden; border:1.5px solid rgba(var(--accent-rgb),.4); flex-shrink:0; }
+    .img-thumb img { width:100%; height:100%; object-fit:cover; }
+    .img-rm { position:absolute; top:2px; right:2px; width:17px; height:17px; border-radius:50%; background:rgba(0,0,0,.75); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:white; font-size:9px; }
+    .img-lbl { font-size:11px; color:var(--text3); font-family:var(--mono); }
+
+    /* Input box */
+    .input-box {
+      background: var(--surface);
+      border: 1.5px solid var(--border2);
+      border-radius: 16px;
+      padding: 5px 5px 5px 8px;
+      display: flex; align-items: flex-end; gap: 6px;
+      transition: border-color .2s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(0,0,0,.28);
+    }
+    .input-box:focus-within {
+      border-color: rgba(var(--accent-rgb),.5);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),.08), 0 4px 20px rgba(0,0,0,.28);
+    }
+    #img-btn {
+      width:36px; height:36px; background:var(--surface2);
+      border:1.5px solid var(--border2); border-radius:10px;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; margin-bottom:3px;
+      transition:all .2s; color:var(--text3);
       -webkit-tap-highlight-color:transparent;
-      position:relative;
-      overflow:hidden;
-      animation:cardIn .35s cubic-bezier(.22,1,.36,1) both;
     }
-    /* Staggered entrance animation for each card */
-    .topic-card:nth-child(1){animation-delay:.04s}
-    .topic-card:nth-child(2){animation-delay:.08s}
-    .topic-card:nth-child(3){animation-delay:.12s}
-    .topic-card:nth-child(4){animation-delay:.16s}
-    .topic-card:nth-child(5){animation-delay:.20s}
-    .topic-card:nth-child(6){animation-delay:.24s}
-    .topic-card:nth-child(7){animation-delay:.28s}
-    .topic-card:nth-child(8){animation-delay:.32s}
-    @keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-
-    /* Glow overlay on hover */
-    .topic-card::before{
-      content:'';
-      position:absolute;inset:0;border-radius:16px;
-      background:linear-gradient(135deg,rgba(var(--accent-rgb),0.1) 0%,transparent 60%);
-      opacity:0;transition:opacity .2s;
+    #img-btn:hover { border-color:rgba(var(--accent-rgb),.4); color:var(--accent); background:rgba(var(--accent-rgb),.08); }
+    #img-btn.has-img { border-color:rgba(var(--accent-rgb),.5); color:var(--accent); background:rgba(var(--accent-rgb),.1); }
+    #img-btn svg { width:16px; height:16px; }
+    #img-input { display:none; }
+    #txt {
+      flex: 1; border: none; background: transparent; outline: none;
+      font-family: var(--font); font-size: 14.5px; color: var(--text);
+      resize: none; max-height: 150px; line-height: 1.6;
+      padding: 10px 0; min-height: 44px;
+      -webkit-appearance: none; caret-color: var(--accent);
     }
-    .topic-card:hover{
-      border-color:rgba(var(--accent-rgb),0.45);
-      transform:translateY(-3px);
-      box-shadow:0 8px 32px rgba(var(--accent-rgb),0.18),0 2px 8px rgba(0,0,0,0.3);
+    #txt::placeholder { color: var(--text3); }
+    #snd {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      border: none; border-radius: 12px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-bottom: 3px;
+      transition: all .2s cubic-bezier(.22,1,.36,1);
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 4px 16px rgba(var(--accent-rgb),.4);
     }
-    .topic-card:hover::before{opacity:1;}
-    .topic-card:active{transform:translateY(-1px) scale(.98);}
+    #snd:hover:not(:disabled) { transform:scale(1.06); box-shadow:0 6px 22px rgba(var(--accent-rgb),.5); }
+    #snd:active:not(:disabled) { transform:scale(.92); }
+    #snd:disabled { opacity:.3; cursor:not-allowed; box-shadow:none; }
+    #snd svg { width:16px; height:16px; }
+    .hint { font-size:10px; color:var(--text3); text-align:center; margin-top:7px; font-family:var(--mono); }
+    .hint a { color:var(--accent); text-decoration:none; }
 
-    /* Icon bubble */
-    .tc-icon{
-      width:40px;height:40px;border-radius:11px;
-      background:var(--surface2);
-      border:1px solid var(--border2);
-      display:flex;align-items:center;justify-content:center;
-      font-size:20px;flex-shrink:0;
-      transition:transform .2s cubic-bezier(.22,1,.36,1);
+    /* ── Loading / Error ────────────────────────────────────────────────────── */
+    #loading {
+      display:flex; align-items:center; justify-content:center;
+      height:100dvh; flex-direction:column; gap:16px;
+      background:var(--bg); position:relative; z-index:100;
     }
-    .topic-card:hover .tc-icon{transform:scale(1.12);}
-
-    .tc-title{font-size:12.5px;font-weight:700;color:var(--text);line-height:1.3;letter-spacing:-.01em;}
-    .tc-desc{font-size:11px;color:var(--text3);line-height:1.5;margin-top:-3px;}
-
-    /* "Tap to explore" micro-label appears on hover */
-    .tc-cta{
-      display:flex;align-items:center;gap:4px;
-      font-size:9.5px;color:var(--accent);font-family:var(--mono);font-weight:600;letter-spacing:.04em;
-      opacity:0;transform:translateY(4px);
-      transition:all .18s ease;margin-top:-4px;
+    .spin {
+      width:36px; height:36px;
+      border:2px solid var(--surface3); border-top-color:var(--accent);
+      border-radius:50%; animation:spn .7s linear infinite;
+      box-shadow:0 0 16px rgba(var(--accent-rgb),.3);
     }
-    .tc-cta svg{width:9px;height:9px;}
-    .topic-card:hover .tc-cta{opacity:1;transform:translateY(0);}
-
-    /* SKELETON loading state (shown briefly before topics load) */
-    .topics-skeleton{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
-    .skel-card{height:110px;background:var(--surface);border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden;}
-    .skel-card::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.04) 50%,transparent 100%);animation:shimmer 1.6s ease infinite;background-size:200% 100%;}
-    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-
-    /* No-topics fallback */
-    .topics-empty{
-      padding:20px;
-      background:var(--surface);
-      border:1px dashed var(--border2);
-      border-radius:16px;
-      text-align:center;
-      font-size:12px;color:var(--text3);
-      font-family:var(--mono);
+    @keyframes spn { to{transform:rotate(360deg)} }
+    .spin-lbl { font-family:var(--mono); font-size:11px; color:var(--text3); }
+    #err {
+      display:none; align-items:center; justify-content:center;
+      height:100dvh; flex-direction:column; gap:14px;
+      text-align:center; padding:32px; background:var(--bg);
     }
+    .err-ico {
+      width:64px; height:64px; border-radius:18px;
+      background:rgba(248,113,113,.1); border:1px solid rgba(248,113,113,.2);
+      display:flex; align-items:center; justify-content:center; font-size:28px;
+    }
+    #err h2 { font-size:18px; font-weight:800; color:var(--text); }
+    #err p  { font-size:13px; color:var(--text2); max-width:260px; line-height:1.65; }
 
-    /* MESSAGES */
-    .msgs{padding-top:20px;padding-bottom:20px;display:flex;flex-direction:column;gap:18px;}
-    .msg{display:flex;gap:11px;animation:msgIn .28s cubic-bezier(.22,1,.36,1) both;}
-    @keyframes msgIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-    .msg.bot{flex-direction:row;align-items:flex-start;}
-    .msg.user{flex-direction:row-reverse;align-items:flex-start;}
-    .av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;overflow:hidden;}
-    .av.bot{background:linear-gradient(135deg,var(--accent),var(--pink));box-shadow:0 0 0 2px rgba(var(--accent-rgb),0.25),0 4px 12px rgba(var(--accent-rgb),0.3);align-self:flex-start;}
-    .av.bot img{width:100%;height:100%;object-fit:contain;border-radius:50%;}
-    .av.user{background:var(--surface2);border:1.5px solid var(--border2);align-self:flex-end;margin-bottom:2px;}
-    .msg-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;}
-    .msg.bot .msg-body{align-items:flex-start;}
-    .msg.user .msg-body{align-items:flex-end;}
-
-    /* BOT BUBBLE */
-    .bubble{width:100%;padding:16px 18px;background:var(--surface);border:1px solid var(--border2);border-radius:4px 18px 18px 18px;font-size:14px;line-height:1.9;color:var(--text);word-break:break-word;overflow-wrap:anywhere;box-shadow:var(--sh),inset 0 1px 0 rgba(255,255,255,0.04);overflow-x:auto;}
-    /* USER BUBBLE */
-    .bubble.user-b{width:auto;max-width:72%;min-width:40px;padding:11px 16px;background:linear-gradient(135deg,rgba(var(--accent-rgb),0.22) 0%,rgba(var(--accent-rgb),0.14) 100%);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:18px 4px 18px 18px;color:var(--text);font-size:14px;line-height:1.75;box-shadow:0 4px 16px rgba(var(--accent-rgb),0.15);}
-
-    /* IMAGE in user bubble */
-    .msg-img{max-width:220px;max-height:200px;border-radius:12px;object-fit:cover;display:block;margin-bottom:6px;border:1px solid rgba(var(--accent-rgb),0.3);}
-
-    /* RICH HTML inside bubble */
-    .bubble h3{font-size:14.5px;font-weight:800;margin:18px 0 8px;color:var(--text);letter-spacing:-.015em;display:flex;align-items:center;gap:7px;}
-    .bubble h3:first-child{margin-top:0;}
-    .bubble h3::before{content:'';display:inline-block;width:3px;height:16px;background:var(--accent);border-radius:2px;flex-shrink:0;}
-    .bubble h4{font-size:13px;font-weight:700;margin:12px 0 5px;color:var(--text2);}
-    .bubble h4:first-child{margin-top:0;}
-    .bubble p{margin:5px 0;color:var(--text2);font-size:13.5px;line-height:1.85;}
-    .bubble p:first-child{margin-top:0;}
-    .bubble ul{padding-left:0;margin:10px 0;list-style:none;display:flex;flex-direction:column;gap:5px;}
-    .bubble ol{padding-left:20px;margin:10px 0;}
-    .bubble li{color:var(--text2);font-size:13.5px;line-height:1.7;padding:7px 12px 7px 14px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--accent);position:relative;}
-    .bubble ol li{padding:5px 0 5px 4px;background:none;border:none;border-radius:0;}
-    .bubble strong{font-weight:700;color:var(--text);}
-    .bubble em{color:var(--text2);font-style:italic;}
-    .bubble code{font-family:var(--mono);font-size:12px;background:var(--surface3);color:var(--cyan);padding:2px 7px;border-radius:6px;}
-    .bubble table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;border-radius:12px;overflow:hidden;}
-    .bubble thead tr{background:var(--surface3);}
-    .bubble th{padding:10px 14px;text-align:left;font-weight:700;color:var(--text);border-bottom:1px solid var(--border2);white-space:nowrap;font-size:12px;letter-spacing:.02em;}
-    .bubble td{padding:9px 14px;color:var(--text2);border-bottom:1px solid var(--border);vertical-align:top;}
-    .bubble tr:last-child td{border-bottom:none;}
-    .bubble tbody tr:hover td{background:rgba(255,255,255,0.02);}
-    .bubble div[style*="border-left"]{border-radius:0 12px 12px 0!important;margin:12px 0!important;background:rgba(var(--accent-rgb),0.08)!important;border-left-color:var(--accent)!important;}
-    .bubble div[style*="background:#fff8e6"]{background:rgba(251,191,36,0.08)!important;border-color:rgba(251,191,36,0.3)!important;border-radius:12px!important;}
-    .bubble div[style*="background:#f0eeeb"]{background:var(--surface2)!important;border-radius:12px!important;}
-    .msg-meta{font-size:10.5px;color:var(--text3);font-family:var(--mono);display:flex;align-items:center;gap:6px;}
-    .msg-badge{font-size:8px;background:rgba(var(--accent-rgb),0.15);color:var(--accent);border:1px solid rgba(var(--accent-rgb),0.3);padding:1px 6px;border-radius:4px;font-weight:700;letter-spacing:.06em;}
-
-    /* "Asked from topic" badge in meta */
-    .msg-topic-badge{font-size:8px;background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:1px 6px;border-radius:4px;font-weight:700;letter-spacing:.04em;}
-
-    .cursor{display:inline-block;width:2px;height:14px;background:var(--accent);margin-left:2px;vertical-align:middle;border-radius:1px;animation:blink .8s step-end infinite;box-shadow:0 0 6px var(--accent);}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-    .typing-row{display:flex;gap:11px;align-items:flex-start;animation:msgIn .28s cubic-bezier(.22,1,.36,1) both;}
-    .typing-bub{padding:14px 18px;background:var(--surface);border:1px solid var(--border2);border-radius:4px 18px 18px 18px;display:flex;align-items:center;gap:5px;box-shadow:var(--sh);}
-    .tdot{width:7px;height:7px;background:var(--text3);border-radius:50%;animation:bdot 1.3s ease infinite;}
-    .tdot:nth-child(2){animation-delay:.15s}.tdot:nth-child(3){animation-delay:.3s}
-    @keyframes bdot{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-5px);opacity:1}}
-
-    /* INPUT AREA */
-    .input-area{flex-shrink:0;position:relative;z-index:10;background:rgba(15,15,19,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:12px var(--pad-x);padding-bottom:calc(12px + var(--safe-b));}
-    .input-area::before{content:'';position:absolute;top:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--accent-rgb),0.25),transparent);}
-
-    /* Image preview strip above input */
-    .img-preview-strip{display:none;padding:0 0 10px 0;gap:8px;align-items:center;}
-    .img-preview-strip.visible{display:flex;}
-    .img-preview-thumb{position:relative;width:60px;height:60px;border-radius:10px;overflow:hidden;border:1.5px solid rgba(var(--accent-rgb),0.4);flex-shrink:0;}
-    .img-preview-thumb img{width:100%;height:100%;object-fit:cover;}
-    .img-preview-remove{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.7);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;font-size:10px;line-height:1;}
-    .img-preview-label{font-size:11px;color:var(--text3);font-family:var(--mono);}
-
-    .input-box{background:var(--surface);border:1.5px solid var(--border2);border-radius:16px;padding:5px 5px 5px 8px;display:flex;align-items:flex-end;gap:6px;transition:border-color .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
-    .input-box:focus-within{border-color:rgba(var(--accent-rgb),0.5);box-shadow:0 0 0 3px rgba(var(--accent-rgb),0.08),0 4px 20px rgba(0,0,0,0.3);}
-
-    /* Image upload button */
-    #img-btn{width:36px;height:36px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:3px;transition:all .2s;color:var(--text3);-webkit-tap-highlight-color:transparent;}
-    #img-btn:hover{border-color:rgba(var(--accent-rgb),0.4);color:var(--accent);background:rgba(var(--accent-rgb),0.08);}
-    #img-btn.has-img{border-color:rgba(var(--accent-rgb),0.5);color:var(--accent);background:rgba(var(--accent-rgb),0.1);}
-    #img-btn svg{width:16px;height:16px;}
-    #img-input{display:none;}
-
-    #txt{flex:1;border:none;background:transparent;outline:none;font-family:var(--font);font-size:14.5px;color:var(--text);resize:none;max-height:150px;line-height:1.6;padding:10px 0;min-height:44px;-webkit-appearance:none;caret-color:var(--accent);}
-    #txt::placeholder{color:var(--text3);}
-    #snd{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:3px;transition:all .2s cubic-bezier(.22,1,.36,1);-webkit-tap-highlight-color:transparent;box-shadow:0 4px 16px rgba(var(--accent-rgb),0.4);}
-    #snd:hover:not(:disabled){transform:scale(1.06);box-shadow:0 6px 20px rgba(var(--accent-rgb),0.5);}
-    #snd:active:not(:disabled){transform:scale(.92);}
-    #snd:disabled{opacity:.3;cursor:not-allowed;box-shadow:none;}
-    #snd svg{width:16px;height:16px;}
-
-    .hint{font-size:10px;color:var(--text3);text-align:center;margin-top:7px;font-family:var(--mono);}
-    .hint a{color:var(--accent);text-decoration:none;}
-
-    /* LOADING / ERROR */
-    #loading{display:flex;align-items:center;justify-content:center;height:100dvh;flex-direction:column;gap:16px;background:var(--bg);position:relative;z-index:100;}
-    .spin{width:36px;height:36px;border:2px solid var(--surface3);border-top-color:var(--accent);border-radius:50%;animation:spn .7s linear infinite;box-shadow:0 0 16px rgba(var(--accent-rgb),0.3);}
-    @keyframes spn{to{transform:rotate(360deg)}}
-    .spin-lbl{font-family:var(--mono);font-size:11px;color:var(--text3);}
-    #err{display:none;align-items:center;justify-content:center;height:100dvh;flex-direction:column;gap:14px;text-align:center;padding:32px;background:var(--bg);}
-    .err-ico{width:64px;height:64px;border-radius:18px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);display:flex;align-items:center;justify-content:center;font-size:28px;}
-    #err h2{font-size:18px;font-weight:800;color:var(--text);}
-    #err p{font-size:13px;color:var(--text2);max-width:260px;line-height:1.65;}
-
-    /* RESPONSIVE */
-    @media(max-width:900px){.topics-grid,.topics-skeleton{grid-template-columns:repeat(3,1fr);}}
+    /* ── Responsive ─────────────────────────────────────────────────────────── */
+    @media(max-width:900px){ .topics-grid,.topics-skeleton{grid-template-columns:repeat(3,1fr);} }
     @media(max-width:640px){
       :root{--pad-x:14px;}
       .hdr-by{display:none;}
-      .hdr{height:calc(56px + var(--safe-t));}
+      .hdr{height:calc(54px + var(--safe-t));}
       .topics-grid,.topics-skeleton{grid-template-columns:repeat(2,1fr);gap:8px;}
-      .bubble.user-b{max-width:82%;}
+      .bubble.user-b{max-width:84%;}
       #txt{font-size:16px;}
-      .bubble li{padding:6px 10px 6px 12px;}
     }
-    @media(max-width:380px){.topics-grid,.topics-skeleton{grid-template-columns:1fr 1fr;}.tc-desc{display:none;}.bubble.user-b{max-width:90%;}}
-    @media(max-height:520px) and (orientation:landscape){.hdr{height:44px;}.welcome{padding-top:10px;gap:10px;}.input-area{padding:7px var(--pad-x);padding-bottom:calc(7px + var(--safe-b));}}
-
-    /* THEMES */
-    body.theme-light{--bg:#f5f4f0;--bg2:#edecea;--surface:#ffffff;--surface2:#f0eeeb;--surface3:#e8e6e1;--border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);--text:#1a1917;--text2:#5c5a57;--text3:#a09e99;--sh:0 2px 12px rgba(0,0,0,0.06),0 6px 24px rgba(0,0,0,0.04);}
-    body.theme-light .bubble li{background:var(--surface2);}
-    body.theme-light .bubble code{background:var(--surface2);color:#0369a1;}
-    body.theme-light .hdr{background:rgba(255,255,255,0.92);}
-    body.theme-light .input-area{background:rgba(245,244,240,0.95);}
-    body.theme-midnight{--bg:#060610;--bg2:#0c0c1a;--surface:#10101e;--surface2:#161628;--surface3:#1e1e32;--border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);}
+    @media(max-width:380px){ .tc-desc{display:none;} .bubble.user-b{max-width:90%;} }
+    @media(max-height:520px) and (orientation:landscape){
+      .hdr{height:44px;} .welcome{padding-top:10px;gap:10px;}
+      .input-area{padding:7px var(--pad-x);padding-bottom:calc(7px + var(--safe-b));}
+    }
   </style>
 </head>
 <body>
@@ -291,6 +522,8 @@
 </div>
 
 <div id="ui" style="display:none;flex-direction:column;height:100dvh;">
+
+  <!-- Header -->
   <div class="hdr">
     <div class="hdr-logo" id="hLogo"><span class="hdr-fb" id="hFb">A</span></div>
     <div class="hdr-info">
@@ -300,63 +533,56 @@
     <div class="hdr-by">by <a href="https://aasaitech.in" target="_blank">Aasai</a></div>
   </div>
 
+  <!-- Scroll area -->
   <div class="scroll" id="scroll">
     <div class="pad">
       <div class="welcome" id="welcome">
+
         <!-- Welcome card -->
         <div class="w-card">
           <div class="w-logo" id="wLogo"><span class="w-logo-fb" id="wFb">A</span></div>
-          <div class="w-text-wrap">
+          <div class="w-text">
             <div class="w-name" id="wName">Hi there! 👋</div>
-            <div class="w-sub" id="wSub">How can I help you today?</div>
+            <div class="w-sub"  id="wSub">How can I help you today?</div>
           </div>
         </div>
 
-        <!-- Image upload hint -->
+        <!-- Image hint -->
         <div class="img-hint">
           <div class="img-hint-icon">📸</div>
           <div class="img-hint-text">
             <strong>Image Analysis Supported</strong>
-            Tap the 📎 button to upload a photo — I can read, analyse, and answer questions about any image.
+            Tap the 📎 icon to upload a photo — I can read, analyse, and answer questions about it.
           </div>
         </div>
 
-        <!-- Topics section -->
+        <!-- Topics -->
         <div class="topics-label">Explore Topics</div>
-
-        <!-- Skeleton shown instantly while config loads -->
         <div class="topics-skeleton" id="topicsSkeleton">
-          <div class="skel-card"></div>
-          <div class="skel-card"></div>
-          <div class="skel-card"></div>
-          <div class="skel-card"></div>
-          <div class="skel-card"></div>
-          <div class="skel-card"></div>
-          <div class="skel-card"></div>
-          <div class="skel-card"></div>
+          <div class="skel-card"></div><div class="skel-card"></div>
+          <div class="skel-card"></div><div class="skel-card"></div>
+          <div class="skel-card"></div><div class="skel-card"></div>
+          <div class="skel-card"></div><div class="skel-card"></div>
         </div>
-
-        <!-- Real topic cards injected here -->
         <div class="topics-grid" id="topicsGrid" style="display:none"></div>
-      </div>
+
+      </div><!-- /welcome -->
     </div>
     <div class="pad">
       <div class="msgs" id="msgs"></div>
     </div>
-  </div>
+  </div><!-- /scroll -->
 
+  <!-- Input -->
   <div class="input-area">
-    <!-- Image preview strip -->
-    <div class="img-preview-strip" id="imgPreviewStrip">
-      <div class="img-preview-thumb">
-        <img id="imgPreviewThumb" src="" alt=""/>
-        <button class="img-preview-remove" onclick="removeImage()" title="Remove image">✕</button>
+    <div class="img-strip" id="imgStrip">
+      <div class="img-thumb">
+        <img id="imgThumb" src="" alt=""/>
+        <button class="img-rm" onclick="removeImage()" title="Remove">✕</button>
       </div>
-      <span class="img-preview-label">Image attached · ask anything about it</span>
+      <span class="img-lbl">Image attached · ask anything about it</span>
     </div>
-
     <div class="input-box">
-      <!-- Image upload button -->
       <button id="img-btn" onclick="document.getElementById('img-input').click()" title="Attach image">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="18" height="18" rx="3"/>
@@ -364,11 +590,9 @@
           <polyline points="21 15 16 10 5 21"/>
         </svg>
       </button>
-      <input type="file" id="img-input" accept="image/*" onchange="onImageSelected(event)"/>
-
+      <input type="file" id="img-input" accept="image/*" onchange="onImagePicked(event)"/>
       <textarea id="txt" placeholder="Ask anything…" rows="1"
         onkeydown="onKey(event)" oninput="resize(this)"></textarea>
-
       <button id="snd" onclick="send()">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
           <line x1="22" y1="2" x2="11" y2="13"/>
@@ -380,12 +604,14 @@
       Powered by <a href="https://aasaitech.in" target="_blank">Aasai AI</a> · Responses may not always be accurate
     </div>
   </div>
-</div>
+
+</div><!-- /ui -->
 
 <script>
 const API     = 'https://fypouhme3gqldqk6sk75b75udy0ltonb.lambda-url.ap-southeast-2.on.aws'
 const agentId = new URLSearchParams(location.search).get('agent')
 
+// Visitor / session IDs
 let vid = localStorage.getItem('aasai_vid')
 if (!vid) { vid = 'v_' + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('aasai_vid', vid) }
 const sid = 's_' + Math.random().toString(36).slice(2) + Date.now().toString(36)
@@ -394,289 +620,274 @@ let cfg  = null
 let busy = false
 let hist = []
 
-// ── IMAGE STATE ──
-let pendingImage = null  // { base64, mimeType, dataUrl }
+// Image state
+let pendingImg = null  // { base64, mimeType, dataUrl }
 
-// ── TOPIC STATE ──
-// Stores the full topic objects so we can pass suggested_prompt on click
+// Topic data (full objects with suggested_prompt)
 let topicsData = []
 
-function onImageSelected(e) {
-  const file = e.target.files[0]
-  if (!file) return
-  if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return }
-  if (file.size > 5 * 1024 * 1024) { alert('Image too large. Max 5MB.'); return }
-  const reader = new FileReader()
-  reader.onload = (ev) => {
-    const dataUrl = ev.target.result
-    const base64  = dataUrl.split(',')[1]
-    pendingImage  = { base64, mimeType: file.type, dataUrl }
-    $('imgPreviewThumb').src = dataUrl
-    $('imgPreviewStrip').classList.add('visible')
-    $('img-btn').classList.add('has-img')
-    $('txt').focus()
-  }
-  reader.readAsDataURL(file)
-  e.target.value = ''
-}
-
-function removeImage() {
-  pendingImage = null
-  $('imgPreviewStrip').classList.remove('visible')
-  $('imgPreviewThumb').src = ''
-  $('img-btn').classList.remove('has-img')
-}
-
-function injectImg(wrap, src, fb) {
-  if (!src) return
-  const img = document.createElement('img')
-  img.src = src
-  img.onerror = () => { try { wrap.removeChild(img) } catch {} }
-  wrap.insertBefore(img, fb)
-}
-function botAvHtml() {
-  const src = cfg?.logo_base64 || cfg?.logo_url || null
-  if (src) return `<img src="${src}" style="width:100%;height:100%;object-fit:contain;border-radius:50%" onerror="this.style.display='none'"/>`
-  return `<span style="font-size:11px;color:white;font-weight:800">${(cfg?.name||'A').charAt(0).toUpperCase()}</span>`
-}
-function hrgb(hex) {
-  try { return [parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)].join(',') } catch { return '124,106,255' }
-}
-
-/* ── INIT ─────────────────────────────────────────────────── */
+// ─────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────
 async function init() {
   if (!agentId) { showErr(); return }
   try {
     const r = await fetch(`${API}/chat/${agentId}/config`)
     if (!r.ok) { showErr(); return }
     cfg = await r.json()
-    applyTheme(); brand()
+    applyTheme()
+    applyBrand()
     $('loading').style.display = 'none'
     $('ui').style.display = 'flex'
-
-    // ── Load topics from cache (instant) or generate on-the-fly ──
     loadTopics()
   } catch(e) { showErr() }
 }
 
 function applyTheme() {
-  const t = cfg?.theme || 'dark'
   document.body.className = ''
-  if (t === 'light') document.body.classList.add('theme-light')
-  else if (t === 'midnight') document.body.classList.add('theme-midnight')
+  const t = cfg?.theme || 'dark'
+  if (t === 'light')    document.body.classList.add('theme-light')
+  if (t === 'midnight') document.body.classList.add('theme-midnight')
 }
 
-function brand() {
+function applyBrand() {
   const hex = (cfg.brand_color || '#7c6aff').trim()
-  const rgb = hrgb(hex)
+  const rgb = hexToRgb(hex)
   const rs  = document.documentElement.style
-  rs.setProperty('--accent', hex)
+  rs.setProperty('--accent',     hex)
   rs.setProperty('--accent-rgb', rgb)
-  rs.setProperty('--accent-l', `rgba(${rgb},0.12)`)
-  rs.setProperty('--accent-b', `rgba(${rgb},0.28)`)
-  document.title         = cfg.name || 'Chat'
+  rs.setProperty('--accent-l',   `rgba(${rgb},0.10)`)
+  rs.setProperty('--accent-b',   `rgba(${rgb},0.25)`)
+  document.title        = cfg.name || 'Chat'
   $('hName').textContent = cfg.name || 'Assistant'
   $('wName').textContent = 'Hi there! 👋'
   $('wSub').textContent  = cfg.welcome_message || 'How can I help you today?'
   const src  = cfg.logo_base64 || cfg.logo_url || null
   const init = (cfg.name || 'A').charAt(0).toUpperCase()
-  const hL = $('hLogo'), hF = $('hFb'); hF.textContent = init; injectImg(hL, src, hF)
-  const wL = $('wLogo'), wF = $('wFb'); wF.textContent = init; injectImg(wL, src, wF)
+  injectLogo('hLogo', 'hFb', src, init)
+  injectLogo('wLogo', 'wFb', src, init)
+  // theme-color meta
   let meta = document.querySelector('meta[name="theme-color"]')
   if (!meta) { meta = document.createElement('meta'); meta.name='theme-color'; document.head.appendChild(meta) }
   meta.content = hex
 }
 
-/* ── TOPICS ────────────────────────────────────────────────
-   Priority:
-   1. cfg.cached_topics  — pre-built at publish time (instant, no AI call)
-   2. cfg.suggestions    — fallback simple suggestion strings
-   3. On-the-fly AI call — last resort if nothing cached
-   ──────────────────────────────────────────────────────── */
+function injectLogo(wrapId, fbId, src, fb) {
+  const wrap = $(wrapId), fallback = $(fbId)
+  fallback.textContent = fb
+  if (!src) return
+  const img = document.createElement('img')
+  img.src = src
+  img.style.cssText = 'width:100%;height:100%;object-fit:contain;border-radius:50%'
+  img.onerror = () => { try { wrap.removeChild(img) } catch {} }
+  wrap.insertBefore(img, fallback)
+}
+
+function hexToRgb(hex) {
+  try { return [parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)].join(',') }
+  catch { return '124,106,255' }
+}
+
+// ─────────────────────────────────────────────────────────────
+// TOPICS
+// Priority: cached_topics → suggestions → on-the-fly AI
+// ─────────────────────────────────────────────────────────────
 async function loadTopics() {
-  // Try cached topics first (generated at publish time)
-  if (cfg.cached_topics && cfg.cached_topics.length > 0) {
+  // 1. Use pre-cached topics (generated at publish time — instant, no AI call)
+  if (cfg.cached_topics?.length > 0) {
     topicsData = cfg.cached_topics
     renderTopics(topicsData)
     return
   }
 
-  // Fallback: try building from simple suggestions strings
-  if (cfg.suggestions && cfg.suggestions.length > 0) {
+  // 2. Build from simple suggestion strings
+  if (cfg.suggestions?.length > 0) {
     topicsData = cfg.suggestions.map(s => ({
       icon: '💡',
-      title: s.replace(/[?]/g,'').trim().slice(0, 30),
+      title: s.replace(/[?]/g,'').trim().slice(0,30),
       desc: 'Ask me about this topic.',
       question: s,
       suggested_prompt: null
-    })).slice(0, 8)
+    })).slice(0,8)
     renderTopics(topicsData)
     return
   }
 
-  // Last resort: on-the-fly AI generation (no cache available)
-  // This only happens for agents published before this feature was added
-  const prompt = `Analyse the knowledge base and return EXACTLY 8 topic cards that visitors would want to ask about.
-Return ONLY a raw JSON array — no markdown, no explanation, no backticks.
-Each object must have: "icon" (emoji), "title" (2-4 words), "desc" (max 10 words), "question" (natural visitor question), "suggested_prompt" (detailed rich prompt for best answer).
-Return exactly 8 items.`
-
+  // 3. Last resort: live AI generation
   try {
     const r = await fetch(`${API}/chat/${agentId}`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ question: prompt, history:[], _internal:true })
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        question: 'Generate 8 topic cards as a raw JSON array. Each object: icon (emoji), title (2-4 words), desc (max 9 words), question (natural visitor question), suggested_prompt (detailed prompt). Return ONLY the JSON array.',
+        history: [], _internal: true
+      })
     })
     const d = await r.json()
     let raw = (d.answer||'').replace(/<[^>]*>/g,'').trim()
-    raw = raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/,'').trim()
-    const start = raw.indexOf('['), end = raw.lastIndexOf(']')
-    if (start === -1 || end === -1) throw new Error('No array')
-    topicsData = JSON.parse(raw.slice(start, end+1))
-    if (!Array.isArray(topicsData) || !topicsData.length) throw new Error('Empty')
+      .replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/,'').trim()
+    const s = raw.indexOf('['), e = raw.lastIndexOf(']')
+    if (s === -1 || e === -1) throw new Error('no array')
+    topicsData = JSON.parse(raw.slice(s,e+1))
+    if (!Array.isArray(topicsData)||!topicsData.length) throw new Error('empty')
     renderTopics(topicsData)
-  } catch(e) {
-    // Nothing to show
+  } catch {
     $('topicsSkeleton').style.display = 'none'
-    const empty = document.createElement('div')
-    empty.className = 'topics-empty'
-    empty.textContent = 'Ask me anything below ↓'
-    $('topicsSkeleton').parentNode.insertBefore(empty, $('topicsGrid'))
   }
 }
 
 function renderTopics(topics) {
   const grid = $('topicsGrid')
-  grid.innerHTML = topics.map((t, i) => `
-    <div class="topic-card" onclick="askTopic(${i})" data-idx="${i}">
-      <div class="tc-icon">${t.icon || '💡'}</div>
+  grid.innerHTML = topics.map((t,i) => `
+    <div class="topic-card" onclick="askTopic(${i})">
+      <div class="tc-icon">${t.icon||'💡'}</div>
       <div class="tc-title">${esc(t.title)}</div>
-      <div class="tc-desc">${esc(t.desc || '')}</div>
+      <div class="tc-desc">${esc(t.desc||'')}</div>
       <div class="tc-cta">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
         </svg>
         Ask this
       </div>
     </div>`).join('')
-
-  // Swap skeleton → real grid
   $('topicsSkeleton').style.display = 'none'
   grid.style.display = 'grid'
 }
 
-/* ── TOPIC CLICK ───────────────────────────────────────────
-   Sets the visible question text for the user bubble,
-   but passes the richer suggested_prompt to the API.
-   ──────────────────────────────────────────────────────── */
+// Topic card clicked — visible text = short question, API gets rich suggested_prompt
 function askTopic(idx) {
-  const topic = topicsData[idx]
-  if (!topic) return
-  $('txt').value = topic.question
-  resize($('txt'))
-  // Pass the suggested_prompt separately so we can show the short
-  // question in the chat but send the richer prompt to the API
-  send({ suggestedPrompt: topic.suggested_prompt || null, fromTopic: true })
+  const t = topicsData[idx]; if (!t) return
+  $('txt').value = t.question; resize($('txt'))
+  send({ suggestedPrompt: t.suggested_prompt || null, fromTopic: true })
 }
 
-/* ── INPUT ─────────────────────────────────────────────── */
-function onKey(e) { if (e.key==='Enter' && !e.shiftKey && window.innerWidth>600) { e.preventDefault(); send() } }
-function resize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,150)+'px' }
+// ─────────────────────────────────────────────────────────────
+// IMAGE
+// ─────────────────────────────────────────────────────────────
+function onImagePicked(e) {
+  const file = e.target.files[0]; if (!file) return
+  if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return }
+  if (file.size > 5*1024*1024) { alert('Image too large. Max 5MB.'); return }
+  const reader = new FileReader()
+  reader.onload = ev => {
+    const dataUrl = ev.target.result
+    pendingImg = { base64: dataUrl.split(',')[1], mimeType: file.type, dataUrl }
+    $('imgThumb').src = dataUrl
+    $('imgStrip').classList.add('on')
+    $('img-btn').classList.add('has-img')
+    $('txt').focus()
+  }
+  reader.readAsDataURL(file)
+  e.target.value = ''
+}
+function removeImage() {
+  pendingImg = null
+  $('imgStrip').classList.remove('on')
+  $('imgThumb').src = ''
+  $('img-btn').classList.remove('has-img')
+}
 
-/* ── SEND ──────────────────────────────────────────────── */
+// ─────────────────────────────────────────────────────────────
+// INPUT
+// ─────────────────────────────────────────────────────────────
+function onKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 600) { e.preventDefault(); send() }
+}
+function resize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight,150)+'px' }
+
+// ─────────────────────────────────────────────────────────────
+// SEND
+// ─────────────────────────────────────────────────────────────
 async function send(opts = {}) {
-  const input = $('txt')
-  const text  = input.value.trim()
-  const image = pendingImage
   const { suggestedPrompt = null, fromTopic = false } = opts
+  const input  = $('txt')
+  const text   = input.value.trim()
+  const image  = pendingImg
 
   if (!text && !image) return
   if (busy) return
 
+  // Dismiss welcome screen
   const w = $('welcome')
-  if (w) { w.style.transition='opacity .2s ease'; w.style.opacity='0'; setTimeout(()=>{ try{w.remove()}catch{} },210) }
+  if (w) { w.style.transition = 'opacity .2s'; w.style.opacity = '0'; setTimeout(()=>{ try{w.remove()}catch{} },200) }
 
-  addUser(text, image, fromTopic)
+  addUserMsg(text, image, fromTopic)
   input.value = ''; input.style.height = 'auto'
   removeImage()
   if (window.innerWidth <= 600) input.blur()
 
   busy = true; $('snd').disabled = true
-
-  const typingEl = addTyping()
-  let botBubble  = null
-  let streamed   = ''
-  let firstChunk = true
+  const typing = addTyping()
+  let bubble = null, streamed = '', firstChunk = true
 
   try {
-    const payload = {
-      question: text || 'Please analyse this image.',
-      history: hist,
-      session_id: sid,
-      visitor_id: vid
-    }
-    // Attach image if present
+    const payload = { question: text || 'Please analyse this image.', history: hist, session_id: sid, visitor_id: vid }
     if (image) payload.image = { base64: image.base64, mimeType: image.mimeType }
-    // Attach suggested_prompt if this was a topic card click
     if (suggestedPrompt) payload.suggested_prompt = suggestedPrompt
 
     const resp = await fetch(`${API}/chat/${agentId}/stream`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
-    if (!resp.ok) throw new Error('HTTP ' + resp.status)
+    if (!resp.ok) throw new Error('HTTP '+resp.status)
 
-    const reader  = resp.body.getReader()
-    const decoder = new TextDecoder()
-    let sseBuf = ''
+    const reader = resp.body.getReader()
+    const dec    = new TextDecoder()
+    let sseBuf   = ''
 
     while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      sseBuf += decoder.decode(value, { stream:true })
-      const lines = sseBuf.split('\n')
-      sseBuf = lines.pop()
+      const { done, value } = await reader.read(); if (done) break
+      sseBuf += dec.decode(value, { stream: true })
+      const lines = sseBuf.split('\n'); sseBuf = lines.pop()
 
       for (const line of lines) {
         if (!line.startsWith('data:')) continue
-        const raw = line.slice(5).trim()
-        if (!raw) continue
-        let evt; try { evt=JSON.parse(raw) } catch { continue }
+        const raw = line.slice(5).trim(); if (!raw) continue
+        let evt; try { evt = JSON.parse(raw) } catch { continue }
 
         if (evt.type === 'chunk') {
-          if (firstChunk) { typingEl.remove(); botBubble=makeBotBubble(fromTopic); firstChunk=false }
+          if (firstChunk) { typing.remove(); bubble = makeBotBubble(); firstChunk = false }
           streamed += evt.html
-          botBubble.innerHTML = streamed + '<span class="cursor"></span>'
-          scrollBottom()
+          // Live render — CSS variables work because .bubble inherits them
+          bubble.innerHTML = streamed + '<span class="cursor"></span>'
+          scrollBot()
         } else if (evt.type === 'done') {
-          if (botBubble) botBubble.innerHTML = streamed
-          hist.push({ role:'user', content: text || '[image]' })
+          if (bubble) bubble.innerHTML = streamed
+          hist.push({ role:'user',      content: text || '[image]' })
           hist.push({ role:'assistant', content: streamed })
           if (hist.length > 20) hist = hist.slice(-20)
-          scrollBottom()
+          scrollBot()
         } else if (evt.type === 'error') {
-          if (firstChunk) typingEl.remove()
-          const m = `<p style="color:var(--red)">${evt.message||'Something went wrong.'}</p>`
-          if (botBubble) botBubble.innerHTML=m; else addBot(m)
+          if (firstChunk) typing.remove()
+          const err = `<div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:10px;"><span style="font-size:16px;flex-shrink:0;">⚠️</span><p style="margin:0;font-size:13.5px;color:var(--red);line-height:1.7;">${esc(evt.message||'Something went wrong.')}</p></div>`
+          if (bubble) bubble.innerHTML = err; else addBotMsg(err)
         }
       }
     }
-    if (firstChunk) { typingEl.remove(); addBot('<p>Sorry, I could not find an answer to that.</p>') }
+    if (firstChunk) { typing.remove(); addBotMsg('<p style="margin:0;font-size:14px;color:var(--text2);">Sorry, I could not find an answer to that.</p>') }
   } catch(e) {
-    if (firstChunk) typingEl.remove()
-    const m = '<p>Sorry, having trouble connecting. Please try again.</p>'
-    if (botBubble) botBubble.innerHTML=m; else addBot(m)
+    if (firstChunk) typing.remove()
+    const err = '<p style="margin:0;font-size:14px;color:var(--red);">Connection error. Please try again.</p>'
+    if (bubble) bubble.innerHTML = err; else addBotMsg(err)
   }
 
   busy = false; $('snd').disabled = false
 }
 
-/* ── MESSAGE BUILDERS ──────────────────────────────────── */
-function addUser(text, image, fromTopic) {
+// ─────────────────────────────────────────────────────────────
+// MESSAGE BUILDERS
+// ─────────────────────────────────────────────────────────────
+function botAv() {
+  const src = cfg?.logo_base64 || cfg?.logo_url || null
+  if (src) return `<img src="${src}" style="width:100%;height:100%;object-fit:contain;border-radius:50%" onerror="this.style.display='none'"/>`
+  return `<span style="font-size:11px;color:white;font-weight:800">${(cfg?.name||'A').charAt(0).toUpperCase()}</span>`
+}
+
+function addUserMsg(text, image, fromTopic) {
   const el = document.createElement('div')
   el.className = 'msg user'
-  const imgHtml = image ? `<img class="msg-img" src="${image.dataUrl}" alt="uploaded image"/>` : ''
-  const textHtml = text ? `<span>${esc(text).replace(/\n/g,'<br>')}</span>` : ''
-  const topicBadge = fromTopic ? `<span class="msg-topic-badge">Topic</span>` : ''
+  const imgHtml  = image ? `<img class="msg-img" src="${image.dataUrl}" alt=""/>` : ''
+  const textHtml = text  ? `<span>${esc(text).replace(/\n/g,'<br>')}</span>` : ''
+  const badge    = fromTopic ? `<span class="msg-topic-badge">Topic</span>` : ''
   el.innerHTML = `
     <div class="av user">
       <svg viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2" style="width:13px;height:13px">
@@ -684,63 +895,68 @@ function addUser(text, image, fromTopic) {
       </svg>
     </div>
     <div class="msg-body">
-      <div class="msg-meta">You ${topicBadge}</div>
+      <div class="msg-meta">You ${badge}</div>
       <div class="bubble user-b">${imgHtml}${textHtml}</div>
       <div class="msg-meta">${ts()}</div>
     </div>`
-  $('msgs').appendChild(el); scrollBottom()
+  $('msgs').appendChild(el); scrollBot()
 }
 
-function addBot(html) {
+function addBotMsg(html) {
   const el = document.createElement('div')
   el.className = 'msg bot'
   el.innerHTML = `
-    <div class="av bot">${botAvHtml()}</div>
+    <div class="av bot">${botAv()}</div>
     <div class="msg-body">
       <div class="msg-meta">${esc(cfg?.name||'Assistant')} <span class="msg-badge">AI</span></div>
       <div class="bubble">${html}</div>
       <div class="msg-meta">${ts()}</div>
     </div>`
-  $('msgs').appendChild(el); scrollBottom()
+  $('msgs').appendChild(el); scrollBot()
 }
 
-function makeBotBubble(fromTopic) {
+function makeBotBubble() {
   const el = document.createElement('div')
   el.className = 'msg bot'
   el.innerHTML = `
-    <div class="av bot">${botAvHtml()}</div>
+    <div class="av bot">${botAv()}</div>
     <div class="msg-body">
       <div class="msg-meta">${esc(cfg?.name||'Assistant')} <span class="msg-badge">AI</span></div>
       <div class="bubble"></div>
       <div class="msg-meta">${ts()}</div>
     </div>`
-  $('msgs').appendChild(el); scrollBottom()
+  $('msgs').appendChild(el); scrollBot()
   return el.querySelector('.bubble')
 }
 
 function addTyping() {
   const el = document.createElement('div')
   el.className = 'typing-row'
-  el.innerHTML = `
-    <div class="av bot">${botAvHtml()}</div>
-    <div class="typing-bub">
-      <div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>
-    </div>`
-  $('msgs').appendChild(el); scrollBottom()
+  el.innerHTML = `<div class="av bot">${botAv()}</div><div class="typing-bub"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>`
+  $('msgs').appendChild(el); scrollBot()
   return el
 }
 
-/* ── UTILS ─────────────────────────────────────────────── */
+// ─────────────────────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────────────────────
 function $(id) { return document.getElementById(id) }
-function scrollBottom() { const s=$('scroll'); requestAnimationFrame(()=>{ s.scrollTop=s.scrollHeight }) }
+function scrollBot() { const s=$('scroll'); requestAnimationFrame(()=>{ s.scrollTop=s.scrollHeight }) }
 function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
 function ts()  { return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) }
 function showErr() { $('loading').style.display='none'; $('err').style.display='flex' }
 
+// iOS safe: prevent double-fire on send
 $('snd').addEventListener('touchend', e => { e.preventDefault(); send() })
+
+// Handle mobile viewport resize (keyboard)
 function setVh() { document.documentElement.style.setProperty('--vh', window.innerHeight*.01+'px') }
-setVh(); window.addEventListener('resize', setVh, { passive:true })
-$('txt').addEventListener('focus', () => { setTimeout(() => $('txt').scrollIntoView({ behavior:'smooth', block:'nearest' }), 350) })
+setVh(); window.addEventListener('resize', setVh, { passive: true })
+
+// Scroll textarea into view when keyboard opens
+$('txt').addEventListener('focus', () => {
+  setTimeout(() => $('txt').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 350)
+})
 
 init()
 </script>
