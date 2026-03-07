@@ -60,22 +60,97 @@
     .img-hint-icon{width:32px;height:32px;border-radius:9px;background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
     .img-hint-text strong{display:block;color:var(--text2);font-size:12px;font-weight:600;margin-bottom:2px;}
 
-    /* TOPICS */
+    /* ══════════════════════════════════
+       TOPICS SECTION
+       ══════════════════════════════════ */
     .topics-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;font-family:var(--mono);padding:0 2px;}
+
+    /* Grid: 4 cols on desktop, responsive below */
     .topics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
-    .topic-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 13px 13px;display:flex;flex-direction:column;gap:10px;cursor:pointer;text-align:left;transition:all .2s cubic-bezier(.22,1,.36,1);-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden;}
-    .topic-card::before{content:'';position:absolute;inset:0;border-radius:16px;background:linear-gradient(135deg,rgba(var(--accent-rgb),0.08) 0%,transparent 60%);opacity:0;transition:opacity .2s;}
-    .topic-card:hover{border-color:rgba(var(--accent-rgb),0.4);transform:translateY(-3px);box-shadow:0 8px 30px rgba(var(--accent-rgb),0.15);}
+
+    /* Each topic card */
+    .topic-card{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 13px 13px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      cursor:pointer;
+      text-align:left;
+      transition:all .22s cubic-bezier(.22,1,.36,1);
+      -webkit-tap-highlight-color:transparent;
+      position:relative;
+      overflow:hidden;
+      animation:cardIn .35s cubic-bezier(.22,1,.36,1) both;
+    }
+    /* Staggered entrance animation for each card */
+    .topic-card:nth-child(1){animation-delay:.04s}
+    .topic-card:nth-child(2){animation-delay:.08s}
+    .topic-card:nth-child(3){animation-delay:.12s}
+    .topic-card:nth-child(4){animation-delay:.16s}
+    .topic-card:nth-child(5){animation-delay:.20s}
+    .topic-card:nth-child(6){animation-delay:.24s}
+    .topic-card:nth-child(7){animation-delay:.28s}
+    .topic-card:nth-child(8){animation-delay:.32s}
+    @keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+    /* Glow overlay on hover */
+    .topic-card::before{
+      content:'';
+      position:absolute;inset:0;border-radius:16px;
+      background:linear-gradient(135deg,rgba(var(--accent-rgb),0.1) 0%,transparent 60%);
+      opacity:0;transition:opacity .2s;
+    }
+    .topic-card:hover{
+      border-color:rgba(var(--accent-rgb),0.45);
+      transform:translateY(-3px);
+      box-shadow:0 8px 32px rgba(var(--accent-rgb),0.18),0 2px 8px rgba(0,0,0,0.3);
+    }
     .topic-card:hover::before{opacity:1;}
-    .topic-card:active{transform:translateY(-1px);}
-    .tc-icon{width:38px;height:38px;border-radius:10px;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+    .topic-card:active{transform:translateY(-1px) scale(.98);}
+
+    /* Icon bubble */
+    .tc-icon{
+      width:40px;height:40px;border-radius:11px;
+      background:var(--surface2);
+      border:1px solid var(--border2);
+      display:flex;align-items:center;justify-content:center;
+      font-size:20px;flex-shrink:0;
+      transition:transform .2s cubic-bezier(.22,1,.36,1);
+    }
+    .topic-card:hover .tc-icon{transform:scale(1.12);}
+
     .tc-title{font-size:12.5px;font-weight:700;color:var(--text);line-height:1.3;letter-spacing:-.01em;}
     .tc-desc{font-size:11px;color:var(--text3);line-height:1.5;margin-top:-3px;}
-    .topics-loading{display:flex;align-items:center;gap:8px;color:var(--text3);font-size:11px;font-family:var(--mono);padding:4px 0;}
-    .dots{display:flex;gap:4px;}
-    .dot{width:5px;height:5px;background:var(--text3);border-radius:50%;animation:bdot 1.3s ease infinite;}
-    .dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}
-    @keyframes bdot{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-5px);opacity:1}}
+
+    /* "Tap to explore" micro-label appears on hover */
+    .tc-cta{
+      display:flex;align-items:center;gap:4px;
+      font-size:9.5px;color:var(--accent);font-family:var(--mono);font-weight:600;letter-spacing:.04em;
+      opacity:0;transform:translateY(4px);
+      transition:all .18s ease;margin-top:-4px;
+    }
+    .tc-cta svg{width:9px;height:9px;}
+    .topic-card:hover .tc-cta{opacity:1;transform:translateY(0);}
+
+    /* SKELETON loading state (shown briefly before topics load) */
+    .topics-skeleton{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+    .skel-card{height:110px;background:var(--surface);border:1px solid var(--border);border-radius:16px;position:relative;overflow:hidden;}
+    .skel-card::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.04) 50%,transparent 100%);animation:shimmer 1.6s ease infinite;background-size:200% 100%;}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+    /* No-topics fallback */
+    .topics-empty{
+      padding:20px;
+      background:var(--surface);
+      border:1px dashed var(--border2);
+      border-radius:16px;
+      text-align:center;
+      font-size:12px;color:var(--text3);
+      font-family:var(--mono);
+    }
 
     /* MESSAGES */
     .msgs{padding-top:20px;padding-bottom:20px;display:flex;flex-direction:column;gap:18px;}
@@ -125,12 +200,17 @@
     .bubble div[style*="background:#f0eeeb"]{background:var(--surface2)!important;border-radius:12px!important;}
     .msg-meta{font-size:10.5px;color:var(--text3);font-family:var(--mono);display:flex;align-items:center;gap:6px;}
     .msg-badge{font-size:8px;background:rgba(var(--accent-rgb),0.15);color:var(--accent);border:1px solid rgba(var(--accent-rgb),0.3);padding:1px 6px;border-radius:4px;font-weight:700;letter-spacing:.06em;}
+
+    /* "Asked from topic" badge in meta */
+    .msg-topic-badge{font-size:8px;background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.25);padding:1px 6px;border-radius:4px;font-weight:700;letter-spacing:.04em;}
+
     .cursor{display:inline-block;width:2px;height:14px;background:var(--accent);margin-left:2px;vertical-align:middle;border-radius:1px;animation:blink .8s step-end infinite;box-shadow:0 0 6px var(--accent);}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
     .typing-row{display:flex;gap:11px;align-items:flex-start;animation:msgIn .28s cubic-bezier(.22,1,.36,1) both;}
     .typing-bub{padding:14px 18px;background:var(--surface);border:1px solid var(--border2);border-radius:4px 18px 18px 18px;display:flex;align-items:center;gap:5px;box-shadow:var(--sh);}
     .tdot{width:7px;height:7px;background:var(--text3);border-radius:50%;animation:bdot 1.3s ease infinite;}
     .tdot:nth-child(2){animation-delay:.15s}.tdot:nth-child(3){animation-delay:.3s}
+    @keyframes bdot{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-5px);opacity:1}}
 
     /* INPUT AREA */
     .input-area{flex-shrink:0;position:relative;z-index:10;background:rgba(15,15,19,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:12px var(--pad-x);padding-bottom:calc(12px + var(--safe-b));}
@@ -176,17 +256,17 @@
     #err p{font-size:13px;color:var(--text2);max-width:260px;line-height:1.65;}
 
     /* RESPONSIVE */
-    @media(max-width:900px){.topics-grid{grid-template-columns:repeat(3,1fr);}}
+    @media(max-width:900px){.topics-grid,.topics-skeleton{grid-template-columns:repeat(3,1fr);}}
     @media(max-width:640px){
       :root{--pad-x:14px;}
       .hdr-by{display:none;}
       .hdr{height:calc(56px + var(--safe-t));}
-      .topics-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+      .topics-grid,.topics-skeleton{grid-template-columns:repeat(2,1fr);gap:8px;}
       .bubble.user-b{max-width:82%;}
       #txt{font-size:16px;}
       .bubble li{padding:6px 10px 6px 12px;}
     }
-    @media(max-width:380px){.topics-grid{grid-template-columns:1fr 1fr;}.tc-desc{display:none;}.bubble.user-b{max-width:90%;}}
+    @media(max-width:380px){.topics-grid,.topics-skeleton{grid-template-columns:1fr 1fr;}.tc-desc{display:none;}.bubble.user-b{max-width:90%;}}
     @media(max-height:520px) and (orientation:landscape){.hdr{height:44px;}.welcome{padding-top:10px;gap:10px;}.input-area{padding:7px var(--pad-x);padding-bottom:calc(7px + var(--safe-b));}}
 
     /* THEMES */
@@ -223,6 +303,7 @@
   <div class="scroll" id="scroll">
     <div class="pad">
       <div class="welcome" id="welcome">
+        <!-- Welcome card -->
         <div class="w-card">
           <div class="w-logo" id="wLogo"><span class="w-logo-fb" id="wFb">A</span></div>
           <div class="w-text-wrap">
@@ -240,11 +321,22 @@
           </div>
         </div>
 
+        <!-- Topics section -->
         <div class="topics-label">Explore Topics</div>
-        <div class="topics-loading" id="topicsLoad">
-          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-          <span>Analysing knowledge base…</span>
+
+        <!-- Skeleton shown instantly while config loads -->
+        <div class="topics-skeleton" id="topicsSkeleton">
+          <div class="skel-card"></div>
+          <div class="skel-card"></div>
+          <div class="skel-card"></div>
+          <div class="skel-card"></div>
+          <div class="skel-card"></div>
+          <div class="skel-card"></div>
+          <div class="skel-card"></div>
+          <div class="skel-card"></div>
         </div>
+
+        <!-- Real topic cards injected here -->
         <div class="topics-grid" id="topicsGrid" style="display:none"></div>
       </div>
     </div>
@@ -303,36 +395,36 @@ let busy = false
 let hist = []
 
 // ── IMAGE STATE ──
-let pendingImage = null  // { base64: '...', mimeType: 'image/jpeg', dataUrl: '...' }
+let pendingImage = null  // { base64, mimeType, dataUrl }
+
+// ── TOPIC STATE ──
+// Stores the full topic objects so we can pass suggested_prompt on click
+let topicsData = []
 
 function onImageSelected(e) {
   const file = e.target.files[0]
   if (!file) return
   if (!file.type.startsWith('image/')) { alert('Please select an image file.'); return }
   if (file.size > 5 * 1024 * 1024) { alert('Image too large. Max 5MB.'); return }
-
   const reader = new FileReader()
   reader.onload = (ev) => {
     const dataUrl = ev.target.result
     const base64  = dataUrl.split(',')[1]
     pendingImage  = { base64, mimeType: file.type, dataUrl }
-    // Show preview
-    document.getElementById('imgPreviewThumb').src = dataUrl
-    document.getElementById('imgPreviewStrip').classList.add('visible')
-    document.getElementById('img-btn').classList.add('has-img')
-    // Focus textarea
-    document.getElementById('txt').focus()
+    $('imgPreviewThumb').src = dataUrl
+    $('imgPreviewStrip').classList.add('visible')
+    $('img-btn').classList.add('has-img')
+    $('txt').focus()
   }
   reader.readAsDataURL(file)
-  // Reset input so same file can be re-selected
   e.target.value = ''
 }
 
 function removeImage() {
   pendingImage = null
-  document.getElementById('imgPreviewStrip').classList.remove('visible')
-  document.getElementById('imgPreviewThumb').src = ''
-  document.getElementById('img-btn').classList.remove('has-img')
+  $('imgPreviewStrip').classList.remove('visible')
+  $('imgPreviewThumb').src = ''
+  $('img-btn').classList.remove('has-img')
 }
 
 function injectImg(wrap, src, fb) {
@@ -351,7 +443,7 @@ function hrgb(hex) {
   try { return [parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)].join(',') } catch { return '124,106,255' }
 }
 
-/* INIT */
+/* ── INIT ─────────────────────────────────────────────────── */
 async function init() {
   if (!agentId) { showErr(); return }
   try {
@@ -361,6 +453,8 @@ async function init() {
     applyTheme(); brand()
     $('loading').style.display = 'none'
     $('ui').style.display = 'flex'
+
+    // ── Load topics from cache (instant) or generate on-the-fly ──
     loadTopics()
   } catch(e) { showErr() }
 }
@@ -393,61 +487,107 @@ function brand() {
   meta.content = hex
 }
 
-/* TOPICS */
+/* ── TOPICS ────────────────────────────────────────────────
+   Priority:
+   1. cfg.cached_topics  — pre-built at publish time (instant, no AI call)
+   2. cfg.suggestions    — fallback simple suggestion strings
+   3. On-the-fly AI call — last resort if nothing cached
+   ──────────────────────────────────────────────────────── */
 async function loadTopics() {
+  // Try cached topics first (generated at publish time)
+  if (cfg.cached_topics && cfg.cached_topics.length > 0) {
+    topicsData = cfg.cached_topics
+    renderTopics(topicsData)
+    return
+  }
+
+  // Fallback: try building from simple suggestions strings
+  if (cfg.suggestions && cfg.suggestions.length > 0) {
+    topicsData = cfg.suggestions.map(s => ({
+      icon: '💡',
+      title: s.replace(/[?]/g,'').trim().slice(0, 30),
+      desc: 'Ask me about this topic.',
+      question: s,
+      suggested_prompt: null
+    })).slice(0, 8)
+    renderTopics(topicsData)
+    return
+  }
+
+  // Last resort: on-the-fly AI generation (no cache available)
+  // This only happens for agents published before this feature was added
   const prompt = `Analyse the knowledge base and return EXACTLY 8 topic cards that visitors would want to ask about.
 Return ONLY a raw JSON array — no markdown, no explanation, no backticks.
-Each object must have these exact keys:
-  "icon"  — a single relevant emoji
-  "title" — 2-4 word topic name
-  "desc"  — one short sentence (max 10 words) describing what they can learn
-  "q"     — the natural question a visitor would ask
-Example: [{"icon":"💰","title":"Fee Structure","desc":"Course fees and payment options.","q":"What are the fees?"},...]
-Base topics strictly on the knowledge base content. Return exactly 8 items.`
+Each object must have: "icon" (emoji), "title" (2-4 words), "desc" (max 10 words), "question" (natural visitor question), "suggested_prompt" (detailed rich prompt for best answer).
+Return exactly 8 items.`
 
   try {
     const r = await fetch(`${API}/chat/${agentId}`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ question: prompt, history:[], _internal:true })
     })
-    const d   = await r.json()
-    let raw   = (d.answer||'').replace(/<[^>]*>/g,'').trim()
+    const d = await r.json()
+    let raw = (d.answer||'').replace(/<[^>]*>/g,'').trim()
     raw = raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/,'').trim()
     const start = raw.indexOf('['), end = raw.lastIndexOf(']')
     if (start === -1 || end === -1) throw new Error('No array')
-    const topics = JSON.parse(raw.slice(start, end+1))
-    if (!Array.isArray(topics) || !topics.length) throw new Error('Empty')
-    renderTopics(topics)
+    topicsData = JSON.parse(raw.slice(start, end+1))
+    if (!Array.isArray(topicsData) || !topicsData.length) throw new Error('Empty')
+    renderTopics(topicsData)
   } catch(e) {
-    const fallback = (cfg.suggestions||[]).map(s=>({ icon:'💡', title:s.replace(/[?]/g,'').trim().slice(0,30), desc:'Ask me about this topic.', q:s })).slice(0,8)
-    if (fallback.length) renderTopics(fallback)
-    else $('topicsLoad').style.display = 'none'
+    // Nothing to show
+    $('topicsSkeleton').style.display = 'none'
+    const empty = document.createElement('div')
+    empty.className = 'topics-empty'
+    empty.textContent = 'Ask me anything below ↓'
+    $('topicsSkeleton').parentNode.insertBefore(empty, $('topicsGrid'))
   }
 }
 
 function renderTopics(topics) {
   const grid = $('topicsGrid')
-  grid.innerHTML = topics.map(t => `
-    <div class="topic-card" onclick="askQ(${JSON.stringify(t.q)})">
+  grid.innerHTML = topics.map((t, i) => `
+    <div class="topic-card" onclick="askTopic(${i})" data-idx="${i}">
       <div class="tc-icon">${t.icon || '💡'}</div>
       <div class="tc-title">${esc(t.title)}</div>
-      <div class="tc-desc">${esc(t.desc)}</div>
+      <div class="tc-desc">${esc(t.desc || '')}</div>
+      <div class="tc-cta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+        Ask this
+      </div>
     </div>`).join('')
-  $('topicsLoad').style.display = 'none'
+
+  // Swap skeleton → real grid
+  $('topicsSkeleton').style.display = 'none'
   grid.style.display = 'grid'
 }
 
-function askQ(q) { $('txt').value = q; resize($('txt')); send() }
+/* ── TOPIC CLICK ───────────────────────────────────────────
+   Sets the visible question text for the user bubble,
+   but passes the richer suggested_prompt to the API.
+   ──────────────────────────────────────────────────────── */
+function askTopic(idx) {
+  const topic = topicsData[idx]
+  if (!topic) return
+  $('txt').value = topic.question
+  resize($('txt'))
+  // Pass the suggested_prompt separately so we can show the short
+  // question in the chat but send the richer prompt to the API
+  send({ suggestedPrompt: topic.suggested_prompt || null, fromTopic: true })
+}
 
-/* INPUT */
+/* ── INPUT ─────────────────────────────────────────────── */
 function onKey(e) { if (e.key==='Enter' && !e.shiftKey && window.innerWidth>600) { e.preventDefault(); send() } }
 function resize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,150)+'px' }
 
-/* SEND */
-async function send() {
+/* ── SEND ──────────────────────────────────────────────── */
+async function send(opts = {}) {
   const input = $('txt')
   const text  = input.value.trim()
-  const image = pendingImage  // capture before clearing
+  const image = pendingImage
+  const { suggestedPrompt = null, fromTopic = false } = opts
 
   if (!text && !image) return
   if (busy) return
@@ -455,7 +595,7 @@ async function send() {
   const w = $('welcome')
   if (w) { w.style.transition='opacity .2s ease'; w.style.opacity='0'; setTimeout(()=>{ try{w.remove()}catch{} },210) }
 
-  addUser(text, image)
+  addUser(text, image, fromTopic)
   input.value = ''; input.style.height = 'auto'
   removeImage()
   if (window.innerWidth <= 600) input.blur()
@@ -475,9 +615,9 @@ async function send() {
       visitor_id: vid
     }
     // Attach image if present
-    if (image) {
-      payload.image = { base64: image.base64, mimeType: image.mimeType }
-    }
+    if (image) payload.image = { base64: image.base64, mimeType: image.mimeType }
+    // Attach suggested_prompt if this was a topic card click
+    if (suggestedPrompt) payload.suggested_prompt = suggestedPrompt
 
     const resp = await fetch(`${API}/chat/${agentId}/stream`, {
       method:'POST', headers:{'Content-Type':'application/json'},
@@ -503,7 +643,7 @@ async function send() {
         let evt; try { evt=JSON.parse(raw) } catch { continue }
 
         if (evt.type === 'chunk') {
-          if (firstChunk) { typingEl.remove(); botBubble=makeBotBubble(); firstChunk=false }
+          if (firstChunk) { typingEl.remove(); botBubble=makeBotBubble(fromTopic); firstChunk=false }
           streamed += evt.html
           botBubble.innerHTML = streamed + '<span class="cursor"></span>'
           scrollBottom()
@@ -530,12 +670,13 @@ async function send() {
   busy = false; $('snd').disabled = false
 }
 
-/* MESSAGE BUILDERS */
-function addUser(text, image) {
+/* ── MESSAGE BUILDERS ──────────────────────────────────── */
+function addUser(text, image, fromTopic) {
   const el = document.createElement('div')
   el.className = 'msg user'
   const imgHtml = image ? `<img class="msg-img" src="${image.dataUrl}" alt="uploaded image"/>` : ''
   const textHtml = text ? `<span>${esc(text).replace(/\n/g,'<br>')}</span>` : ''
+  const topicBadge = fromTopic ? `<span class="msg-topic-badge">Topic</span>` : ''
   el.innerHTML = `
     <div class="av user">
       <svg viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2" style="width:13px;height:13px">
@@ -543,7 +684,7 @@ function addUser(text, image) {
       </svg>
     </div>
     <div class="msg-body">
-      <div class="msg-meta">You</div>
+      <div class="msg-meta">You ${topicBadge}</div>
       <div class="bubble user-b">${imgHtml}${textHtml}</div>
       <div class="msg-meta">${ts()}</div>
     </div>`
@@ -563,7 +704,7 @@ function addBot(html) {
   $('msgs').appendChild(el); scrollBottom()
 }
 
-function makeBotBubble() {
+function makeBotBubble(fromTopic) {
   const el = document.createElement('div')
   el.className = 'msg bot'
   el.innerHTML = `
@@ -589,7 +730,7 @@ function addTyping() {
   return el
 }
 
-/* UTILS */
+/* ── UTILS ─────────────────────────────────────────────── */
 function $(id) { return document.getElementById(id) }
 function scrollBottom() { const s=$('scroll'); requestAnimationFrame(()=>{ s.scrollTop=s.scrollHeight }) }
 function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
