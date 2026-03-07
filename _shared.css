@@ -35,10 +35,12 @@ input,textarea,select{transition:border-color .2s !important;}
 .btn-logout:hover{background:rgba(255,101,132,.15);color:var(--accent2);}
 
 /* MOBILE TOPBAR */
-.mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;z-index:150;height:56px;background:var(--surface);border-bottom:1px solid var(--border);align-items:center;padding:0 16px;gap:12px;}
-.mobile-topbar .logo-mark{width:30px;height:30px;}
-.mobile-topbar .logo-text{font-size:17px;}
-.mobile-menu-btn{background:none;border:none;cursor:pointer;color:var(--muted);padding:8px;margin-right:12px;display:flex;flex-direction:column;gap:4px;}
+.mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;z-index:150;height:60px;background:var(--surface);border-bottom:1px solid var(--border);align-items:center;padding:0 16px;gap:0;}
+.mobile-topbar .logo-mark{width:36px;height:36px;}
+.mobile-topbar .logo-text{font-size:20px;font-weight:700;}
+.mobile-topbar-center{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;}
+.mobile-menu-btn{background:none;border:none;cursor:pointer;color:var(--text);padding:8px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;}
+.mobile-menu-btn span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s;}
 .mobile-menu-btn span{display:block;width:20px;height:2px;background:var(--muted);border-radius:2px;transition:all .3s;}
 .mobile-menu-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
 .mobile-menu-btn.open span:nth-child(2){opacity:0;}
