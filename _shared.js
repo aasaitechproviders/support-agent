@@ -142,7 +142,42 @@ function setActiveNav(pageId) {
   })
 }
 
-// ── Apply accent color ──
+// ── Apply background theme ──
+const BG_THEMES = [
+  {id:'dark',bg:'#0a0a0f',bgRgb:'10,10,15',surface:'#111118',surface2:'#1a1a24',border:'#2a2a38',text:'#f0f0f8',muted:'#7a7a9a'},
+  {id:'light',bg:'#f5f5fa',bgRgb:'245,245,250',surface:'#ffffff',surface2:'#ededf5',border:'#e0e0ec',text:'#1a1a2e',muted:'#6868a0'},
+  {id:'midnight',bg:'#05050d',bgRgb:'5,5,13',surface:'#0d0d1a',surface2:'#12122a',border:'#1e1e30',text:'#e8e8ff',muted:'#6868a0'},
+  {id:'slate',bg:'#0f172a',bgRgb:'15,23,42',surface:'#1e293b',surface2:'#263044',border:'#334155',text:'#f1f5f9',muted:'#64748b'},
+  {id:'white',bg:'#ffffff',bgRgb:'255,255,255',surface:'#f8f8fc',surface2:'#f0f0f8',border:'#e4e4f0',text:'#1a1a2e',muted:'#6868a0'},
+]
+function applyBgTheme(themeId, customHex) {
+  const root = document.documentElement
+  if (themeId === 'custom') {
+    const hex = customHex || '#0a0a0f'
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16)
+    const isDark = (r*0.299 + g*0.587 + b*0.114) < 128
+    const shift = (h, o) => { let rv=Math.min(255,Math.max(0,parseInt(h.slice(1,3),16)+o)), gv=Math.min(255,Math.max(0,parseInt(h.slice(3,5),16)+o)), bv=Math.min(255,Math.max(0,parseInt(h.slice(5,7),16)+o)); return '#'+[rv,gv,bv].map(x=>x.toString(16).padStart(2,'0')).join('') }
+    root.style.setProperty('--bg', hex)
+    root.style.setProperty('--bg-rgb', `${r},${g},${b}`)
+    root.style.setProperty('--surface', isDark ? shift(hex,10) : shift(hex,-10))
+    root.style.setProperty('--surface2', isDark ? shift(hex,20) : shift(hex,-20))
+    root.style.setProperty('--border', isDark ? shift(hex,35) : shift(hex,-35))
+    root.style.setProperty('--text', isDark ? '#f0f0f8' : '#1a1a2e')
+    root.style.setProperty('--muted', isDark ? '#7a7a9a' : '#6868a0')
+  } else {
+    const t = BG_THEMES.find(x => x.id === themeId)
+    if (!t) return
+    root.style.setProperty('--bg', t.bg)
+    root.style.setProperty('--bg-rgb', t.bgRgb)
+    root.style.setProperty('--surface', t.surface)
+    root.style.setProperty('--surface2', t.surface2)
+    root.style.setProperty('--border', t.border)
+    root.style.setProperty('--text', t.text)
+    root.style.setProperty('--muted', t.muted)
+  }
+}
+
+
 const BRAND_COLORS = ['#6c63ff','#7c3aed','#2563eb','#0891b2','#0d9488','#16a34a','#ca8a04','#ea580c','#dc2626','#db2777','#c8972a','#64748b','#ff6584','#43e97b','#f7971e']
 
 function applyAccent(hex) {
@@ -161,6 +196,8 @@ async function requireAuthPage() {
     const user = await res.json()
     // Apply saved accent
     if (user.dashboard_accent) applyAccent(user.dashboard_accent)
+    // Apply saved background theme
+    if (user.dashboard_bg_theme) applyBgTheme(user.dashboard_bg_theme, user.dashboard_bg_custom || '#0a0a0f')
     return user
   } catch {
     clearToken()
