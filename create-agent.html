@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Agent — Aasai Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="_shared.css"/>
+  <style>
+    ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+    .create-layout{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;max-width:1200px;}
+    .create-main{display:flex;flex-direction:column;gap:20px;}
+    .create-side{display:flex;flex-direction:column;gap:20px;position:sticky;top:80px;}
+
+    .logo-upload-zone{display:flex;align-items:center;gap:16px;}
+    .logo-preview-box{width:60px;height:60px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden;}
+    .logo-preview-box img{width:100%;height:100%;object-fit:contain;border-radius:12px;}
+    .logo-upload-actions{display:flex;flex-direction:column;gap:8px;flex:1;}
+    .logo-upload-btn{display:flex;align-items:center;gap:8px;padding:9px 14px;background:rgba(var(--accent-rgb),.12);border:1px solid rgba(var(--accent-rgb),.25);border-radius:8px;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;width:fit-content;}
+    .logo-upload-btn:hover{background:rgba(var(--accent-rgb),.2);border-color:var(--accent);}
+    .logo-upload-hint{font-size:11px;color:var(--muted);line-height:1.5;}
+    .logo-remove-btn{display:none;align-items:center;gap:5px;padding:5px 10px;background:rgba(255,101,132,.1);border:1px solid rgba(255,101,132,.25);border-radius:6px;color:var(--accent2);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;width:fit-content;}
+    .logo-remove-btn:hover{background:rgba(255,101,132,.2);}
+    .logo-remove-btn.visible{display:flex;}
+
+    .color-palette{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+    .color-swatch{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .18s;flex-shrink:0;position:relative;}
+    .color-swatch:hover{transform:scale(1.18);border-color:rgba(255,255,255,.5);}
+    .color-swatch.selected{border-color:white !important;box-shadow:0 0 0 2px var(--accent),0 3px 12px rgba(0,0,0,.3);}
+    .color-swatch.selected::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:white;text-shadow:0 1px 3px rgba(0,0,0,.6);}
+    .color-pick-row{display:flex;align-items:center;gap:12px;}
+
+    .sources-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+    .source-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;}
+    .source-type-badge{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;flex-shrink:0;}
+    .type-text{background:rgba(var(--accent-rgb),.15);color:var(--accent);}
+    .type-file{background:rgba(255,101,132,.15);color:var(--accent2);}
+    .type-url{background:rgba(67,233,123,.15);color:var(--accent3);}
+    .source-content{flex:1;font-size:13px;color:var(--muted);line-height:1.5;word-break:break-word;}
+    .add-source-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+    .tab-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;}
+    .tab-btn.active{background:rgba(var(--accent-rgb),.15);border-color:var(--accent);color:var(--accent);}
+    .source-input-area{display:none;}
+    .source-input-area.active{display:block;}
+    .file-drop{border:2px dashed var(--border);border-radius:10px;padding:24px;text-align:center;cursor:pointer;color:var(--muted);font-size:14px;transition:all .2s;}
+    .file-drop:hover{border-color:var(--accent);color:var(--accent);}
+    .file-queue{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+    .file-queue-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface2);border-radius:8px;font-size:13px;}
+    .file-queue-item .fname{flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .file-queue-item .fstatus{font-size:11px;color:var(--muted);}
+    .file-queue-item .fstatus.done{color:var(--accent3);}
+    .file-queue-item .fstatus.error{color:var(--accent2);}
+    .token-meter{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-top:12px;}
+    .token-meter-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+    .token-meter-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent));border-radius:3px;width:0%;transition:width .5s;}
+    .token-meter-text{font-size:12px;color:var(--muted);white-space:nowrap;}
+
+    .publish-box{background:linear-gradient(135deg,rgba(var(--accent-rgb),.1),rgba(255,101,132,.05));border:1px solid rgba(var(--accent-rgb),.3);border-radius:var(--radius);padding:28px;text-align:center;}
+    .publish-box h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;}
+    .publish-box p{color:var(--muted);font-size:14px;margin-bottom:20px;}
+    .btn-publish{padding:13px 32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:var(--radius);color:white;font-family:'Syne',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+    .btn-publish:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(var(--accent-rgb),.3);}
+    .btn-publish:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+    .published-url-box{margin-top:16px;padding:14px 16px;background:var(--surface2);border:1px solid var(--accent);border-radius:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .published-url{flex:1;font-size:13px;color:var(--accent);word-break:break-all;min-width:0;text-decoration:none;}
+    .btn-copy{padding:6px 12px;background:rgba(var(--accent-rgb),.15);border:none;border-radius:6px;color:var(--accent);font-size:12px;cursor:pointer;}
+
+    .preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+    .preview-card-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;}
+
+    .theme-swatch-btn{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;cursor:pointer;border:1.5px solid var(--border);transition:all .15s;background:transparent;}
+    .theme-swatch-btn:hover{border-color:var(--muted);}
+
+    @media(max-width:1024px){.create-layout{grid-template-columns:1fr;}}
+    @media(max-width:768px){.create-side{position:static;}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  </style>
+</head>
+<body>
+
+<div class="mobile-topbar">
+  <div class="logo-mark"><img src="logo.png" alt="" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\' style=\'width:30px;height:30px;font-size:13px;\'>A</div>'"/></div>
+  <span class="logo-text">Aasai Tech</span>
+  <button class="mobile-menu-btn" id="mob-menu-btn"><span></span><span></span><span></span></button>
+</div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark"><img src="logo.png" alt="" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\'>A</div>'"/></div>
+    <span class="logo-text">Aasai Tech</span>
+  </div>
+  <nav>
+    <a class="nav-item" data-page="dashboard" href="home.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a class="nav-item" data-page="agents" href="agents.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>My Agents</a>
+    <a class="nav-item" data-page="conversations" href="conversations.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Conversations</a>
+    <a class="nav-item active" data-page="create" href="create-agent.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Create Agent</a>
+    <a class="nav-item" data-page="settings" href="settings.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
+    <a class="nav-item" data-page="profile" href="profile.html"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-chip" onclick="location.href='profile.html'">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div style="flex:1;min-width:0;"><div class="user-name" id="user-name">…</div><div class="user-plan" id="user-plan">Free Plan</div></div>
+      <button class="btn-logout" onclick="event.stopPropagation();logout()" title="Logout"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="page-title" id="create-title">Create Agent</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="agents.html" class="btn-secondary">Cancel</a>
+      <button class="btn-primary" id="save-btn" onclick="saveAgent()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Agent
+      </button>
+    </div>
+  </div>
+
+  <div class="content page-enter">
+    <div class="create-layout">
+
+      <!-- LEFT -->
+      <div class="create-main">
+
+        <!-- Section 1 -->
+        <div class="form-section">
+          <div class="form-section-title"><div class="section-num">1</div>Basic Information</div>
+          <div class="form-row">
+            <div class="form-group"><label>Agent Name *</label><input type="text" id="f-name" placeholder="e.g. Springfield Coaching Bot" oninput="updatePreviewName(this.value)"/></div>
+            <div class="form-group"><label>Welcome Message</label><input type="text" id="f-welcome" placeholder="Hi! How can I help you today?"/></div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Agent Logo <span style="font-size:11px;color:var(--muted);font-weight:400;">(PNG, JPG, WebP — max 2MB)</span></label>
+            <div class="logo-upload-zone">
+              <div class="logo-preview-box" id="logo-preview-box">🤖</div>
+              <div class="logo-upload-actions">
+                <label class="logo-upload-btn" for="logo-file-input">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Upload Logo
+                </label>
+                <input type="file" id="logo-file-input" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none;" onchange="handleLogoUpload(this)"/>
+                <div class="logo-upload-hint">Square image recommended · Appears in chat header & agent cards</div>
+                <button type="button" class="logo-remove-btn" id="logo-remove-btn" onclick="removeLogo()">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+                  Remove
+                </button>
+              </div>
+            </div>
+            <input type="hidden" id="f-logo-base64" value=""/>
+          </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="form-section">
+          <div class="form-section-title"><div class="section-num">2</div>AI Behaviour</div>
+          <div class="form-group" style="margin-bottom:0;"><label>System Prompt</label><textarea id="f-prompt" placeholder="You are a helpful assistant for [Organisation]. Answer only from the provided knowledge. Be friendly and concise."></textarea></div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="form-section">
+          <div class="form-section-title"><div class="section-num">3</div>Knowledge Sources</div>
+          <div class="sources-list" id="sources-list"></div>
+          <div class="add-source-tabs">
+            <button class="tab-btn active" onclick="switchTab('text',this)">📝 Text</button>
+            <button class="tab-btn" onclick="switchTab('file',this)">📄 Files</button>
+            <button class="tab-btn" onclick="switchTab('url',this)">🔗 URL</button>
+          </div>
+          <div class="source-input-area active" id="tab-text">
+            <textarea id="src-text" placeholder="Paste your knowledge here — fees, timings, FAQs, policies…" style="min-height:120px;"></textarea>
+            <button class="btn-primary" style="margin-top:10px;" id="add-text-btn" onclick="addSource('text')">Add Text</button>
+          </div>
+          <div class="source-input-area" id="tab-file">
+            <div class="file-drop" onclick="document.getElementById('file-input').click()">
+              <input type="file" id="file-input" style="display:none;" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg" multiple onchange="uploadFiles(this)"/>
+              <div style="font-size:24px;margin-bottom:8px;">📎</div>
+              <div>Click to upload — multiple files supported</div>
+              <div style="font-size:12px;margin-top:4px;">PDF, DOCX, TXT, PNG, JPG</div>
+            </div>
+            <div class="file-queue" id="file-queue"></div>
+          </div>
+          <div class="source-input-area" id="tab-url">
+            <input type="text" id="src-url" placeholder="https://yourwebsite.com/about"/>
+            <button class="btn-primary" style="margin-top:10px;" id="add-url-btn" onclick="addSource('url')">Fetch &amp; Add</button>
+          </div>
+          <div class="token-meter">
+            <span style="font-size:12px;color:var(--muted);">Knowledge size</span>
+            <div class="token-meter-bar"><div class="token-meter-fill" id="k-fill"></div></div>
+            <span class="token-meter-text" id="k-text">~0 / 18,000 tokens</span>
+          </div>
+        </div>
+
+      </div><!-- /create-main -->
+
+      <!-- RIGHT -->
+      <div class="create-side">
+
+        <!-- Branding -->
+        <div class="form-section">
+          <div class="form-section-title"><div class="section-num">4</div>Branding</div>
+          <div class="form-group">
+            <label>Brand Colour</label>
+            <div style="display:flex;flex-direction:column;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;">
+              <div class="color-pick-row">
+                <div id="color-preview" style="width:44px;height:44px;border-radius:10px;background:#6c63ff;box-shadow:0 4px 14px rgba(0,0,0,.3);flex-shrink:0;"></div>
+                <input type="text" id="agent-color-hex" value="#6C63FF" maxlength="7" placeholder="#6C63FF" style="flex:1;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;text-transform:uppercase;letter-spacing:.04em;outline:none;" oninput="onAgentHexInput(this.value)"/>
+                <label style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" title="Open colour picker">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                  <input type="color" id="f-color" value="#6c63ff" style="opacity:0;position:absolute;width:0;height:0;" oninput="onColorInput(this.value)"/>
+                </label>
+              </div>
+              <div class="color-palette" id="color-palette"></div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Chat Portal Theme</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;" id="theme-swatches"></div>
+          </div>
+          <input type="hidden" id="f-theme" value="dark"/>
+        </div>
+
+        <!-- Live Preview -->
+        <div class="preview-card">
+          <div class="preview-card-title">Live Preview</div>
+          <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+            <div id="acp-header" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#6c63ff18;border-bottom:1px solid #6c63ff30;">
+              <div id="acp-avatar" style="width:22px;height:22px;border-radius:6px;background:#6c63ff22;display:flex;align-items:center;justify-content:center;font-size:12px;overflow:hidden;">🤖</div>
+              <div style="width:6px;height:6px;border-radius:50%;background:#43e97b;animation:pulse 2s infinite;"></div>
+              <span id="acp-name" style="font-size:12px;font-weight:600;color:var(--text);">Your Agent</span>
+            </div>
+            <div style="padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg);">
+              <div style="padding:8px 12px;border-radius:10px 10px 10px 3px;font-size:12px;color:var(--text);max-width:85%;border:1px solid var(--border);background:var(--surface);">Hi! How can I help you today? 👋</div>
+              <div id="acp-userbubble" style="padding:8px 12px;border-radius:10px 10px 3px 10px;font-size:12px;color:white;max-width:85%;align-self:flex-end;background:#6c63ff;">Sure, what are the timings?</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Publish -->
+        <div class="publish-box">
+          <h3>Ready to go live?</h3>
+          <p>Publish your agent and get a shareable chat link instantly.</p>
+          <button class="btn-publish" id="pub-btn" onclick="publishAgent()">🚀 Publish Agent</button>
+          <div class="published-url-box" id="url-box" style="display:none;">
+            <a class="published-url" id="pub-url" href="#" target="_blank" rel="noopener"></a>
+            <button class="btn-copy" onclick="copyUrl()">Copy</button>
+          </div>
+        </div>
+
+      </div><!-- /create-side -->
+    </div>
+  </div>
+</main>
+
+<script src="_shared.js"></script>
+<script>
+const BRAND_COLORS_LIST = ['#6c63ff','#7c3aed','#2563eb','#0891b2','#0d9488','#16a34a','#ca8a04','#ea580c','#dc2626','#db2777','#c8972a','#64748b','#ff6584','#43e97b','#f7971e']
+const THEMES = [
+  {id:'dark',label:'Dark',bg:'#0a0a0f',border:'#2a2a38'},
+  {id:'light',label:'Light',bg:'#f4f4fa',border:'#e4e4f0'},
+  {id:'midnight',label:'Midnight',bg:'#05050d',border:'#1e1e30'},
+  {id:'slate',label:'Slate',bg:'#0f172a',border:'#334155'},
+  {id:'forest',label:'Forest',bg:'#0a0f0a',border:'#1e2e1e'},
+]
+
+let editingAgentId = null
+let sources = []
+
+async function init() {
+  const user = await requireAuthPage()
+  if (!user) return
+  renderUserChip(user)
+  initMobileSidebar()
+  buildColorPalette()
+  buildThemeSwatches()
+  renderSources()
+
+  const params = new URLSearchParams(location.search)
+  const id = params.get('id')
+  if (id) {
+    document.getElementById('create-title').textContent = 'Edit Agent'
+    showPageLoader(); setPageLoaderLabel('Loading agent…')
+    await loadAgent(id)
+    hidePageLoader()
+  }
+}
+
+async function loadAgent(id) {
+  try {
+    const [ar, sr] = await Promise.all([
+      apiFetch('/agents/' + id),
+      apiFetch('/agents/' + id + '/sources')
+    ])
+    const a = await ar.json()
+    sources = await sr.json()
+    editingAgentId = id
+
+    document.getElementById('f-name').value = a.name || ''
+    document.getElementById('f-welcome').value = a.welcome_message || ''
+    document.getElementById('f-prompt').value = a.system_prompt || ''
+    document.getElementById('f-theme').value = a.theme || 'dark'
+    updatePreviewName(a.name || '')
+
+    const ac = a.brand_color || '#6c63ff'
+    document.getElementById('f-color').value = ac
+    document.getElementById('agent-color-hex').value = ac.toUpperCase()
+    pickAgentColor(ac)
+    updateThemeSwatchSelection(a.theme || 'dark')
+
+    if (a.logo_base64) {
+      document.getElementById('f-logo-base64').value = a.logo_base64
+      setLogoPreview(a.logo_base64)
+    }
+
+    if (a.published_url) {
+      const pl = document.getElementById('pub-url')
+      pl.textContent = a.published_url; pl.href = a.published_url
+      document.getElementById('url-box').style.display = 'flex'
+    }
+    renderSources()
+  } catch (e) { toast('Failed to load agent', 'error') }
+}
+
+function handleLogoUpload(input) {
+  const file = input.files[0]
+  if (!file) return
+  if (!file.type.startsWith('image/')) { toast('Please upload an image file', 'error'); return }
+  if (file.size > 2 * 1024 * 1024) { toast('Image too large — max 2MB', 'error'); return }
+  const reader = new FileReader()
+  reader.onload = e => {
+    const base64 = e.target.result
+    document.getElementById('f-logo-base64').value = base64
+    setLogoPreview(base64)
+    toast('Logo uploaded ✓', 'success')
+  }
+  reader.readAsDataURL(file)
+  input.value = ''
+}
+
+function setLogoPreview(src) {
+  const box = document.getElementById('logo-preview-box')
+  const removeBtn = document.getElementById('logo-remove-btn')
+  if (src) {
+    box.innerHTML = `<img src="${src}" alt="logo"/>`
+    removeBtn.classList.add('visible')
+    const acpAvatar = document.getElementById('acp-avatar')
+    if (acpAvatar) acpAvatar.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:contain;border-radius:6px;"/>`
+  } else {
+    box.innerHTML = '🤖'
+    removeBtn.classList.remove('visible')
+    const acpAvatar = document.getElementById('acp-avatar')
+    if (acpAvatar) acpAvatar.innerHTML = '🤖'
+  }
+}
+
+function removeLogo() {
+  document.getElementById('f-logo-base64').value = ''
+  setLogoPreview(null)
+}
+
+function updatePreviewName(val) {
+  const el = document.getElementById('acp-name')
+  if (el) el.textContent = val || 'Your Agent'
+}
+
+function buildColorPalette() {
+  document.getElementById('color-palette').innerHTML = BRAND_COLORS_LIST.map(c =>
+    `<div class="color-swatch" data-color="${c}" style="background:${c};" onclick="pickAgentColor('${c}')"></div>`
+  ).join('')
+}
+
+function buildThemeSwatches() {
+  document.getElementById('theme-swatches').innerHTML = THEMES.map(t =>
+    `<div class="theme-swatch-btn" data-theme="${t.id}" onclick="selectTheme('${t.id}')">
+      <div style="width:20px;height:20px;border-radius:5px;background:${t.bg};border:1px solid ${t.border};flex-shrink:0;"></div>
+      <span style="font-size:13px;color:var(--muted);">${t.label}</span>
+    </div>`
+  ).join('')
+  updateThemeSwatchSelection('dark')
+}
+
+function selectTheme(id) {
+  document.getElementById('f-theme').value = id
+  updateThemeSwatchSelection(id)
+}
+
+function updateThemeSwatchSelection(id) {
+  document.querySelectorAll('.theme-swatch-btn').forEach(el => {
+    const active = el.dataset.theme === id
+    el.style.borderColor = active ? 'var(--accent)' : 'var(--border)'
+    el.style.background = active ? 'rgba(var(--accent-rgb),0.1)' : 'transparent'
+    el.querySelector('span').style.color = active ? 'var(--accent)' : 'var(--muted)'
+  })
+}
+
+function onAgentHexInput(val) {
+  const hex = val.startsWith('#') ? val : '#' + val
+  if (!isValidHex(hex)) return
+  document.getElementById('f-color').value = hex
+  updateAgentColorPreview(hex)
+}
+
+function onColorInput(hex) {
+  document.getElementById('agent-color-hex').value = hex.toUpperCase()
+  updateAgentColorPreview(hex)
+}
+
+function pickAgentColor(hex) {
+  document.getElementById('f-color').value = hex
+  document.getElementById('agent-color-hex').value = hex.toUpperCase()
+  updateAgentColorPreview(hex)
+}
+
+function updateAgentColorPreview(hex) {
+  document.getElementById('color-preview').style.background = hex
+  const header = document.getElementById('acp-header')
+  const bubble = document.getElementById('acp-userbubble')
+  if (header) { header.style.background = hex + '18'; header.style.borderBottom = `1px solid ${hex}30` }
+  if (bubble) bubble.style.background = hex
+  document.querySelectorAll('#color-palette .color-swatch').forEach(s =>
+    s.classList.toggle('selected', s.dataset.color.toLowerCase() === hex.toLowerCase()))
+}
+
+// SAVE
+async function saveAgent() {
+  const name = document.getElementById('f-name').value.trim()
+  if (!name) { toast('Agent name is required', 'error'); return }
+  const btn = document.getElementById('save-btn')
+  btnLoading(btn, 'Saving…')
+  const logoBase64 = document.getElementById('f-logo-base64').value || null
+  const body = {
+    name,
+    brand_color: document.getElementById('f-color').value,
+    welcome_message: document.getElementById('f-welcome').value || 'Hi! How can I help you today?',
+    logo_url: '',
+    logo_base64: logoBase64,
+    system_prompt: document.getElementById('f-prompt').value || `You are a helpful assistant for ${name}. Answer only from the provided knowledge. Be friendly and concise.`,
+    theme: document.getElementById('f-theme').value
+  }
+  try {
+    const r = await apiFetch(
+      editingAgentId ? '/agents/' + editingAgentId : '/agents',
+      { method: editingAgentId ? 'PUT' : 'POST', body: JSON.stringify(body) }
+    )
+    const d = await r.json()
+    if (!editingAgentId) {
+      editingAgentId = d._id
+      // Update URL without reload
+      history.replaceState({}, '', 'create-agent.html?id=' + d._id)
+      document.getElementById('create-title').textContent = 'Edit Agent'
+    }
+    toast('Agent saved ✓', 'success')
+  } catch (e) { toast('Failed to save', 'error') }
+  btnReset(btn)
+}
+
+// PUBLISH
+async function publishAgent() {
+  if (!editingAgentId) {
+    await saveAgent()
+    if (!editingAgentId) return
+  }
+  const btn = document.getElementById('pub-btn')
+  btnLoading(btn, 'Publishing…')
+  try {
+    const r = await apiFetch('/agents/' + editingAgentId + '/publish', { method: 'POST' })
+    const d = await r.json()
+    if (!r.ok) { toast(d.error || 'Publish failed', 'error'); btnReset(btn); return }
+    const pl = document.getElementById('pub-url')
+    pl.textContent = d.url; pl.href = d.url
+    document.getElementById('url-box').style.display = 'flex'
+    toast('Agent published! 🚀', 'success')
+  } catch (e) { toast('Failed to publish', 'error') }
+  btnReset(btn)
+}
+
+function copyUrl() {
+  const pl = document.getElementById('pub-url')
+  navigator.clipboard.writeText(pl.href || pl.textContent)
+  toast('URL copied ✓', 'success')
+}
+
+// SOURCES
+function switchTab(type, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+  document.querySelectorAll('.source-input-area').forEach(a => a.classList.remove('active'))
+  btn.classList.add('active')
+  document.getElementById('tab-' + type).classList.add('active')
+}
+
+async function ensureSaved() {
+  if (!editingAgentId) await saveAgent()
+  return !!editingAgentId
+}
+
+async function addSource(type) {
+  const content = type === 'text'
+    ? document.getElementById('src-text').value.trim()
+    : document.getElementById('src-url').value.trim()
+  if (!content) { toast('Please enter content', 'error'); return }
+  if (!await ensureSaved()) return
+  const btn = document.getElementById(type === 'text' ? 'add-text-btn' : 'add-url-btn')
+  btnLoading(btn, type === 'url' ? 'Fetching…' : 'Adding…')
+  try {
+    const r = await apiFetch('/agents/' + editingAgentId + '/sources', {
+      method: 'POST',
+      body: JSON.stringify({ type, content })
+    })
+    const s = await r.json()
+    if (!r.ok) { toast(s.error || 'Failed', 'error'); btnReset(btn); return }
+    sources.push(s)
+    renderSources()
+    if (type === 'text') document.getElementById('src-text').value = ''
+    if (type === 'url') document.getElementById('src-url').value = ''
+    toast('Source added ✓', 'success')
+  } catch (e) { toast('Failed to add source', 'error') }
+  btnReset(btn)
+}
+
+async function uploadFiles(input) {
+  if (!input.files.length) return
+  if (!await ensureSaved()) return
+  const files = Array.from(input.files)
+  const queueEl = document.getElementById('file-queue')
+  files.forEach((f, i) => {
+    const el = document.createElement('div')
+    el.className = 'file-queue-item'
+    el.id = `fq-${i}`
+    el.innerHTML = `<span style="font-size:16px;">📄</span><span class="fname">${f.name}</span><span class="fstatus" id="fqs-${i}">Waiting…</span>`
+    queueEl.appendChild(el)
+  })
+  for (let i = 0; i < files.length; i++) {
+    const statusEl = document.getElementById(`fqs-${i}`)
+    statusEl.textContent = 'Uploading…'
+    try {
+      const fd = new FormData(); fd.append('file', files[i])
+      const r = await fetch(API + '/agents/' + editingAgentId + '/sources/file', {
+        method: 'POST', headers: { Authorization: 'Bearer ' + getToken() }, body: fd
+      })
+      const s = await r.json()
+      if (!r.ok) { statusEl.textContent = '✕ Failed'; statusEl.className = 'fstatus error'; continue }
+      sources.push(s)
+      statusEl.textContent = '✓ Done'
+      statusEl.className = 'fstatus done'
+      renderSources()
+    } catch { statusEl.textContent = '✕ Error'; statusEl.className = 'fstatus error' }
+  }
+  input.value = ''
+  toast(`${files.length} file(s) processed`, 'success')
+}
+
+async function deleteSource(id) {
+  await apiFetch('/agents/' + editingAgentId + '/sources/' + id, { method: 'DELETE' })
+  sources = sources.filter(s => s._id !== id)
+  renderSources()
+  toast('Source removed', 'success')
+}
+
+function renderSources() {
+  const el = document.getElementById('sources-list')
+  if (!sources.length) {
+    el.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">No sources yet. Add text, files or URLs below.</div>`
+    updateMeter(0); return
+  }
+  el.innerHTML = sources.map(s =>
+    `<div class="source-item">
+      <span class="source-type-badge type-${s.type}">${s.type}</span>
+      <div class="source-content">${escHtml((s.type === 'file' ? s.file_name || s.content : s.content || '').substring(0, 120))}${((s.type === 'file' ? s.file_name || s.content : s.content) || '').length > 120 ? '…' : ''}</div>
+      <button class="btn-icon" onclick="deleteSource('${s._id}')" title="Remove"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+    </div>`
+  ).join('')
+  const chars = sources.reduce((a, s) => a + (s.extracted_text || s.content || '').length, 0)
+  updateMeter(Math.round(chars / 4))
+}
+
+function updateMeter(t) {
+  const pct = Math.min((t / 18000) * 100, 100)
+  document.getElementById('k-fill').style.width = pct + '%'
+  document.getElementById('k-fill').style.background = pct > 90 ? 'var(--accent2)' : ''
+  document.getElementById('k-text').textContent = `~${t.toLocaleString()} / 18,000 tokens`
+}
+
+init()
+</script>
+</body>
+</html>
