@@ -42,17 +42,17 @@ function toast(msg, type = 'success') {
     el.style.background = '#1a1a24'
     el.style.color = '#f0f0f8'
     el.style.border = '1px solid rgba(67,233,123,.35)'
-    el.innerHTML = `<svg width="16" height="16" fill="none" stroke="#43e97b" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> ${msg}`
+    el.innerHTML = '<svg width="16" height="16" fill="none" stroke="#43e97b" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> ' + msg
   } else if (type === 'error') {
     el.style.background = '#1a1a24'
     el.style.color = '#f0f0f8'
     el.style.border = '1px solid rgba(248,113,113,.35)'
-    el.innerHTML = `<svg width="16" height="16" fill="none" stroke="#f87171" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> ${msg}`
+    el.innerHTML = '<svg width="16" height="16" fill="none" stroke="#f87171" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> ' + msg
   } else {
     el.style.background = '#1a1a24'
     el.style.color = '#f0f0f8'
     el.style.border = '1px solid rgba(108,99,255,.35)'
-    el.innerHTML = `<svg width="16" height="16" fill="none" stroke="#6c63ff" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> ${msg}`
+    el.innerHTML = '<svg width="16" height="16" fill="none" stroke="#6c63ff" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/></svg> ' + msg
   }
   el.style.transform = 'translateY(0)'
   el.style.opacity = '1'
@@ -69,19 +69,8 @@ function showPageLoader() {
   if (!el) {
     el = document.createElement('div')
     el.id = 'page-loader'
-    el.style.cssText = `
-      position:fixed;inset:0;z-index:9998;background:rgba(10,10,15,.7);
-      display:flex;align-items:center;justify-content:center;
-      backdrop-filter:blur(4px);
-      transition:opacity .2s;
-    `
-    el.innerHTML = `
-      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
-        <div style="width:40px;height:40px;border:2.5px solid #2a2a38;border-top-color:#6c63ff;border-radius:50%;animation:spin .7s linear infinite;box-shadow:0 0 20px rgba(108,99,255,.3);"></div>
-        <div id="page-loader-label" style="color:#7a7a9a;font-size:13px;font-family:'DM Sans',sans-serif;letter-spacing:.02em;"></div>
-      </div>
-      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-    `
+    el.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(10,10,15,.7);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:opacity .2s;'
+    el.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:16px;"><div style="width:40px;height:40px;border:2.5px solid #2a2a38;border-top-color:#6c63ff;border-radius:50%;animation:spin .7s linear infinite;"></div><div id="page-loader-label" style="color:#7a7a9a;font-size:13px;font-family:DM Sans,sans-serif;"></div></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>'
     document.body.appendChild(el)
   }
   el.style.display = 'flex'
@@ -102,7 +91,7 @@ function hidePageLoader() {
 function btnLoading(btn, label) {
   btn.disabled = true
   btn._origHtml = btn.innerHTML
-  btn.innerHTML = `<svg width="14" height="14" style="animation:spin .7s linear infinite;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> ${label || 'Loading…'}`
+  btn.innerHTML = '<svg width="14" height="14" style="animation:spin .7s linear infinite;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> ' + (label || 'Loading…')
 }
 function btnReset(btn) {
   btn.disabled = false
@@ -117,8 +106,8 @@ function fmt(n) {
   return (n || 0).toString()
 }
 function hexToRgb(hex) {
-  try { return `${parseInt(hex.slice(1,3),16)}, ${parseInt(hex.slice(3,5),16)}, ${parseInt(hex.slice(5,7),16)}` }
-  catch { return '108, 99, 255' }
+  try { return parseInt(hex.slice(1,3),16) + ', ' + parseInt(hex.slice(3,5),16) + ', ' + parseInt(hex.slice(5,7),16) }
+  catch(e) { return '108, 99, 255' }
 }
 function isValidHex(h) { return /^#[0-9a-fA-F]{6}$/.test(h) }
 function escHtml(str) {
@@ -142,54 +131,7 @@ function setActiveNav(pageId) {
   })
 }
 
-// ── Apply background theme ──
-const BG_THEMES = [
-  {id:'dark',bg:'#0a0a0f',bgRgb:'10,10,15',surface:'#111118',surface2:'#1a1a24',border:'#2a2a38',text:'#f0f0f8',muted:'#7a7a9a'},
-  {id:'light',bg:'#f5f5fa',bgRgb:'245,245,250',surface:'#ffffff',surface2:'#ededf5',border:'#e0e0ec',text:'#1a1a2e',muted:'#6868a0'},
-  {id:'midnight',bg:'#05050d',bgRgb:'5,5,13',surface:'#0d0d1a',surface2:'#12122a',border:'#1e1e30',text:'#e8e8ff',muted:'#6868a0'},
-  {id:'slate',bg:'#0f172a',bgRgb:'15,23,42',surface:'#1e293b',surface2:'#263044',border:'#334155',text:'#f1f5f9',muted:'#64748b'},
-  {id:'white',bg:'#ffffff',bgRgb:'255,255,255',surface:'#f8f8fc',surface2:'#f0f0f8',border:'#e4e4f0',text:'#1a1a2e',muted:'#6868a0'},
-]
-function applyBgTheme(themeId, customHex) {
-  const root = document.documentElement
-  if (themeId === 'custom') {
-    const hex = customHex || '#0a0a0f'
-    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16)
-    const isDark = (r*0.299 + g*0.587 + b*0.114) < 128
-    const shift = (h, o) => { let rv=Math.min(255,Math.max(0,parseInt(h.slice(1,3),16)+o)), gv=Math.min(255,Math.max(0,parseInt(h.slice(3,5),16)+o)), bv=Math.min(255,Math.max(0,parseInt(h.slice(5,7),16)+o)); return '#'+[rv,gv,bv].map(x=>x.toString(16).padStart(2,'0')).join('') }
-    root.style.setProperty('--bg', hex)
-    root.style.setProperty('--bg-rgb', `${r},${g},${b}`)
-    root.style.setProperty('--surface', isDark ? shift(hex,10) : shift(hex,-10))
-    root.style.setProperty('--surface2', isDark ? shift(hex,20) : shift(hex,-20))
-    root.style.setProperty('--border', isDark ? shift(hex,35) : shift(hex,-35))
-    root.style.setProperty('--text', isDark ? '#f0f0f8' : '#1a1a2e')
-    root.style.setProperty('--muted', isDark ? '#7a7a9a' : '#6868a0')
-  } else {
-    const t = BG_THEMES.find(x => x.id === themeId)
-    if (!t) return
-    root.style.setProperty('--bg', t.bg)
-    root.style.setProperty('--bg-rgb', t.bgRgb)
-    root.style.setProperty('--surface', t.surface)
-    root.style.setProperty('--surface2', t.surface2)
-    root.style.setProperty('--border', t.border)
-    root.style.setProperty('--text', t.text)
-    root.style.setProperty('--muted', t.muted)
-  }
-  // Persist to localStorage for instant apply on next page load
-  localStorage.setItem('aasai_bg_theme', themeId)
-  if (customHex) localStorage.setItem('aasai_bg_custom', customHex)
-}
-
-// Apply theme instantly from localStorage (before API call, no flash)
-;(function() {
-  const t = localStorage.getItem('aasai_bg_theme')
-  const c = localStorage.getItem('aasai_bg_custom')
-  if (t) applyBgTheme(t, c)
-  const accent = localStorage.getItem('aasai_accent')
-  if (accent) applyAccent(accent)
-})()
-
-
+// ── Apply accent color ──
 const BRAND_COLORS = ['#6c63ff','#7c3aed','#2563eb','#0891b2','#0d9488','#16a34a','#ca8a04','#ea580c','#dc2626','#db2777','#c8972a','#64748b','#ff6584','#43e97b','#f7971e']
 
 function applyAccent(hex) {
@@ -199,20 +141,72 @@ function applyAccent(hex) {
   localStorage.setItem('aasai_accent', hex)
 }
 
+// ── Apply background theme ──
+const BG_THEMES = [
+  {id:'dark',    bg:'#0a0a0f',bgRgb:'10,10,15',   surface:'#111118',surface2:'#1a1a24',border:'#2a2a38',text:'#f0f0f8',muted:'#7a7a9a'},
+  {id:'light',   bg:'#f5f5fa',bgRgb:'245,245,250', surface:'#ffffff', surface2:'#ededf5',border:'#e0e0ec',text:'#1a1a2e',muted:'#6868a0'},
+  {id:'midnight',bg:'#05050d',bgRgb:'5,5,13',      surface:'#0d0d1a',surface2:'#12122a',border:'#1e1e30',text:'#e8e8ff',muted:'#6868a0'},
+  {id:'slate',   bg:'#0f172a',bgRgb:'15,23,42',    surface:'#1e293b',surface2:'#263044',border:'#334155',text:'#f1f5f9',muted:'#64748b'},
+  {id:'white',   bg:'#ffffff',bgRgb:'255,255,255',  surface:'#f8f8fc',surface2:'#f0f0f8',border:'#e4e4f0',text:'#1a1a2e',muted:'#6868a0'},
+]
+
+function applyBgTheme(themeId, customHex) {
+  const root = document.documentElement
+  if (themeId === 'custom') {
+    const hex = customHex || '#0a0a0f'
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16)
+    const isDark = (r*0.299 + g*0.587 + b*0.114) < 128
+    const shift = function(h, o) {
+      const rv = Math.min(255,Math.max(0,parseInt(h.slice(1,3),16)+o))
+      const gv = Math.min(255,Math.max(0,parseInt(h.slice(3,5),16)+o))
+      const bv = Math.min(255,Math.max(0,parseInt(h.slice(5,7),16)+o))
+      return '#' + [rv,gv,bv].map(function(x){ return x.toString(16).padStart(2,'0') }).join('')
+    }
+    root.style.setProperty('--bg', hex)
+    root.style.setProperty('--bg-rgb', r+','+g+','+b)
+    root.style.setProperty('--surface',  isDark ? shift(hex,10) : shift(hex,-10))
+    root.style.setProperty('--surface2', isDark ? shift(hex,20) : shift(hex,-20))
+    root.style.setProperty('--border',   isDark ? shift(hex,35) : shift(hex,-35))
+    root.style.setProperty('--text',  isDark ? '#f0f0f8' : '#1a1a2e')
+    root.style.setProperty('--muted', isDark ? '#7a7a9a' : '#6868a0')
+  } else {
+    const t = BG_THEMES.find(function(x){ return x.id === themeId })
+    if (!t) return
+    root.style.setProperty('--bg', t.bg)
+    root.style.setProperty('--bg-rgb', t.bgRgb)
+    root.style.setProperty('--surface',  t.surface)
+    root.style.setProperty('--surface2', t.surface2)
+    root.style.setProperty('--border',   t.border)
+    root.style.setProperty('--text',  t.text)
+    root.style.setProperty('--muted', t.muted)
+  }
+  localStorage.setItem('aasai_bg_theme', themeId)
+  if (customHex) localStorage.setItem('aasai_bg_custom', customHex)
+}
+
+// ── Apply saved theme instantly from localStorage on every page load ──
+// NOTE: This runs after applyAccent and applyBgTheme are defined above
+;(function() {
+  var t = localStorage.getItem('aasai_bg_theme')
+  var c = localStorage.getItem('aasai_bg_custom')
+  if (t) applyBgTheme(t, c)
+  var accent = localStorage.getItem('aasai_accent')
+  if (accent) applyAccent(accent)
+})()
+
 // ── Guard: redirect if not authed ──
 async function requireAuthPage() {
   const token = getToken()
   if (!token) { window.location.replace('index.html'); return null }
   try {
-    const res = await fetch(`${API}/auth/me`, { headers: { Authorization: 'Bearer ' + token } })
+    const res = await fetch(API + '/auth/me', { headers: { Authorization: 'Bearer ' + token } })
     if (!res.ok) throw new Error()
     const user = await res.json()
-    // Apply saved accent
+    // Apply from DB (source of truth) and sync to localStorage
     if (user.dashboard_accent) applyAccent(user.dashboard_accent)
-    // Apply saved background theme
     if (user.dashboard_bg_theme) applyBgTheme(user.dashboard_bg_theme, user.dashboard_bg_custom || '#0a0a0f')
     return user
-  } catch {
+  } catch(e) {
     clearToken()
     window.location.replace('index.html')
     return null
@@ -221,10 +215,10 @@ async function requireAuthPage() {
 
 // ── Render sidebar user chip ──
 function renderUserChip(user) {
-  const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : '?'
+  const initials = user.name ? user.name.split(' ').map(function(n){ return n[0] }).join('').toUpperCase().slice(0, 2) : '?'
   const avatarEl = document.getElementById('user-avatar')
   if (avatarEl) {
-    if (user.avatar) avatarEl.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`
+    if (user.avatar) avatarEl.innerHTML = '<img src="' + user.avatar + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />'
     else avatarEl.textContent = initials
   }
   const nameEl = document.getElementById('user-name')
@@ -239,7 +233,7 @@ function initMobileSidebar() {
   const sidebar = document.getElementById('sidebar')
   const overlay = document.getElementById('sidebar-overlay')
   if (!mobBtn || !sidebar) return
-  mobBtn.addEventListener('click', () => {
+  mobBtn.addEventListener('click', function() {
     sidebar.classList.toggle('open')
     overlay && overlay.classList.toggle('open')
     mobBtn.classList.toggle('open')
@@ -257,5 +251,8 @@ function closeSidebar() {
 
 function logout() {
   clearToken()
+  localStorage.removeItem('aasai_bg_theme')
+  localStorage.removeItem('aasai_bg_custom')
+  localStorage.removeItem('aasai_accent')
   window.location.replace('index.html')
 }
