@@ -1,425 +1,233 @@
 <!DOCTYPE html>
-<html lang="en" style="background:#080910">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>eKart — My Stores</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="nav.css">
-<style>
-  /* ── STORE CARDS ── */
-  .stores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 18px; }
-  .store-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    overflow: hidden;
-    transition: border-color .2s, transform .2s, box-shadow .2s;
-  }
-  .store-card:hover { border-color: rgba(108,99,255,0.35); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
-  .store-banner {
-    height: 76px;
-    display: flex; align-items: center;
-    padding: 0 20px;
-    gap: 12px;
-  }
-  .store-banner-logo { height: 48px; width: 48px; border-radius: 12px; object-fit: contain; background: rgba(255,255,255,0.15); padding: 4px; }
-  .store-banner-initials { font-size: 26px; font-weight: 900; color: white; letter-spacing: -0.04em; }
-  .store-card-body { padding: 16px 18px; }
-  .store-name { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
-  .store-slug { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; margin-bottom: 10px; }
-  .store-badges { display: flex; gap: 7px; margin-bottom: 12px; flex-wrap: wrap; }
-  .store-kpis {
-    display: grid; grid-template-columns: repeat(3,1fr);
-    border-top: 1px solid var(--border);
-    margin: 0 -18px 14px;
-  }
-  .store-kpi { padding: 10px 8px; text-align: center; border-right: 1px solid var(--border); }
-  .store-kpi:last-child { border-right: none; }
-  .store-kpi-val { font-size: 14px; font-weight: 800; font-family: 'DM Mono', monospace; color: var(--text); line-height: 1; margin-bottom: 3px; }
-  .store-kpi-val.loading { color: var(--border2); animation: shimmer 1.2s infinite; }
-  @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:.3} }
-  .store-kpi-val.rev { color: var(--green); }
-  .store-kpi-val.today { color: var(--accent2); }
-  .store-kpi-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); }
-  .store-actions { display: flex; gap: 7px; flex-wrap: wrap; }
-
-  /* ── DASH STATS ── */
-  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px 20px;
-    display: flex; align-items: center; gap: 14px;
-  }
-  .stat-icon { font-size: 26px; }
-  .stat-label { font-size: 11px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
-  .stat-value { font-size: 24px; font-weight: 900; letter-spacing: -0.04em; font-family: 'DM Mono', monospace; }
-
-  /* Card style picker */
-  .card-style-picker { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 4px; }
-  .card-style-opt { border: 2px solid var(--border); border-radius: 10px; padding: 10px 6px 8px; cursor: pointer; text-align: center; transition: all .15s; }
-  .card-style-opt:hover, .card-style-opt.active { border-color: var(--accent); background: rgba(108,99,255,0.08); }
-  .card-style-opt span { font-size: 11px; font-weight: 700; color: var(--text3); display: block; margin-top: 6px; }
-  .card-style-opt.active span { color: var(--accent2); }
-  .card-style-preview { height: 44px; display: flex; align-items: center; justify-content: center; }
-  .cspr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; width: 40px; }
-  .cspr-grid div { background: var(--border2); border-radius: 2px; height: 16px; }
-  .card-style-opt.active .cspr-grid div { background: var(--accent); opacity: 0.5; }
-  .cspr-list { display: flex; gap: 4px; align-items: center; width: 50px; margin-bottom: 3px; }
-  .cspr-list-img { width: 16px; height: 16px; background: var(--border2); border-radius: 2px; flex-shrink: 0; }
-  .cspr-list-lines { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-  .cspr-list-lines span { display: block; height: 3px; background: var(--border2); border-radius: 2px; }
-  .card-style-opt.active .cspr-list-img, .card-style-opt.active .cspr-list-lines span { background: var(--accent); opacity: 0.5; }
-  .cspr-minimal { position: relative; width: 40px; height: 40px; border-radius: 5px; overflow: hidden; }
-  .cspr-min-img { position: absolute; inset: 0; background: var(--border2); }
-  .cspr-min-overlay { position: absolute; bottom: 0; left: 0; right: 0; height: 40%; background: rgba(0,0,0,0.3); }
-  .card-style-opt.active .cspr-min-img { background: var(--accent); opacity: 0.4; }
-  .cspr-magazine { display: flex; gap: 3px; width: 48px; height: 40px; }
-  .cspr-mag-big { flex: 2; background: var(--border2); border-radius: 2px; }
-  .cspr-mag-small { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-  .cspr-mag-small div { flex: 1; background: var(--border2); border-radius: 2px; }
-  .card-style-opt.active .cspr-mag-big, .card-style-opt.active .cspr-mag-small div { background: var(--accent); opacity: 0.5; }
-</style>
-<script>
-;(function(){var p=new URLSearchParams(location.search),t=p.get('token');if(t){localStorage.setItem('ekart_token',t);history.replaceState({},'','/home.html')}})()
-</script>
-<script src="api.js"></script>
-<script src="nav.js"></script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Aasai Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="_shared.css"/>
+  <style>
+    ::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+  </style>
 </head>
 <body>
-<div id="page-skeleton">
-    <div class="skel-sidebar">
-      <div class="skel" style="height:22px;width:68px;border-radius:5px;margin-bottom:20px;"></div>
-      <div style="display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:14px;">
-        <div class="skel" style="width:32px;height:32px;border-radius:50%;flex-shrink:0;"></div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
-          <div class="skel" style="height:10px;width:80px;border-radius:4px;"></div>
-          <div class="skel" style="height:9px;width:110px;border-radius:4px;"></div>
-        </div>
-      </div>
-      <div class="skel" style="height:34px;border-radius:9px;margin-bottom:2px;opacity:.65;"></div><div class="skel" style="height:34px;border-radius:9px;margin-bottom:2px;opacity:.3;"></div><div class="skel" style="height:34px;border-radius:9px;margin-bottom:2px;opacity:.3;"></div><div class="skel" style="height:34px;border-radius:9px;margin-bottom:2px;opacity:.3;"></div><div class="skel" style="height:34px;border-radius:9px;margin-bottom:2px;opacity:.3;"></div><div class="skel" style="height:34px;border-radius:9px;margin-bottom:2px;opacity:.3;"></div><div class="skel" style="height:34px;border-radius:9px;margin-bottom:2px;opacity:.3;"></div><div class="skel" style="height:34px;border-radius:9px;margin-bottom:2px;opacity:.3;"></div>
-    </div>
-    <div class="skel-main">
-      <div class="skel-topbar">
-        <div class="skel" style="height:16px;width:100px;border-radius:5px;"></div>
-        
-      </div>
-      <div class="skel-body">
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;">
-          <div class="skel" style="height:78px;border-radius:13px;"></div><div class="skel" style="height:78px;border-radius:13px;"></div><div class="skel" style="height:78px;border-radius:13px;"></div><div class="skel" style="height:78px;border-radius:13px;"></div>
-        </div>
-        <div class="skel" style="height:40px;border-radius:9px;margin-bottom:10px;"></div>
-        <div class="skel" style="height:52px;border-radius:9px;margin-bottom:8px;opacity:1.0;"></div><div class="skel" style="height:52px;border-radius:9px;margin-bottom:8px;opacity:0.82;"></div><div class="skel" style="height:52px;border-radius:9px;margin-bottom:8px;opacity:0.64;"></div><div class="skel" style="height:52px;border-radius:9px;margin-bottom:8px;opacity:0.46;"></div><div class="skel" style="height:52px;border-radius:9px;margin-bottom:8px;opacity:0.28;"></div>
-      </div>
-    </div>
-  </div>
-<div class="sidebar" id="sidebar">
-    <a class="sidebar-logo" href="home.html">e<span class="logo-k">K</span>art<span class="logo-dot"></span></a>
-    <div class="sidebar-user">
-      <div class="sidebar-avatar" id="nav-avatar">…</div>
-      <div style="min-width:0;">
-        <div class="sidebar-user-name" id="nav-user-name">…</div>
-        <div class="sidebar-user-email" id="nav-user-email">…</div>
-      </div>
-    </div>
-    <div class="nav-section"><div class="nav-section-label">Merchant</div>
-      <a class="nav-item active" href="home.html"><span class="nav-icon">🏪</span>My Stores</a>
-      <a class="nav-item" href="products.html"><span class="nav-icon">📦</span>Products</a>
-      <a class="nav-item" href="categories.html"><span class="nav-icon">🗂️</span>Categories</a>
-      <a class="nav-item" href="orders.html"><span class="nav-icon">📋</span>Orders</a>
-      <a class="nav-item" href="coupons.html"><span class="nav-icon">🎟️</span>Coupons</a>
-      <a class="nav-item" href="analytics.html"><span class="nav-icon">📊</span>Analytics</a>
-      <a class="nav-item" href="marketing.html"><span class="nav-icon">📣</span>Marketing</a>
-    </div><div class="nav-section"><div class="nav-section-label">AI Tools</div>
-      <a class="nav-item" href="ai-assistant.html"><span class="nav-icon">🤖</span>AI Assistant</a>
-    </div>
-    <div class="sidebar-bottom">
-      <button class="btn-logout" onclick="logout()">↩ Logout</button>
-    </div>
-  </div>
-  <div class="main-wrap">
-    <div class="topbar">
-      <div class="topbar-left"><span class="topbar-title">My Stores</span></div>
-      <div class="topbar-right">
-        <div id="topbar-actions"></div>
-      </div>
-    </div>
-    <div id="page-content" class="content page-enter" style="display:none;"></div>
-  </div>
-<!-- CREATE/EDIT STORE MODAL -->
-<div class="modal-overlay" id="storeModal">
-  <div class="modal" style="max-width:560px;">
-    <h2 id="storeModalTitle">Create New Store</h2>
-    <input type="hidden" id="storeEditId">
-    <div class="field"><label>Store Name *</label><input type="text" id="storeName" placeholder="My Awesome Store"></div>
-    <div class="field"><label>Tagline</label><input type="text" id="storeTagline" placeholder="The best deals online"></div>
-    <div class="field"><label>Description</label><textarea id="storeDesc" placeholder="What does your store sell?"></textarea></div>
-    <div class="field-row">
-      <div class="field"><label>Contact Email</label><input type="email" id="storeEmail"></div>
-      <div class="field"><label>Phone</label><input type="text" id="storePhone" placeholder="+91 98765 43210"></div>
-    </div>
-    <div class="field-row">
-      <div class="field"><label>Currency</label>
-        <select id="storeCurrency">
-          <option value="INR">INR (₹)</option>
-          <option value="USD">USD ($)</option>
-          <option value="EUR">EUR (€)</option>
-        </select>
-      </div>
-      <div class="field"><label>Brand Color</label>
-        <input type="color" id="storeBrandColor" value="#6c63ff" style="height:42px;padding:4px;">
-      </div>
-    </div>
-    <div class="field">
-      <label>Product Card Style</label>
-      <div class="card-style-picker" id="cardStylePicker">
-        <div class="card-style-opt active" data-style="grid" onclick="selectCardStyle('grid',this)">
-          <div class="card-style-preview"><div class="cspr-grid"><div></div><div></div><div></div><div></div></div></div>
-          <span>Grid</span>
-        </div>
-        <div class="card-style-opt" data-style="list" onclick="selectCardStyle('list',this)">
-          <div class="card-style-preview">
-            <div><div class="cspr-list"><div class="cspr-list-img"></div><div class="cspr-list-lines"><span></span><span></span></div></div>
-            <div class="cspr-list"><div class="cspr-list-img"></div><div class="cspr-list-lines"><span></span><span></span></div></div></div>
-          </div>
-          <span>List</span>
-        </div>
-        <div class="card-style-opt" data-style="minimal" onclick="selectCardStyle('minimal',this)">
-          <div class="card-style-preview"><div class="cspr-minimal"><div class="cspr-min-img"></div><div class="cspr-min-overlay"></div></div></div>
-          <span>Minimal</span>
-        </div>
-        <div class="card-style-opt" data-style="magazine" onclick="selectCardStyle('magazine',this)">
-          <div class="card-style-preview"><div class="cspr-magazine"><div class="cspr-mag-big"></div><div class="cspr-mag-small"><div></div><div></div></div></div></div>
-          <span>Magazine</span>
-        </div>
-      </div>
-      <input type="hidden" id="storeCardStyle" value="grid">
-    </div>
-    <div class="field">
-      <label>Store Logo</label>
-      <input type="file" id="storeLogoFile" accept="image/*" onchange="previewLogo(this)"
-        style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:9px;padding:8px 12px;color:var(--text);font-family:Outfit,sans-serif;">
-      <div id="storeLogoPreview" style="margin-top:8px;display:none;">
-        <img id="storeLogoImg" src="" style="height:52px;border-radius:8px;object-fit:contain;border:1px solid var(--border2);padding:4px;">
-      </div>
-      <input type="hidden" id="storeLogoExisting">
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeModal('storeModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveStore()">Save Store</button>
-    </div>
-  </div>
+
+<!-- MOBILE TOPBAR -->
+<div class="mobile-topbar">
+  <button class="mobile-menu-btn" id="mob-menu-btn"><span></span><span></span><span></span></button>
+  <div class="mobile-topbar-center"><div class="logo-mark"><img src="logo.png" alt="Aasai" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\' style=\'width:30px;height:30px;font-size:13px;\'>A</div>'"/></div><span class="logo-text">Aasai Tech</span></div>
 </div>
 
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark"><img src="logo.png" alt="Aasai" onerror="this.parentElement.outerHTML='<div class=\'logo-mark-fallback\'>A</div>'"/></div>
+    <span class="logo-text">Aasai Tech</span>
+  </div>
+  <nav>
+    <a class="nav-item active" data-page="dashboard" href="home.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" data-page="agents" href="agents.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      My Agents
+    </a>
+    <a class="nav-item" data-page="conversations" href="conversations.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Conversations
+    </a>
+    <a class="nav-item" data-page="create" href="create-agent.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Create Agent
+    </a>
+    <a class="nav-item" data-page="settings" href="settings.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+    <a class="nav-item" data-page="profile" href="profile.html">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-chip" onclick="location.href='profile.html'">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div style="flex:1;min-width:0;">
+        <div class="user-name" id="user-name">…</div>
+        <div class="user-plan" id="user-plan">Free Plan</div>
+      </div>
+      <button class="btn-logout" onclick="event.stopPropagation();logout()" title="Logout">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="page-title">Dashboard</div>
+    <a href="create-agent.html" class="btn-primary">+ New Agent</a>
+  </div>
+  <div class="content page-enter" id="main-content" style="display:none;">
+    <div class="stats-grid">
+      <div class="stat-card c1"><div class="stat-label">Total Agents</div><div class="stat-value" id="s-agents">—</div><div class="stat-sub">Created agents</div></div>
+      <div class="stat-card c2"><div class="stat-label">Total Queries</div><div class="stat-value" id="s-queries">—</div><div class="stat-sub">All time</div></div>
+      <div class="stat-card c3"><div class="stat-label">Tokens Used</div><div class="stat-value" id="s-tokens">—</div><div class="stat-sub">Lifetime consumed</div></div>
+      <div class="stat-card c4"><div class="stat-label">Today's Queries</div><div class="stat-value" id="s-today">—</div><div class="stat-sub">Last 24 hours</div></div>
+    </div>
+
+    <div class="token-card">
+      <div class="token-header">
+        <div class="token-title">Token Usage</div>
+        <span class="badge badge-free" id="plan-badge">Free Plan</span>
+      </div>
+      <div class="token-bar-bg"><div class="token-bar-fill" id="token-bar" style="width:0%"></div></div>
+      <div class="token-counts"><span id="t-used">0 used</span><span id="t-limit">1,000,000 total</span></div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card"><div class="chart-title">Daily Token Usage</div><div class="chart-sub">Last 14 days</div><div class="chart-container"><canvas id="chart-tokens"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Daily Queries</div><div class="chart-sub">Last 14 days</div><div class="chart-container"><canvas id="chart-queries"></canvas></div></div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">Recent Agents</div>
+      <a href="agents.html" style="font-size:13px;color:var(--accent);text-decoration:none;">View all →</a>
+    </div>
+    <div class="agents-grid" id="dash-agents"></div>
+  </div>
+
+  <!-- SKELETON while loading -->
+  <div class="content" id="skel-content">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="skel" style="height:20px;width:60%;margin-bottom:10px;"></div><div class="skel" style="height:32px;width:40%;"></div></div>
+      <div class="stat-card"><div class="skel" style="height:20px;width:60%;margin-bottom:10px;"></div><div class="skel" style="height:32px;width:40%;"></div></div>
+      <div class="stat-card"><div class="skel" style="height:20px;width:60%;margin-bottom:10px;"></div><div class="skel" style="height:32px;width:40%;"></div></div>
+      <div class="stat-card"><div class="skel" style="height:20px;width:60%;margin-bottom:10px;"></div><div class="skel" style="height:32px;width:40%;"></div></div>
+    </div>
+    <div class="token-card"><div class="skel" style="height:20px;width:30%;margin-bottom:16px;"></div><div class="skel" style="height:8px;"></div></div>
+    <div class="charts-grid">
+      <div class="chart-card"><div class="skel" style="height:180px;"></div></div>
+      <div class="chart-card"><div class="skel" style="height:180px;"></div></div>
+    </div>
+    <div class="agents-grid">
+      <div class="agent-card" style="pointer-events:none;"><div class="skel" style="height:20px;margin-bottom:10px;"></div><div class="skel" style="height:14px;width:60%;"></div></div>
+      <div class="agent-card" style="pointer-events:none;"><div class="skel" style="height:20px;margin-bottom:10px;"></div><div class="skel" style="height:14px;width:60%;"></div></div>
+    </div>
+  </div>
+</main>
+
+<script src="_shared.js"></script>
 <script>
-let currentUser = null, allStores = []
+let currentUser = null
 
-window.addEventListener('DOMContentLoaded', async () => {
-  const nav = await renderNav('stores')
-  if (!nav) return
-  currentUser = nav.user
-  document.getElementById('storeEmail').value = currentUser.email || ''
-  setTopbarActions(`<button class="btn btn-primary" onclick="openCreateStore()">+ New Store</button>`)
-  await loadAll()
-})
+async function init() {
+  currentUser = await requireAuthPage()
+  if (!currentUser) return
 
-async function loadAll() {
-  const pc = document.getElementById('page-content')
-  // Remove stale stats row before re-rendering
-  pc.querySelector('.stats-row')?.remove()
-  await Promise.all([loadStores(), loadDashStats()])
+  // Apply theme + accent from DB on landing — this is the source of truth after login
+  // requireAuthPage() already calls applyAccent/applyBgTheme BUT we also force-sync
+  // localStorage here so every other page picks it up instantly without an API call
+  const accent = currentUser.dashboard_accent || '#6c63ff'
+  const bgTheme = currentUser.dashboard_bg_theme || 'dark'
+  const bgCustom = currentUser.dashboard_bg_custom || '#0a0a0f'
+  applyAccent(accent)
+  applyBgTheme(bgTheme, bgCustom)  // also writes to localStorage
+
+  renderUserChip(currentUser)
+  initMobileSidebar()
+  await loadDashboard()
+  document.getElementById('skel-content').style.display = 'none'
+  document.getElementById('main-content').style.display = 'block'
 }
 
-async function loadStores() {
-  allStores = await apiFetch('/stores')
-  renderStores()
-  allStores.forEach(s => loadStoreKPIs(s))
-}
-
-async function loadDashStats() {
+async function loadDashboard() {
   try {
-    const d = await apiFetch('/dashboard')
-    // Remove any existing stats row first
-    document.getElementById('page-content')?.querySelector('.stats-row')?.remove()
-    const statsHtml = `
-      <div class="stats-row">
-        <div class="stat-card"><span class="stat-icon">🏪</span><div><div class="stat-label">Total Stores</div><div class="stat-value">${d.stores_count}</div></div></div>
-        <div class="stat-card"><span class="stat-icon">📦</span><div><div class="stat-label">Total Orders</div><div class="stat-value">${d.total_orders}</div></div></div>
-        <div class="stat-card"><span class="stat-icon">🕐</span><div><div class="stat-label">Today\'s Orders</div><div class="stat-value">${d.today_orders}</div></div></div>
-        <div class="stat-card"><span class="stat-icon">💰</span><div><div class="stat-label">Total Revenue</div><div class="stat-value">₹${(d.total_revenue||0).toLocaleString('en-IN',{maximumFractionDigits:0})}</div></div></div>
-      </div>`
-    document.getElementById('page-content').insertAdjacentHTML('afterbegin', statsHtml)
-  } catch {}
+    const r = await apiFetch('/dashboard')
+    const d = await r.json()
+    document.getElementById('s-agents').textContent = d.agents_count || 0
+    document.getElementById('s-queries').textContent = (d.total_queries || 0).toLocaleString()
+    document.getElementById('s-tokens').textContent = fmt(d.tokens_used || 0)
+    document.getElementById('s-today').textContent = (d.today_queries || 0).toLocaleString()
+    const used = d.tokens_used || 0, limit = d.token_limit
+    const pct = limit ? Math.min((used / limit) * 100, 100).toFixed(1) : 0
+    document.getElementById('token-bar').style.width = pct + '%'
+    document.getElementById('t-used').textContent = fmt(used) + ' used'
+    document.getElementById('t-limit').textContent = limit ? fmt(limit) + ' total' : 'Unlimited'
+    if (d.plan === 'pro') {
+      document.getElementById('plan-badge').textContent = 'Pro Plan'
+      document.getElementById('plan-badge').className = 'badge badge-pro'
+    }
+    renderAgentCards(d.recent_agents || [], 'dash-agents')
+    renderCharts(d.daily_stats || [])
+  } catch (e) { console.error(e) }
 }
 
-async function loadStoreKPIs(s) {
-  try {
-    const data = await apiFetch(`/stores/${s._id}/analytics?days=30`)
-    const cur = s.currency === 'USD' ? '$' : s.currency === 'EUR' ? '€' : '₹'
-    const rev = data.total_revenue || 0
-    const revStr = rev >= 100000 ? cur + (rev/100000).toFixed(1)+'L' : rev >= 1000 ? cur + (rev/1000).toFixed(1)+'k' : cur + rev.toFixed(0)
-    const revEl = document.getElementById(`kpi-rev-${s._id}`)
-    const ordEl = document.getElementById(`kpi-ord-${s._id}`)
-    const todEl = document.getElementById(`kpi-today-${s._id}`)
-    if (revEl) { revEl.textContent = revStr; revEl.classList.remove('loading'); revEl.classList.add('rev') }
-    if (ordEl) { ordEl.textContent = data.total_orders || 0; ordEl.classList.remove('loading') }
-    if (todEl) { todEl.textContent = data.today_orders || 0; todEl.classList.remove('loading'); todEl.classList.add('today') }
-  } catch {}
-}
-
-function renderStores() {
-  const container = document.getElementById('page-content')
-  const existing = container.querySelector('.stores-grid')
-  if (existing) existing.remove()
-
-  if (!allStores.length) {
-    container.insertAdjacentHTML('beforeend', `
-      <div class="empty-state">
-        <div class="empty-icon">🏪</div>
-        <h3>No stores yet</h3>
-        <p>Create your first store to start selling</p>
-        <button class="btn btn-primary" style="margin-top:16px;" onclick="openCreateStore()">+ Create Store</button>
-      </div>`)
+function renderAgentCards(list, id) {
+  const c = document.getElementById(id)
+  if (!list.length) {
+    c.innerHTML = `<div class="empty-state"><div class="empty-icon">🤖</div><h3>No agents yet</h3><p>Create your first AI agent</p><a href="create-agent.html" class="btn-primary" style="display:inline-flex;">Create Agent</a></div>`
     return
   }
-
-  const grid = document.createElement('div')
-  grid.className = 'stores-grid'
-  grid.innerHTML = allStores.map(s => {
-    const bg = s.brand_color || '#6c63ff'
-    const logo = s.logo_url
-      ? `<img class="store-banner-logo" src="${s.logo_url}" alt="">`
-      : `<span class="store-banner-initials">${s.name.slice(0,2).toUpperCase()}</span>`
-    return `<div class="store-card">
-      <div class="store-banner" style="background:linear-gradient(135deg,${bg}ee,${bg}88);">${logo}</div>
-      <div class="store-card-body">
-        <div class="store-name">${s.name}</div>
-        <div class="store-slug">/${s.slug}</div>
-        <div class="store-badges">
-          <span class="badge ${s.published ? 'badge-green' : 'badge-gray'}">${s.published ? '● Live' : '○ Draft'}</span>
-          <span class="badge badge-gray">📦 ${s.product_count || 0}</span>
-          <span class="badge badge-gray">📋 ${s.order_count || 0}</span>
-        </div>
-        <div class="store-kpis" style="padding: 0 18px;">
-          <div class="store-kpi"><div class="store-kpi-val loading" id="kpi-rev-${s._id}">—</div><div class="store-kpi-label">Revenue</div></div>
-          <div class="store-kpi"><div class="store-kpi-val loading" id="kpi-ord-${s._id}">—</div><div class="store-kpi-label">Orders</div></div>
-          <div class="store-kpi"><div class="store-kpi-val loading" id="kpi-today-${s._id}">—</div><div class="store-kpi-label">Today</div></div>
-        </div>
-        <div class="store-actions">
-          ${s.published ? `<a href="${s.published_url}" target="_blank" class="btn btn-secondary btn-sm">🌐 View</a>` : ''}
-          <button class="btn btn-secondary btn-sm" onclick="publishStore('${s._id}')">🚀 ${s.published ? 'Republish' : 'Publish'}</button>
-          <button class="btn btn-secondary btn-sm" onclick="openEditStore('${s._id}')">✏️ Edit</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteStore('${s._id}','${s.name.replace(/'/g,"\\'")}')">🗑</button>
+  c.innerHTML = list.map(a => {
+    const logoHtml = a.logo_base64
+      ? `<img src="${a.logo_base64}" style="width:100%;height:100%;object-fit:contain;" />`
+      : a.logo_url ? `<img src="${a.logo_url}" />` : '🤖'
+    return `<div class="agent-card" onclick="location.href='create-agent.html?id=${a._id}'">
+      <div class="agent-card-header">
+        <div class="agent-avatar" style="background:${a.brand_color||'#6c63ff'}22;">${logoHtml}</div>
+        <div><div class="agent-name">${escHtml(a.name)}</div><div class="agent-desc">${a.sources_count||0} sources · ${(a.query_count||0).toLocaleString()} queries</div></div>
+      </div>
+      <div class="agent-footer">
+        <span class="${a.published?'status-live':'status-draft'}">${a.published?'Live':'Draft'}</span>
+        <div style="display:flex;gap:6px;">
+          ${a.published_url?`<button class="btn-icon" onclick="event.stopPropagation();window.open('${a.published_url}','_blank')" title="Open chat"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>`:''}
+          <button class="btn-icon" onclick="event.stopPropagation();deleteAgent('${a._id}',this)" title="Delete"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
         </div>
       </div>
     </div>`
   }).join('')
-  container.appendChild(grid)
 }
 
-function openCreateStore() {
-  document.getElementById('storeModalTitle').textContent = 'Create New Store'
-  document.getElementById('storeEditId').value = ''
-  document.getElementById('storeName').value = ''
-  document.getElementById('storeTagline').value = ''
-  document.getElementById('storeDesc').value = ''
-  document.getElementById('storeEmail').value = currentUser?.email || ''
-  document.getElementById('storePhone').value = ''
-  document.getElementById('storeBrandColor').value = '#6c63ff'
-  document.getElementById('storeLogoFile').value = ''
-  document.getElementById('storeLogoExisting').value = ''
-  document.getElementById('storeLogoPreview').style.display = 'none'
-  selectCardStyle('grid', document.querySelector('[data-style="grid"]'))
-  openModal('storeModal')
+async function deleteAgent(id, btn) {
+  if (!confirm('Delete this agent? This cannot be undone.')) return
+  btnLoading(btn, '')
+  await apiFetch('/agents/' + id, { method: 'DELETE' })
+  toast('Agent deleted', 'success')
+  loadDashboard()
 }
 
-function openEditStore(id) {
-  const s = allStores.find(x => x._id === id); if (!s) return
-  document.getElementById('storeModalTitle').textContent = 'Edit Store'
-  document.getElementById('storeEditId').value = id
-  document.getElementById('storeName').value = s.name
-  document.getElementById('storeTagline').value = s.tagline || ''
-  document.getElementById('storeDesc').value = s.description || ''
-  document.getElementById('storeEmail').value = s.contact_email || ''
-  document.getElementById('storePhone').value = s.phone || ''
-  document.getElementById('storeCurrency').value = s.currency || 'INR'
-  document.getElementById('storeBrandColor').value = s.brand_color || '#6c63ff'
-  const cs = s.card_style || 'grid'
-  selectCardStyle(cs, document.querySelector(`[data-style="${cs}"]`))
-  document.getElementById('storeLogoFile').value = ''
-  document.getElementById('storeLogoExisting').value = s.logo_url || ''
-  if (s.logo_url) {
-    document.getElementById('storeLogoImg').src = s.logo_url
-    document.getElementById('storeLogoPreview').style.display = 'block'
-  } else document.getElementById('storeLogoPreview').style.display = 'none'
-  openModal('storeModal')
+function renderCharts(daily) {
+  const labels = [], tokenData = [], queryData = []
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i)
+    const key = d.toISOString().slice(0, 10)
+    labels.push(d.toLocaleDateString('en', { month: 'short', day: 'numeric' }))
+    const match = (daily || []).find(x => x._id === key)
+    tokenData.push(match ? match.tokens : 0)
+    queryData.push(match ? match.queries : 0)
+  }
+  const mutedColor = '#7a7a9a', gridColor = '#2a2a38'
+  const opts = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: gridColor + '88' }, ticks: { color: mutedColor, font: { size: 10 }, maxRotation: 45 } }, y: { grid: { color: gridColor + '88' }, ticks: { color: mutedColor, font: { size: 10 } }, beginAtZero: true } } }
+  ;['chart-tokens', 'chart-queries'].forEach(id => { const e = Chart.getChart(id); if (e) e.destroy() })
+  new Chart(document.getElementById('chart-tokens'), { type: 'bar', data: { labels, datasets: [{ data: tokenData, backgroundColor: 'rgba(108,99,255,.6)', borderColor: '#6c63ff', borderWidth: 1, borderRadius: 4 }] }, options: opts })
+  new Chart(document.getElementById('chart-queries'), { type: 'bar', data: { labels, datasets: [{ data: queryData, backgroundColor: 'rgba(255,101,132,.6)', borderColor: '#ff6584', borderWidth: 1, borderRadius: 4 }] }, options: opts })
 }
 
-async function saveStore() {
-  const id = document.getElementById('storeEditId').value
-  const name = document.getElementById('storeName').value.trim()
-  if (!name) return toast('Store name is required', 'error')
-  const fd = new FormData()
-  fd.append('name', name)
-  fd.append('tagline', document.getElementById('storeTagline').value.trim())
-  fd.append('description', document.getElementById('storeDesc').value.trim())
-  fd.append('contact_email', document.getElementById('storeEmail').value.trim())
-  fd.append('phone', document.getElementById('storePhone').value.trim())
-  fd.append('currency', document.getElementById('storeCurrency').value)
-  fd.append('brand_color', document.getElementById('storeBrandColor').value)
-  fd.append('card_style', document.getElementById('storeCardStyle').value || 'grid')
-  const logoFile = document.getElementById('storeLogoFile').files[0]
-  if (logoFile) fd.append('logo', logoFile)
-  else fd.append('logo_url', document.getElementById('storeLogoExisting').value || '')
-  try {
-    const url = id ? `/stores/${id}` : '/stores'
-    const res = await fetch(API + url, {
-      method: id ? 'PUT' : 'POST',
-      headers: { 'Authorization': 'Bearer ' + getToken() },
-      body: fd
-    })
-    if (!res.ok) { const e = await res.json(); throw new Error(e.error) }
-    closeModal('storeModal')
-    await loadStores()
-    toast(id ? 'Store updated!' : 'Store created!', 'success')
-  } catch (e) { toast(e.message, 'error') }
-}
+;(function() {
+  const p = new URLSearchParams(location.search)
+  const tk = p.get('token')
+  if (tk) {
+    localStorage.setItem('aasai_token', tk)
+    history.replaceState({}, '', location.pathname)
+  }
+})()
 
-async function publishStore(id) {
-  try {
-    const r = await apiFetch(`/stores/${id}/publish`, { method: 'POST', body: '{}' })
-    toast('Store published! URL copied.')
-    navigator.clipboard.writeText(r.url).catch(() => {})
-    await loadStores()
-  } catch (e) { toast(e.message, 'error') }
-}
-
-async function deleteStore(id, name) {
-  if (!confirm(`Delete "${name}" and all its data? This cannot be undone.`)) return
-  try {
-    await apiFetch(`/stores/${id}`, { method: 'DELETE', body: '{}' })
-    await loadStores()
-    toast('Store deleted')
-  } catch (e) { toast(e.message, 'error') }
-}
-
-function selectCardStyle(style, el) {
-  document.querySelectorAll('.card-style-opt').forEach(o => o.classList.remove('active'))
-  if (el) el.classList.add('active')
-  document.getElementById('storeCardStyle').value = style
-}
-
-function previewLogo(input) {
-  if (!input.files[0]) return
-  const r = new FileReader()
-  r.onload = e => { document.getElementById('storeLogoImg').src = e.target.result; document.getElementById('storeLogoPreview').style.display = 'block' }
-  r.readAsDataURL(input.files[0])
-}
+init()
 </script>
 </body>
-</html>
 </html>
