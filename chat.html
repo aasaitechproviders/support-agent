@@ -4,222 +4,943 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Chat</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ── CSS variables — all values can be overridden at runtime by brand colour ── */
+/* ═══════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════════════════════ */
 :root {
-  --brand:#6C5FF5; --brand-dim:rgba(108,95,245,.1); --brand-glow:rgba(108,95,245,.22);
-  --accent-l:rgba(108,95,245,.06); --accent-b:rgba(108,95,245,.18);
-  --bg:#F4F5FB; --surface:#FFF; --surface2:#F8F9FD; --surface3:#EEF0F8;
-  --text:#0D1021; --text2:#53587A; --text3:#9CA3BF;
-  --border:rgba(0,0,0,.07); --border2:rgba(0,0,0,.11);
-  --r:14px; --r-sm:10px;
-  --font:'Plus Jakarta Sans',sans-serif; --mono:'JetBrains Mono',monospace;
-  --green:#0FA36D; --green-dim:rgba(15,163,109,.09); --green-border:rgba(15,163,109,.22);
-  --red:#DC3545; --amber:#D97706;
+  --brand: #6C5FF5;
+  --brand-2: #8B7FF8;
+  --brand-dark: #4B40D9;
+  --brand-dim: rgba(108,95,245,.08);
+  --brand-glow: rgba(108,95,245,.18);
+  --brand-glow-lg: rgba(108,95,245,.28);
+
+  --bg: #F2F3FA;
+  --bg-pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236C5FF5' fill-opacity='0.028'%3E%3Ccircle cx='20' cy='20' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+  --surface: rgba(255,255,255,0.92);
+  --surface-solid: #FFFFFF;
+  --surface2: rgba(242,243,250,0.7);
+  --surface3: #E8EAFF;
+  --glass: rgba(255,255,255,0.72);
+  --glass-border: rgba(255,255,255,0.9);
+
+  --text: #0B0D1A;
+  --text2: #4A4F6E;
+  --text3: #9096B8;
+  --text4: #B8BDDA;
+
+  --border: rgba(108,95,245,.10);
+  --border2: rgba(108,95,245,.15);
+  --border3: rgba(0,0,0,.06);
+
+  --r: 18px;
+  --r-sm: 12px;
+  --r-xs: 8px;
+
+  --font: 'Sora', sans-serif;
+  --mono: 'Fira Code', monospace;
+
+  --green: #059669;
+  --green-dim: rgba(5,150,105,.09);
+  --green-border: rgba(5,150,105,.22);
+  --red: #DC2626;
+  --amber: #D97706;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.10), 0 4px 12px rgba(0,0,0,.06);
+  --shadow-brand: 0 4px 20px var(--brand-glow), 0 1px 4px rgba(0,0,0,.06);
+  --shadow-brand-lg: 0 8px 32px var(--brand-glow-lg), 0 2px 8px rgba(0,0,0,.08);
 }
+
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:var(--font); background:var(--bg); color:var(--text); height:100dvh; display:flex; flex-direction:column; -webkit-font-smoothing:antialiased; overflow:hidden; }
 
-/* ── Header ────────────────────────────────────────────── */
-.chat-header { background:var(--surface); border-bottom:1px solid var(--border); padding:12px 18px; display:flex; align-items:center; gap:12px; flex-shrink:0; box-shadow:0 1px 4px rgba(0,0,0,.04); }
-.agent-avatar { width:40px; height:40px; border-radius:12px; background:var(--brand); display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:800; color:#fff; flex-shrink:0; overflow:hidden; box-shadow:0 2px 8px var(--brand-glow); }
-.agent-avatar img { width:100%; height:100%; object-fit:cover; }
-.agent-name { font-size:15px; font-weight:800; letter-spacing:-.02em; }
-.agent-status { font-size:12px; color:var(--green); display:flex; align-items:center; gap:4px; margin-top:2px; }
-.status-dot { width:7px; height:7px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-.powered-by { margin-left:auto; font-size:10px; color:var(--text3); text-align:right; flex-shrink:0; }
-.powered-by a { color:var(--brand); font-weight:600; text-decoration:none; }
+body {
+  font-family: var(--font);
+  background: var(--bg) var(--bg-pattern);
+  color: var(--text);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
 
-/* ── Messages ──────────────────────────────────────────── */
-.chat-messages { flex:1; overflow-y:auto; padding:20px 16px; display:flex; flex-direction:column; gap:16px; scroll-behavior:smooth; }
-.chat-messages::-webkit-scrollbar { width:4px; }
-.chat-messages::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:4px; }
+/* ═══════════════════════════════════════════════════════════════
+   HEADER — frosted glass with gradient accent line
+═══════════════════════════════════════════════════════════════ */
+.chat-header {
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 14px 18px 13px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  box-shadow: var(--shadow-sm);
+}
 
-.msg-group { display:flex; flex-direction:column; gap:4px; }
-.msg-group.user { align-items:flex-end; }
-.msg-group.agent { align-items:flex-start; }
+/* Accent gradient line at very top */
+.chat-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2), #A78BFA, var(--brand));
+  background-size: 200% 100%;
+  animation: shimmer-line 4s linear infinite;
+}
+@keyframes shimmer-line {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
 
-/* User bubble — plain text, white on brand */
+.agent-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: var(--shadow-brand);
+  position: relative;
+}
+.agent-avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  pointer-events: none;
+}
+.agent-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.agent-info { flex: 1; min-width: 0; }
+.agent-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -.025em;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.agent-status {
+  font-size: 11px;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+  font-weight: 500;
+  letter-spacing: .01em;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 2px var(--green-dim);
+  animation: pulse-dot 2.4s ease infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 2px var(--green-dim); }
+  50% { box-shadow: 0 0 0 4px var(--green-dim); }
+}
+
+.powered-by {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--text4);
+  text-align: right;
+  flex-shrink: 0;
+  line-height: 1.5;
+  letter-spacing: .01em;
+}
+.powered-by a {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity .15s;
+}
+.powered-by a:hover { opacity: .75; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MESSAGE FEED
+═══════════════════════════════════════════════════════════════ */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  scroll-behavior: smooth;
+}
+
+/* Thin elegant scrollbar */
+.chat-messages::-webkit-scrollbar { width: 3px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 3px;
+}
+.chat-messages::-webkit-scrollbar-thumb:hover { background: var(--brand); }
+
+/* Message group */
+.msg-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  animation: msg-in .32s cubic-bezier(.22,1,.36,1) both;
+}
+.msg-group.user { align-items: flex-end; }
+.msg-group.agent { align-items: flex-start; }
+
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(12px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── USER BUBBLE ── */
 .msg-bubble-user {
-  max-width:80%; padding:11px 14px; border-radius:18px 18px 4px 18px;
-  font-size:14px; line-height:1.65; word-break:break-word;
-  background:var(--brand); color:#fff;
+  max-width: 78%;
+  padding: 11px 16px;
+  border-radius: 20px 20px 5px 20px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  word-break: break-word;
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  color: #fff;
+  box-shadow: var(--shadow-brand);
+  letter-spacing: -.005em;
+  position: relative;
 }
-/* Agent bubble — raw HTML from backend, inherits CSS vars */
-.msg-bubble-agent {
-  max-width:88%; padding:12px 15px; border-radius:4px 18px 18px 18px;
-  background:var(--surface); border:1px solid var(--border2);
-  color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,.04);
-  word-break:break-word; overflow-x:auto;
-  /* Smooth content reveal as tokens stream in */
-  transition: none;
-}
-/* Welcome message — wider, accent tint */
-.msg-bubble-welcome {
-  max-width:100%; padding:14px 16px; border-radius:18px;
-  background:var(--brand-dim); border:1px solid var(--accent-b);
-  color:var(--text); font-size:14px; line-height:1.7;
+.msg-bubble-user::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 60%);
+  pointer-events: none;
 }
 
-/* ── STREAMING CURSOR — shown while tokens are arriving ── */
+/* ── AGENT BUBBLE ── */
+.msg-bubble-agent {
+  max-width: 90%;
+  padding: 13px 16px;
+  border-radius: 5px 20px 20px 20px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border3);
+  color: var(--text);
+  box-shadow: var(--shadow-md);
+  word-break: break-word;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.7;
+  letter-spacing: -.005em;
+}
+
+/* Rich content inside agent bubbles */
+.msg-bubble-agent p { margin: 0 0 .7em; }
+.msg-bubble-agent p:last-child { margin-bottom: 0; }
+.msg-bubble-agent strong { font-weight: 700; color: var(--text); }
+.msg-bubble-agent em { font-style: italic; color: var(--text2); }
+.msg-bubble-agent a { color: var(--brand); text-decoration: none; font-weight: 500; border-bottom: 1px solid var(--brand-dim); transition: border-color .15s; }
+.msg-bubble-agent a:hover { border-color: var(--brand); }
+.msg-bubble-agent ul, .msg-bubble-agent ol { padding-left: 1.4em; margin: .5em 0; }
+.msg-bubble-agent li { margin-bottom: .3em; }
+.msg-bubble-agent code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--surface3);
+  color: var(--brand-dark);
+  padding: 1px 6px;
+  border-radius: 5px;
+  font-weight: 500;
+}
+.msg-bubble-agent pre {
+  background: var(--text);
+  color: #E0E6F0;
+  border-radius: var(--r-sm);
+  padding: 14px;
+  overflow-x: auto;
+  margin: .6em 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.msg-bubble-agent pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+.msg-bubble-agent h1, .msg-bubble-agent h2, .msg-bubble-agent h3 {
+  font-weight: 700;
+  margin: .6em 0 .3em;
+  letter-spacing: -.02em;
+}
+.msg-bubble-agent h1 { font-size: 17px; }
+.msg-bubble-agent h2 { font-size: 15px; }
+.msg-bubble-agent h3 { font-size: 13.5px; }
+
+/* ── WELCOME BUBBLE ── */
+.msg-bubble-welcome {
+  max-width: 100%;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--brand-dim) 0%, rgba(108,95,245,.04) 100%);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-size: 13.5px;
+  line-height: 1.75;
+  letter-spacing: -.005em;
+  position: relative;
+  overflow: hidden;
+}
+.msg-bubble-welcome::before {
+  content: '';
+  position: absolute;
+  top: -20px; left: -20px;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle, var(--brand-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── DATE SEPARATOR ── */
+.date-sep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 4px;
+  color: var(--text3);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.date-sep::before, .date-sep::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── TIME LABEL ── */
+.msg-time {
+  font-size: 10px;
+  color: var(--text4);
+  padding: 0 5px;
+  letter-spacing: .02em;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STREAMING CURSOR
+═══════════════════════════════════════════════════════════════ */
 .stream-cursor {
   display: inline-block;
   width: 2px;
-  height: 1em;
+  height: .9em;
   background: var(--brand);
-  border-radius: 1px;
+  border-radius: 2px;
   vertical-align: text-bottom;
-  margin-left: 1px;
-  animation: blink-cursor 0.6s step-start infinite;
+  margin-left: 2px;
+  animation: blink-cursor .55s step-start infinite;
 }
 @keyframes blink-cursor { 50% { opacity: 0; } }
 
-/* Streaming bubble border pulse */
 .msg-bubble-streaming {
   border-color: var(--brand) !important;
-  box-shadow: 0 0 0 1px var(--brand-glow), 0 1px 4px rgba(0,0,0,.04) !important;
+  box-shadow: 0 0 0 1px var(--brand-glow), var(--shadow-md) !important;
 }
 
-.msg-time { font-size:10px; color:var(--text3); padding:0 4px; }
+/* ═══════════════════════════════════════════════════════════════
+   TYPING INDICATOR
+═══════════════════════════════════════════════════════════════ */
+.typing-wrap { display: flex; align-items: flex-start; }
+.typing-indicator {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 16px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border3);
+  border-radius: 5px 18px 18px 18px;
+  box-shadow: var(--shadow-sm);
+}
+.typing-indicator.show { display: flex; }
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text4);
+  animation: tdot .9s infinite ease-in-out;
+}
+.typing-dot:nth-child(2) { animation-delay: .18s; }
+.typing-dot:nth-child(3) { animation-delay: .36s; }
+@keyframes tdot {
+  0%, 100% { transform: translateY(0); opacity: .4; }
+  50% { transform: translateY(-5px); opacity: 1; background: var(--brand); }
+}
 
-/* ── Typing indicator ────────────────────────────────────── */
-.typing-wrap { display:flex; align-items:flex-start; gap:0; }
-.typing-indicator { display:none; align-items:center; gap:6px; padding:12px 14px; background:var(--surface); border:1px solid var(--border2); border-radius:4px 18px 18px 18px; max-width:80px; box-shadow:0 1px 4px rgba(0,0,0,.04); }
-.typing-indicator.show { display:flex; }
-.typing-dot { width:7px; height:7px; border-radius:50%; background:var(--text3); animation:tdot .8s infinite ease-in-out; }
-.typing-dot:nth-child(2){animation-delay:.15s;} .typing-dot:nth-child(3){animation-delay:.3s;}
-@keyframes tdot { 0%,100%{transform:translateY(0);opacity:.5} 50%{transform:translateY(-5px);opacity:1} }
+/* ═══════════════════════════════════════════════════════════════
+   TOPIC CHIPS — Horizontal pill strip
+═══════════════════════════════════════════════════════════════ */
+.topics-wrap {
+  display: flex;
+  gap: 7px;
+  padding: 10px 16px 4px;
+  overflow-x: auto;
+  flex-shrink: 0;
+  scrollbar-width: none;
+}
+.topics-wrap::-webkit-scrollbar { display: none; }
 
-/* ── Topic chips (from cached_topics) ──────────────────── */
-.topics-wrap { display:flex; flex-wrap:wrap; gap:8px; padding:10px 16px 0; }
 .topic-chip {
-  padding:8px 14px; border:1px solid var(--brand-dim); border-radius:20px;
-  background:var(--surface); color:var(--brand); font-size:12.5px; font-weight:600;
-  cursor:pointer; transition:all .16s; display:flex; align-items:center; gap:6px; white-space:nowrap;
+  padding: 8px 14px;
+  border: 1.5px solid var(--border2);
+  border-radius: 30px;
+  background: var(--surface-solid);
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all .18s cubic-bezier(.22,1,.36,1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: -.01em;
 }
-.topic-chip:hover { background:var(--brand); color:#fff; border-color:var(--brand); }
-.topic-chip .chip-icon { font-size:14px; }
+.topic-chip:hover {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+  box-shadow: var(--shadow-brand);
+  transform: translateY(-1px);
+}
+.topic-chip:active { transform: translateY(0) scale(.97); }
+.chip-icon { font-size: 13px; }
 
-/* ── Product cards (shopping) ──────────────────────────── */
-.products-row { display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; max-width:100%; }
-.products-row::-webkit-scrollbar { height:0; }
+/* ═══════════════════════════════════════════════════════════════
+   PRODUCT CARDS
+═══════════════════════════════════════════════════════════════ */
+.products-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  max-width: 100%;
+  scrollbar-width: none;
+}
+.products-row::-webkit-scrollbar { display: none; }
+
 .product-card {
-  min-width:155px; max-width:155px; background:var(--surface); border:1px solid var(--border2);
-  border-radius:14px; overflow:hidden; flex-shrink:0; transition:all .16s;
-  box-shadow:0 1px 4px rgba(0,0,0,.04);
+  min-width: 148px;
+  max-width: 148px;
+  background: var(--surface-solid);
+  border: 1px solid var(--border3);
+  border-radius: var(--r);
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: all .22s cubic-bezier(.22,1,.36,1);
+  box-shadow: var(--shadow-sm);
 }
-.product-card:hover { border-color:var(--brand); transform:translateY(-2px); box-shadow:0 4px 12px var(--brand-glow); }
-.product-img { width:100%; height:96px; object-fit:cover; background:var(--surface2); display:block; }
-.product-img-placeholder { width:100%; height:96px; background:var(--surface2); display:flex; align-items:center; justify-content:center; font-size:30px; }
-.product-info { padding:10px 10px 6px; }
-.product-name { font-size:12.5px; font-weight:700; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.product-price { font-size:14px; font-weight:800; color:var(--brand); font-family:var(--mono); }
-.product-btn { display:block; text-align:center; background:var(--brand); color:#fff; padding:8px; font-size:12px; font-weight:700; border:none; cursor:pointer; width:100%; transition:background .16s; }
-.product-btn:hover { background:#5b4de0; }
+.product-card:hover {
+  border-color: var(--brand);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-brand-lg);
+}
+.product-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  background: var(--surface3);
+  display: block;
+  transition: transform .3s ease;
+}
+.product-card:hover .product-img { transform: scale(1.04); }
+.product-img-placeholder {
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(135deg, var(--surface3) 0%, var(--brand-dim) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+.product-info { padding: 10px 11px 8px; }
+.product-name {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -.01em;
+  color: var(--text);
+}
+.product-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brand);
+  font-family: var(--mono);
+  letter-spacing: -.02em;
+}
+.product-btn {
+  display: block;
+  text-align: center;
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  color: #fff;
+  padding: 9px;
+  font-size: 11.5px;
+  font-weight: 700;
+  font-family: var(--font);
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity .15s;
+  letter-spacing: .01em;
+}
+.product-btn:hover { opacity: .85; }
 
-/* ── Input area ────────────────────────────────────────── */
-.chat-input-wrap { background:var(--surface); border-top:1px solid var(--border); padding:12px 14px; flex-shrink:0; }
-.chat-input-row { display:flex; gap:8px; align-items:flex-end; }
+/* ═══════════════════════════════════════════════════════════════
+   INPUT AREA — floating pill
+═══════════════════════════════════════════════════════════════ */
+.chat-input-wrap {
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border-top: 1px solid var(--glass-border);
+  padding: 12px 14px 16px;
+  flex-shrink: 0;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 9px;
+  align-items: flex-end;
+  background: var(--surface-solid);
+  border: 1.5px solid var(--border2);
+  border-radius: 18px;
+  padding: 8px 8px 8px 14px;
+  transition: border-color .2s, box-shadow .2s;
+  box-shadow: var(--shadow-sm);
+}
+.chat-input-row:focus-within {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-dim), var(--shadow-brand);
+}
+
 .chat-input {
-  flex:1; min-height:44px; max-height:120px; padding:10px 14px;
-  border-radius:12px; border:1px solid var(--border2); background:var(--surface2);
-  color:var(--text); font-size:14px; font-family:var(--font);
-  resize:none; outline:none; line-height:1.5; transition:border-color .16s;
+  flex: 1;
+  min-height: 28px;
+  max-height: 120px;
+  padding: 3px 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 13.5px;
+  font-family: var(--font);
+  resize: none;
+  outline: none;
+  line-height: 1.55;
+  letter-spacing: -.008em;
 }
-.chat-input:focus { border-color:var(--brand); background:var(--surface); }
-.chat-input::placeholder { color:var(--text3); }
+.chat-input::placeholder { color: var(--text4); }
+
 .send-btn {
-  width:44px; height:44px; border-radius:12px; background:var(--brand); border:none;
-  cursor:pointer; display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; transition:all .16s; box-shadow:0 2px 8px var(--brand-glow);
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all .18s cubic-bezier(.22,1,.36,1);
+  box-shadow: 0 2px 10px var(--brand-glow);
 }
-.send-btn:hover { background:#5b4de0; transform:scale(1.05); }
-.send-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
-.send-btn svg { color:#fff; }
+.send-btn:hover {
+  transform: scale(1.08);
+  box-shadow: var(--shadow-brand);
+}
+.send-btn:active { transform: scale(.95); }
+.send-btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.send-btn svg { color: #fff; }
 
-/* ── Cart bar ──────────────────────────────────────────── */
-.cart-bar { background:var(--brand); color:#fff; padding:10px 16px; display:none; align-items:center; justify-content:space-between; font-size:13px; font-weight:600; flex-shrink:0; cursor:pointer; }
-.cart-bar.show { display:flex; }
-.cart-bar:hover { background:#5b4de0; }
-.cart-count { background:rgba(255,255,255,.25); border-radius:20px; padding:2px 10px; font-size:12px; font-weight:700; }
+/* ═══════════════════════════════════════════════════════════════
+   CART BAR
+═══════════════════════════════════════════════════════════════ */
+.cart-bar {
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  color: #fff;
+  padding: 12px 20px;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: opacity .15s;
+  letter-spacing: -.01em;
+  box-shadow: 0 -4px 20px var(--brand-glow);
+  animation: cart-bar-in .3s cubic-bezier(.22,1,.36,1);
+}
+@keyframes cart-bar-in {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.cart-bar.show { display: flex; }
+.cart-bar:hover { opacity: .92; }
+.cart-count {
+  background: rgba(255,255,255,.22);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 20px;
+  padding: 1px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  margin-left: 7px;
+  font-family: var(--mono);
+}
 
-/* ── Cart sheet ────────────────────────────────────────── */
-.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); backdrop-filter:blur(6px); z-index:100; display:flex; align-items:flex-end; justify-content:center; visibility:hidden; opacity:0; transition:.2s; }
-.modal-overlay.open { visibility:visible; opacity:1; }
-.cart-sheet { background:var(--surface); border-radius:24px 24px 0 0; width:100%; max-width:480px; max-height:85vh; overflow-y:auto; padding:20px; }
-.cart-handle { width:40px; height:4px; background:var(--surface3); border-radius:4px; margin:0 auto 16px; }
-.cart-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
-.cart-item:last-child { border-bottom:none; }
-.cart-item-thumb { width:44px; height:44px; border-radius:10px; background:var(--surface2); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; overflow:hidden; }
-.cart-item-thumb img { width:100%; height:100%; object-fit:cover; }
-.cart-qty { display:flex; align-items:center; gap:8px; margin-top:6px; }
-.qty-btn { width:26px; height:26px; border-radius:8px; border:1px solid var(--border2); background:var(--surface2); cursor:pointer; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; line-height:1; }
-.qty-btn:hover { background:var(--brand); color:#fff; border-color:var(--brand); }
+/* ═══════════════════════════════════════════════════════════════
+   MODAL / CART SHEET
+═══════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11,13,26,.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .25s, visibility .25s;
+}
+.modal-overlay.open { visibility: visible; opacity: 1; }
 
-/* ── Loading / error ───────────────────────────────────── */
-.loading-screen { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px; }
-.spin { width:32px; height:32px; border:3px solid var(--surface3); border-top-color:var(--brand); border-radius:50%; animation:spin .7s linear infinite; }
-@keyframes spin { to{transform:rotate(360deg)} }
+.cart-sheet {
+  background: var(--surface-solid);
+  border-radius: 28px 28px 0 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 82vh;
+  overflow-y: auto;
+  padding: 8px 20px 30px;
+  box-shadow: 0 -20px 60px rgba(0,0,0,.15);
+  transform: translateY(40px);
+  transition: transform .3s cubic-bezier(.22,1,.36,1);
+}
+.modal-overlay.open .cart-sheet { transform: translateY(0); }
+.cart-sheet::-webkit-scrollbar { width: 3px; }
+.cart-sheet::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+.cart-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border2);
+  border-radius: 4px;
+  margin: 6px auto 18px;
+}
+.cart-sheet-title {
+  font-size: 17px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: -.025em;
+  color: var(--text);
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+  animation: msg-in .22s cubic-bezier(.22,1,.36,1) both;
+}
+.cart-item:last-child { border-bottom: none; }
+
+.cart-item-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--surface3) 0%, var(--brand-dim) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.cart-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.cart-item-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cart-item-unit {
+  font-size: 11.5px;
+  color: var(--text3);
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-weight: 500;
+}
+
+.cart-qty {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 7px;
+}
+.qty-btn {
+  width: 27px;
+  height: 27px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border2);
+  background: var(--surface2);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: all .15s;
+  color: var(--text2);
+  font-family: var(--font);
+}
+.qty-btn:hover {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+  box-shadow: 0 2px 8px var(--brand-glow);
+}
+.qty-label {
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 22px;
+  text-align: center;
+  font-family: var(--mono);
+}
+.cart-item-total {
+  font-size: 14px;
+  font-weight: 800;
+  font-family: var(--mono);
+  white-space: nowrap;
+  color: var(--text);
+  letter-spacing: -.02em;
+}
+
+.cart-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.cart-total-label { font-size: 11.5px; color: var(--text3); font-weight: 600; letter-spacing: .02em; text-transform: uppercase; margin-bottom: 3px; }
+.cart-total-amount { font-size: 24px; font-weight: 800; font-family: var(--mono); letter-spacing: -.03em; color: var(--text); }
+
+.checkout-btn {
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 13px 26px;
+  font-size: 13.5px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all .18s cubic-bezier(.22,1,.36,1);
+  box-shadow: var(--shadow-brand);
+  letter-spacing: -.01em;
+}
+.checkout-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-brand-lg);
+}
+.checkout-btn:active { transform: scale(.97); }
+
+/* ═══════════════════════════════════════════════════════════════
+   LOADING SCREEN
+═══════════════════════════════════════════════════════════════ */
+.loading-screen {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+}
+.spin-ring {
+  width: 36px;
+  height: 36px;
+  border: 2.5px solid var(--surface3);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin .75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-label {
+  font-size: 12.5px;
+  color: var(--text3);
+  font-weight: 500;
+  letter-spacing: .01em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DARK THEME OVERRIDES
+═══════════════════════════════════════════════════════════════ */
+.theme-dark {
+  --bg: #08090F;
+  --surface: rgba(17,19,30,0.9);
+  --surface-solid: #111320;
+  --surface2: rgba(20,23,35,0.8);
+  --surface3: #1C2035;
+  --glass: rgba(15,17,28,0.8);
+  --glass-border: rgba(255,255,255,0.06);
+  --text: #ECEEF9;
+  --text2: #7E85AB;
+  --text3: #4A5072;
+  --text4: #32375A;
+  --border: rgba(255,255,255,.05);
+  --border2: rgba(255,255,255,.09);
+  --border3: rgba(255,255,255,.07);
+  --bg-pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236C5FF5' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SG PRODUCT CARD (from agent response HTML)
+═══════════════════════════════════════════════════════════════ */
+.msg-bubble-agent .sg-product-card {
+  display: inline-flex;
+  flex-direction: column;
+  border: 1px solid var(--border3);
+  border-radius: var(--r);
+  overflow: hidden;
+  width: 140px;
+  box-shadow: var(--shadow-sm);
+  vertical-align: top;
+  margin: 4px;
+  transition: all .2s cubic-bezier(.22,1,.36,1);
+  background: var(--surface-solid);
+}
+.msg-bubble-agent .sg-product-card:hover {
+  border-color: var(--brand);
+  box-shadow: var(--shadow-brand);
+  transform: translateY(-2px);
+}
 </style>
 </head>
 <body>
 
-<!-- Header (hidden until loaded) -->
+<!-- ── HEADER ────────────────────────────────────────────────── -->
 <div class="chat-header" id="chat-header" style="display:none;">
-  <div class="agent-avatar" id="hdr-avatar">🤖</div>
-  <div>
+  <div class="agent-avatar" id="hdr-avatar">✦</div>
+  <div class="agent-info">
     <div class="agent-name" id="hdr-name">Agent</div>
-    <div class="agent-status"><span class="status-dot"></span>Online</div>
+    <div class="agent-status">
+      <span class="status-dot"></span>Online
+    </div>
   </div>
-  <div class="powered-by">Powered by<br><a href="https://supportagent.aasaitech.in" target="_blank">SupportGent</a></div>
+  <div class="powered-by">
+    Powered by<br>
+    <a href="https://supportagent.aasaitech.in" target="_blank">SupportGent</a>
+  </div>
 </div>
 
-<!-- Loading -->
+<!-- ── LOADING ────────────────────────────────────────────────── -->
 <div class="loading-screen" id="loading-screen">
-  <div class="spin"></div>
-  <div style="font-size:13px;color:var(--text3);">Loading agent…</div>
+  <div class="spin-ring"></div>
+  <div class="loading-label">Loading agent…</div>
 </div>
 
-<!-- Message feed -->
+<!-- ── MESSAGE FEED ───────────────────────────────────────────── -->
 <div class="chat-messages" id="chat-messages" style="display:none;"></div>
 
-<!-- Topic chips / quick replies -->
+<!-- ── TOPIC CHIPS ────────────────────────────────────────────── -->
 <div class="topics-wrap" id="topics-wrap"></div>
 
-<!-- Cart bar -->
+<!-- ── CART BAR ───────────────────────────────────────────────── -->
 <div class="cart-bar" id="cart-bar" onclick="openCart()">
-  <span>🛒 Cart <span class="cart-count" id="cart-count">0</span></span>
-  <span>View & Checkout →</span>
+  <span style="display:flex;align-items:center;gap:2px;">
+    🛒 Cart
+    <span class="cart-count" id="cart-count">0</span>
+  </span>
+  <span style="font-size:12px;opacity:.85;letter-spacing:.01em;">View &amp; Checkout →</span>
 </div>
 
-<!-- Input -->
+<!-- ── INPUT ──────────────────────────────────────────────────── -->
 <div class="chat-input-wrap" id="chat-input-wrap" style="display:none;">
   <div class="chat-input-row">
-    <textarea class="chat-input" id="chat-input" placeholder="Type your message…" rows="1"
-      onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-    <button class="send-btn" id="send-btn" onclick="sendMessage()">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+    <textarea
+      class="chat-input"
+      id="chat-input"
+      placeholder="Ask anything…"
+      rows="1"
+      onkeydown="handleKey(event)"
+      oninput="autoResize(this)"
+    ></textarea>
+    <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Send">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
       </svg>
     </button>
   </div>
 </div>
 
-<!-- Cart sheet -->
+<!-- ── CART SHEET ─────────────────────────────────────────────── -->
 <div class="modal-overlay" id="cart-overlay" onclick="if(event.target===this)closeCart()">
   <div class="cart-sheet">
     <div class="cart-handle"></div>
-    <div style="font-size:18px;font-weight:800;margin-bottom:16px;">🛒 Your Cart</div>
+    <div class="cart-sheet-title">🛒 Your Cart</div>
     <div id="cart-items"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+    <div class="cart-footer">
       <div>
-        <div style="font-size:12px;color:var(--text3);">Total</div>
-        <div style="font-size:22px;font-weight:800;font-family:var(--mono);" id="cart-total">₹0</div>
+        <div class="cart-total-label">Total</div>
+        <div class="cart-total-amount" id="cart-total">₹0</div>
       </div>
-      <button class="send-btn" style="width:auto;padding:0 24px;border-radius:12px;font-size:14px;font-weight:700;"
-        onclick="checkout()">Checkout →</button>
+      <button class="checkout-btn" onclick="checkout()">Checkout →</button>
     </div>
   </div>
 </div>
@@ -243,50 +964,26 @@ let sessionId  = null
 let isTyping   = false
 
 // ══════════════════════════════════════════════════════════════════════════════
-// LIVE STREAM RENDERER
-// ──────────────────────────────────────────────────────────────────────────────
-// HTML streaming is tricky because partial HTML fragments may be broken mid-tag.
-// Strategy:
-//   1. Accumulate all tokens into rawBuffer (plain string)
-//   2. On each chunk, use innerHTML to render the FULL accumulated string so far
-//   3. Append a blinking cursor element at the end while streaming
-//   4. On 'done', do a final clean render and wire product cards
-//
-// This gives true word-by-word feel because:
-//  - Each token from Azure (~1-5 chars) triggers an immediate innerHTML update
-//  - The cursor shows the user text is still arriving
-//  - No artificial delays or batching
+// STREAM RENDERER
 // ══════════════════════════════════════════════════════════════════════════════
-
-/**
- * StreamRenderer — manages a single streaming agent bubble
- */
 class StreamRenderer {
   constructor(bubble) {
-    this.bubble   = bubble
-    this.raw      = ''      // accumulated raw HTML string
-    this.cursor   = null    // blinking cursor DOM element
-    this.firstChunk = true
-    this._rafId   = null
-    this._pendingRaw = ''   // buffer tokens between rAF frames
-    this._dirty   = false
+    this.bubble = bubble
+    this.raw    = ''
+    this.cursor = null
+    this._rafId = null
+    this._pendingRaw = ''
+    this._dirty = false
 
-    // Create cursor element once
     this.cursor = document.createElement('span')
     this.cursor.className = 'stream-cursor'
     this.cursor.setAttribute('aria-hidden', 'true')
   }
 
-  /**
-   * Called for every SSE 'chunk' event — append token and schedule render
-   */
   push(token) {
     this._pendingRaw += token
     if (!this._dirty) {
       this._dirty = true
-      // Use requestAnimationFrame to batch rapid successive tokens
-      // into a single DOM update per frame (~16ms) — prevents layout thrash
-      // while still feeling live because rAF fires as fast as the screen refreshes
       this._rafId = requestAnimationFrame(() => this._flush())
     }
   }
@@ -294,49 +991,28 @@ class StreamRenderer {
   _flush() {
     this._dirty = false
     if (!this._pendingRaw) return
-
     this.raw += this._pendingRaw
     this._pendingRaw = ''
-
-    // Render accumulated HTML + cursor
     this.bubble.innerHTML = this.raw
     this.bubble.appendChild(this.cursor)
-
-    // Auto-scroll — only if user hasn't manually scrolled up
     const msgs = document.getElementById('chat-messages')
-    const distFromBottom = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight
-    if (distFromBottom < 120) {
-      msgs.scrollTop = msgs.scrollHeight
-    }
+    const dist = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight
+    if (dist < 120) msgs.scrollTop = msgs.scrollHeight
   }
 
-  /**
-   * Called on SSE 'done' — finalize with clean answer from server
-   */
   finalize(finalHtml) {
-    // Cancel any pending rAF
     if (this._rafId) cancelAnimationFrame(this._rafId)
     this._dirty = false
-
-    // Use server's cleaned final answer (strips trailing fences etc.)
     const html = finalHtml || this.raw
     this.bubble.innerHTML = html
     this.bubble.classList.remove('msg-bubble-streaming')
-
-    // Wire product cards if any
     wireProductCards(this.bubble)
-
-    // Scroll to bottom
-    const msgs = document.getElementById('chat-messages')
-    msgs.scrollTop = msgs.scrollHeight
+    document.getElementById('chat-messages').scrollTop = 999999
   }
 
-  /**
-   * Called on error — show error in bubble
-   */
   error(msg) {
     if (this._rafId) cancelAnimationFrame(this._rafId)
-    this.bubble.innerHTML = `<p style="color:var(--red);margin:0;font-size:14px;">⚠️ ${msg || 'Failed to get response.'}</p>`
+    this.bubble.innerHTML = `<p style="color:var(--red);margin:0;font-size:13.5px;">⚠️ ${msg || 'Failed to get response.'}</p>`
     this.bubble.classList.remove('msg-bubble-streaming')
   }
 }
@@ -354,12 +1030,14 @@ async function init() {
     setupColors(agent)
     setupHeader(agent)
 
-    document.getElementById('loading-screen').style.display   = 'none'
-    document.getElementById('chat-messages').style.display    = 'flex'
-    document.getElementById('chat-input-wrap').style.display  = 'block'
-    document.getElementById('chat-header').style.display      = 'flex'
+    document.getElementById('loading-screen').style.display  = 'none'
+    document.getElementById('chat-messages').style.display   = 'flex'
+    document.getElementById('chat-input-wrap').style.display = 'block'
+    document.getElementById('chat-header').style.display     = 'flex'
     document.title = (agent.name || 'Chat') + ' — SupportGent'
 
+    // Date separator
+    addDateSeparator()
     addWelcomeMsg(agent.welcome_message || `Hi! I'm ${agent.name || 'your assistant'}. How can I help you today?`)
 
     if (agent.cached_topics?.length) renderTopics(agent.cached_topics)
@@ -377,41 +1055,49 @@ async function init() {
 function setupHeader(d) {
   document.getElementById('hdr-name').textContent = d.name || 'Agent'
   const av = document.getElementById('hdr-avatar')
-  av.style.background = d.brand_color || '#6C5FF5'
-  if (d.logo_base64) av.innerHTML = `<img src="${d.logo_base64}" alt="${d.name}"/>`
-  else av.textContent = (d.name?.[0]?.toUpperCase()) || '🤖'
+  if (d.logo_base64) {
+    av.innerHTML = `<img src="${d.logo_base64}" alt="${d.name}"/>`
+  } else {
+    av.textContent = (d.name?.[0]?.toUpperCase()) || '✦'
+    if (d.brand_color) av.style.background = `linear-gradient(135deg, ${d.brand_color}, ${dimColor(d.brand_color)})`
+  }
 }
 
 function setupColors(d) {
   if (!d.brand_color) return
   const c = d.brand_color
   const rgb = hexToRgb(c)
+  const dark = dimColor(c)
   document.documentElement.style.setProperty('--brand', c)
+  document.documentElement.style.setProperty('--brand-2', lightenColor(c, 20))
+  document.documentElement.style.setProperty('--brand-dark', dark)
   if (rgb) {
-    document.documentElement.style.setProperty('--brand-dim',  `rgba(${rgb},.10)`)
-    document.documentElement.style.setProperty('--brand-glow', `rgba(${rgb},.22)`)
-    document.documentElement.style.setProperty('--accent-l',   `rgba(${rgb},.06)`)
-    document.documentElement.style.setProperty('--accent-b',   `rgba(${rgb},.18)`)
+    document.documentElement.style.setProperty('--brand-dim',     `rgba(${rgb},.08)`)
+    document.documentElement.style.setProperty('--brand-glow',    `rgba(${rgb},.18)`)
+    document.documentElement.style.setProperty('--brand-glow-lg', `rgba(${rgb},.28)`)
+    document.documentElement.style.setProperty('--border',  `rgba(${rgb},.10)`)
+    document.documentElement.style.setProperty('--border2', `rgba(${rgb},.15)`)
   }
-  if (d.theme === 'dark') applyDarkTheme()
-}
-
-function applyDarkTheme() {
-  const s = document.documentElement.style
-  s.setProperty('--bg',      '#09090F')
-  s.setProperty('--surface', '#0F111A')
-  s.setProperty('--surface2','#141720')
-  s.setProperty('--surface3','#1A1E2E')
-  s.setProperty('--text',    '#ECEEF8')
-  s.setProperty('--text2',   '#8084A8')
-  s.setProperty('--text3',   '#454A6A')
-  s.setProperty('--border',  'rgba(255,255,255,.055)')
-  s.setProperty('--border2', 'rgba(255,255,255,.09)')
+  if (d.theme === 'dark') document.body.classList.add('theme-dark')
 }
 
 function hexToRgb(hex) {
   const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
   return r ? `${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}` : null
+}
+
+function dimColor(hex) {
+  const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!r) return hex
+  const darken = v => Math.max(0, Math.round(parseInt(v, 16) * .75))
+  return `#${darken(r[1]).toString(16).padStart(2,'0')}${darken(r[2]).toString(16).padStart(2,'0')}${darken(r[3]).toString(16).padStart(2,'0')}`
+}
+
+function lightenColor(hex, amount) {
+  const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!r) return hex
+  const lighten = v => Math.min(255, Math.round(parseInt(v, 16) + amount))
+  return `#${lighten(r[1]).toString(16).padStart(2,'0')}${lighten(r[2]).toString(16).padStart(2,'0')}${lighten(r[3]).toString(16).padStart(2,'0')}`
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -421,8 +1107,16 @@ function getTime() {
   return new Date().toLocaleTimeString('en', {hour:'2-digit', minute:'2-digit'})
 }
 
-function addWelcomeMsg(text) {
+function addDateSeparator() {
   const msgs = document.getElementById('chat-messages')
+  const sep  = document.createElement('div')
+  sep.className = 'date-sep'
+  sep.textContent = new Date().toLocaleDateString('en', {weekday:'short', month:'short', day:'numeric'})
+  msgs.appendChild(sep)
+}
+
+function addWelcomeMsg(text) {
+  const msgs  = document.getElementById('chat-messages')
   const group = document.createElement('div')
   group.className = 'msg-group agent'
   const bubble = document.createElement('div')
@@ -438,7 +1132,7 @@ function addWelcomeMsg(text) {
 }
 
 function addUserMsg(text) {
-  const msgs = document.getElementById('chat-messages')
+  const msgs  = document.getElementById('chat-messages')
   const group = document.createElement('div')
   group.className = 'msg-group user'
   const bubble = document.createElement('div')
@@ -453,11 +1147,8 @@ function addUserMsg(text) {
   msgs.scrollTop = msgs.scrollHeight
 }
 
-/**
- * Create agent bubble ready for streaming — returns {group, bubble, timeEl}
- */
 function createAgentBubble() {
-  const msgs = document.getElementById('chat-messages')
+  const msgs  = document.getElementById('chat-messages')
   const group = document.createElement('div')
   group.className = 'msg-group agent'
   const bubble = document.createElement('div')
@@ -514,7 +1205,7 @@ function sendTopicChip(topic) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// SEND MESSAGE
+// SEND
 // ══════════════════════════════════════════════════════════════════════════════
 function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
@@ -534,7 +1225,6 @@ async function sendMessage() {
 
 async function sendMessageText(question, suggestedPrompt) {
   document.getElementById('topics-wrap').innerHTML = ''
-
   addUserMsg(question)
   msgHistory.push({ role:'user', content:question })
 
@@ -545,12 +1235,10 @@ async function sendMessageText(question, suggestedPrompt) {
   try {
     streamOk = await streamResponse(question, suggestedPrompt)
   } catch(e) {
-    console.warn('[stream failed]', e.message, '— falling back to non-stream')
+    console.warn('[stream failed]', e.message, '— falling back')
   }
 
-  if (!streamOk) {
-    await nonStreamResponse(question, suggestedPrompt)
-  }
+  if (!streamOk) await nonStreamResponse(question, suggestedPrompt)
 
   isTyping = false
   document.getElementById('send-btn').disabled = false
@@ -558,10 +1246,9 @@ async function sendMessageText(question, suggestedPrompt) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// SSE STREAMING HANDLER — LIVE TOKEN-BY-TOKEN
+// SSE STREAMING
 // ══════════════════════════════════════════════════════════════════════════════
 async function streamResponse(question, suggestedPrompt) {
-  // Create bubble before fetch so user sees it immediately
   const { bubble } = createAgentBubble()
   const renderer = new StreamRenderer(bubble)
 
@@ -599,41 +1286,23 @@ async function streamResponse(question, suggestedPrompt) {
     while (true) {
       const { value, done } = await reader.read()
       if (done) break
-
-      // Decode chunk and append to line buffer
       lineBuffer += decoder.decode(value, { stream: true })
-
-      // Split on double-newline (SSE event separator)
-      // Use a loop to consume all complete events in the buffer
       let sepIdx
       while ((sepIdx = lineBuffer.indexOf('\n\n')) !== -1) {
         const eventBlock = lineBuffer.slice(0, sepIdx)
         lineBuffer = lineBuffer.slice(sepIdx + 2)
-
-        // Skip heartbeat comments (': heartbeat')
         if (eventBlock.startsWith(':')) continue
-
-        // Parse each 'data: ...' line in the event block
         for (const line of eventBlock.split('\n')) {
           if (!line.startsWith('data: ')) continue
           let evt
           try { evt = JSON.parse(line.slice(6)) } catch { continue }
-
-          if (evt.type === 'chunk' && evt.html) {
-            // ── LIVE TOKEN: push to renderer immediately ──────────────────
-            renderer.push(evt.html)
-          }
-
+          if (evt.type === 'chunk' && evt.html) renderer.push(evt.html)
           if (evt.type === 'done') {
             if (evt.session_id) sessionId = evt.session_id
             finalAnswer = evt.answer || ''
             gotDone = true
           }
-
-          if (evt.type === 'error') {
-            renderer.error(evt.message)
-            return true // handled — don't fallback
-          }
+          if (evt.type === 'error') { renderer.error(evt.message); return true }
         }
       }
     }
@@ -641,19 +1310,15 @@ async function streamResponse(question, suggestedPrompt) {
     reader.releaseLock()
   }
 
-  // Finalize — use server's cleaned answer or what we accumulated
   if (gotDone) {
     renderer.finalize(finalAnswer)
-    // Store stripped text in history for context
-    const plain = (finalAnswer || renderer.raw).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
-    msgHistory.push({ role: 'assistant', content: plain })
+    const plain = (finalAnswer || renderer.raw).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim()
+    msgHistory.push({ role:'assistant', content:plain })
   } else {
-    // Stream ended without done event — finalize with what we have
     renderer.finalize(renderer.raw)
-    const plain = renderer.raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
-    msgHistory.push({ role: 'assistant', content: plain })
+    const plain = renderer.raw.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim()
+    msgHistory.push({ role:'assistant', content:plain })
   }
-
   return true
 }
 
@@ -675,14 +1340,12 @@ async function nonStreamResponse(question, suggestedPrompt) {
     })
     const d = await res.json()
     typEl.remove()
-
     const { bubble } = createAgentBubble()
     const answerHtml = d.answer || d.message || '<p style="color:var(--text2);">No response received.</p>'
     bubble.innerHTML = answerHtml
     bubble.classList.remove('msg-bubble-streaming')
     wireProductCards(bubble)
     document.getElementById('chat-messages').scrollTop = 999999
-
     msgHistory.push({ role:'assistant', content:answerHtml.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim() })
   } catch(e) {
     typEl.remove()
@@ -735,9 +1398,9 @@ function renderProductsInChat(products) {
   const msgs = document.getElementById('chat-messages')
   const wrap = document.createElement('div')
   wrap.className = 'msg-group agent'
-  const row = document.createElement('div')
+  const row  = document.createElement('div')
   row.className = 'products-row'
-  products.slice(0, 6).forEach(p => {
+  products.slice(0,6).forEach(p => {
     const card = document.createElement('div')
     card.className = 'product-card'
     card.innerHTML = `
@@ -766,15 +1429,7 @@ function addToCart(product) {
   if (existing) { existing.qty++ }
   else { cart.push({ ...product, qty:1 }) }
   updateCartBar()
-  const msgs = document.getElementById('chat-messages')
-  const group = document.createElement('div')
-  group.className = 'msg-group agent'
-  const bub = document.createElement('div')
-  bub.className = 'msg-bubble-agent'
-  bub.innerHTML = `<p style="margin:0;font-size:14px;">✅ <strong>${product.name}</strong> added to cart. ${cart.reduce((a,i)=>a+i.qty,0)} item(s) total.</p>`
-  group.appendChild(bub)
-  msgs.appendChild(group)
-  msgs.scrollTop = msgs.scrollHeight
+  showChatMsg(`✅ <strong>${product.name}</strong> added to cart. ${cart.reduce((a,i)=>a+i.qty,0)} item(s) total.`)
 }
 
 function updateCartBar() {
@@ -791,17 +1446,15 @@ function openCart() {
         ${item.image_url ? `<img src="${item.image_url}" alt="">` : '📦'}
       </div>
       <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</div>
-        <div style="font-size:12px;color:var(--text3);">${cur}${item.price} each</div>
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-unit">${cur}${item.price} each</div>
         <div class="cart-qty">
           <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
-          <span style="font-size:13px;font-weight:700;min-width:20px;text-align:center;">${item.qty}</span>
+          <span class="qty-label">${item.qty}</span>
           <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
         </div>
       </div>
-      <div style="font-size:14px;font-weight:800;font-family:var(--mono);white-space:nowrap;">
-        ${cur}${(item.price * item.qty).toFixed(2)}
-      </div>
+      <div class="cart-item-total">${cur}${(item.price * item.qty).toFixed(2)}</div>
     </div>`).join('')
 
   const total = cart.reduce((a,i) => a + (i.price * i.qty), 0)
@@ -842,17 +1495,14 @@ async function checkout() {
       method:  'POST',
       headers: {'Content-Type':'application/json'},
       body:    JSON.stringify({
-        items: cart.map(i => ({ product_id: i._id, qty: i.qty })),
+        items: cart.map(i => ({ product_id:i._id, qty:i.qty })),
         customer: {}
       })
     })
     const d = await res.json()
     prep.remove()
 
-    if (!res.ok || d.error) {
-      showChatMsg(`❌ ${d.error || 'Unable to create order.'}`)
-      return
-    }
+    if (!res.ok || d.error) { showChatMsg(`❌ ${d.error || 'Unable to create order.'}`); return }
 
     if (d.order_id && d.key_id) {
       const rz = new Razorpay({
@@ -885,9 +1535,7 @@ async function checkout() {
             showChatMsg('❌ Payment verification failed. Please contact support.')
           }
         },
-        modal: {
-          ondismiss: () => showChatMsg('Payment was cancelled. Your cart is still saved — tap Cart to try again.')
-        }
+        modal: { ondismiss: () => showChatMsg('Payment was cancelled. Your cart is still saved — tap Cart to try again.') }
       })
       rz.open()
     } else {
@@ -901,12 +1549,12 @@ async function checkout() {
 }
 
 function showChatMsg(text) {
-  const msgs = document.getElementById('chat-messages')
+  const msgs  = document.getElementById('chat-messages')
   const group = document.createElement('div')
   group.className = 'msg-group agent'
   const bub = document.createElement('div')
   bub.className = 'msg-bubble-agent'
-  bub.innerHTML = `<p style="margin:0;font-size:14px;">${text}</p>`
+  bub.innerHTML = `<p style="margin:0;font-size:13.5px;">${text}</p>`
   group.appendChild(bub)
   msgs.appendChild(group)
   msgs.scrollTop = msgs.scrollHeight
@@ -918,18 +1566,15 @@ function showChatMsg(text) {
 function showError(msg) {
   document.getElementById('loading-screen').innerHTML = `
     <div style="text-align:center;padding:40px 24px;">
-      <div style="font-size:48px;margin-bottom:16px;">⚠️</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:8px;">Something went wrong</div>
-      <div style="font-size:13px;color:var(--text3);line-height:1.6;">${msg}</div>
+      <div style="font-size:44px;margin-bottom:16px;">⚠️</div>
+      <div style="font-size:14.5px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em;">Something went wrong</div>
+      <div style="font-size:12.5px;color:var(--text3);line-height:1.65;">${msg}</div>
     </div>`
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
 // BOOT
-// ══════════════════════════════════════════════════════════════════════════════
 init()
 </script>
-<!-- Razorpay SDK — loaded only if shopping is enabled -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </body>
 </html>
