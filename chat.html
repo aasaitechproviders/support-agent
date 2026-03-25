@@ -53,6 +53,8 @@ body { font-family:var(--font); background:var(--bg); color:var(--text); height:
   background:var(--surface); border:1px solid var(--border2);
   color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,.04);
   word-break:break-word; overflow-x:auto;
+  /* Smooth content reveal as tokens stream in */
+  transition: none;
 }
 /* Welcome message — wider, accent tint */
 .msg-bubble-welcome {
@@ -60,14 +62,29 @@ body { font-family:var(--font); background:var(--bg); color:var(--text); height:
   background:var(--brand-dim); border:1px solid var(--accent-b);
   color:var(--text); font-size:14px; line-height:1.7;
 }
-/* Streaming — live build */
-.msg-bubble-streaming { border-color:var(--brand) !important; }
-.msg-bubble-streaming::after { content:'▊'; display:inline-block; animation:blink .7s step-start infinite; color:var(--brand); }
-@keyframes blink { 50%{opacity:0} }
+
+/* ── STREAMING CURSOR — shown while tokens are arriving ── */
+.stream-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--brand);
+  border-radius: 1px;
+  vertical-align: text-bottom;
+  margin-left: 1px;
+  animation: blink-cursor 0.6s step-start infinite;
+}
+@keyframes blink-cursor { 50% { opacity: 0; } }
+
+/* Streaming bubble border pulse */
+.msg-bubble-streaming {
+  border-color: var(--brand) !important;
+  box-shadow: 0 0 0 1px var(--brand-glow), 0 1px 4px rgba(0,0,0,.04) !important;
+}
 
 .msg-time { font-size:10px; color:var(--text3); padding:0 4px; }
 
-/* Typing indicator */
+/* ── Typing indicator ────────────────────────────────────── */
 .typing-wrap { display:flex; align-items:flex-start; gap:0; }
 .typing-indicator { display:none; align-items:center; gap:6px; padding:12px 14px; background:var(--surface); border:1px solid var(--border2); border-radius:4px 18px 18px 18px; max-width:80px; box-shadow:0 1px 4px rgba(0,0,0,.04); }
 .typing-indicator.show { display:flex; }
@@ -208,30 +225,128 @@ body { font-family:var(--font); background:var(--bg); color:var(--text); height:
 </div>
 
 <script>
-// ── Config ──────────────────────────────────────────────────────────────────
-// API base URL — update if your Lambda URL changes
+// ══════════════════════════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════════════════════════
 const API      = 'https://fypouhme3gqldqk6sk75b75udy0ltonb.lambda-url.ap-southeast-2.on.aws'
 const params   = new URLSearchParams(location.search)
 const AGENT_ID = params.get('agent') || ''
 
-// ── State ───────────────────────────────────────────────────────────────────
-let agent      = null   // config from GET /chat/:id/config
-let allProds   = []     // loaded once from GET /chat/:id/products
-let cart       = []     // [{_id, name, price, image_url, qty}]
-let msgHistory = []     // [{role:'user'|'assistant', content:string}] for backend context
-let sessionId  = null   // visitor session (from first stream response)
+// ══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════════════
+let agent      = null
+let allProds   = []
+let cart       = []
+let msgHistory = []
+let sessionId  = null
 let isTyping   = false
 
-// ── Currency helper ─────────────────────────────────────────────────────────
-function currSym() {
-  return (agent?.payment_currency || 'INR') === 'USD' ? '$' : '₹'
+// ══════════════════════════════════════════════════════════════════════════════
+// LIVE STREAM RENDERER
+// ──────────────────────────────────────────────────────────────────────────────
+// HTML streaming is tricky because partial HTML fragments may be broken mid-tag.
+// Strategy:
+//   1. Accumulate all tokens into rawBuffer (plain string)
+//   2. On each chunk, use innerHTML to render the FULL accumulated string so far
+//   3. Append a blinking cursor element at the end while streaming
+//   4. On 'done', do a final clean render and wire product cards
+//
+// This gives true word-by-word feel because:
+//  - Each token from Azure (~1-5 chars) triggers an immediate innerHTML update
+//  - The cursor shows the user text is still arriving
+//  - No artificial delays or batching
+// ══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * StreamRenderer — manages a single streaming agent bubble
+ */
+class StreamRenderer {
+  constructor(bubble) {
+    this.bubble   = bubble
+    this.raw      = ''      // accumulated raw HTML string
+    this.cursor   = null    // blinking cursor DOM element
+    this.firstChunk = true
+    this._rafId   = null
+    this._pendingRaw = ''   // buffer tokens between rAF frames
+    this._dirty   = false
+
+    // Create cursor element once
+    this.cursor = document.createElement('span')
+    this.cursor.className = 'stream-cursor'
+    this.cursor.setAttribute('aria-hidden', 'true')
+  }
+
+  /**
+   * Called for every SSE 'chunk' event — append token and schedule render
+   */
+  push(token) {
+    this._pendingRaw += token
+    if (!this._dirty) {
+      this._dirty = true
+      // Use requestAnimationFrame to batch rapid successive tokens
+      // into a single DOM update per frame (~16ms) — prevents layout thrash
+      // while still feeling live because rAF fires as fast as the screen refreshes
+      this._rafId = requestAnimationFrame(() => this._flush())
+    }
+  }
+
+  _flush() {
+    this._dirty = false
+    if (!this._pendingRaw) return
+
+    this.raw += this._pendingRaw
+    this._pendingRaw = ''
+
+    // Render accumulated HTML + cursor
+    this.bubble.innerHTML = this.raw
+    this.bubble.appendChild(this.cursor)
+
+    // Auto-scroll — only if user hasn't manually scrolled up
+    const msgs = document.getElementById('chat-messages')
+    const distFromBottom = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight
+    if (distFromBottom < 120) {
+      msgs.scrollTop = msgs.scrollHeight
+    }
+  }
+
+  /**
+   * Called on SSE 'done' — finalize with clean answer from server
+   */
+  finalize(finalHtml) {
+    // Cancel any pending rAF
+    if (this._rafId) cancelAnimationFrame(this._rafId)
+    this._dirty = false
+
+    // Use server's cleaned final answer (strips trailing fences etc.)
+    const html = finalHtml || this.raw
+    this.bubble.innerHTML = html
+    this.bubble.classList.remove('msg-bubble-streaming')
+
+    // Wire product cards if any
+    wireProductCards(this.bubble)
+
+    // Scroll to bottom
+    const msgs = document.getElementById('chat-messages')
+    msgs.scrollTop = msgs.scrollHeight
+  }
+
+  /**
+   * Called on error — show error in bubble
+   */
+  error(msg) {
+    if (this._rafId) cancelAnimationFrame(this._rafId)
+    this.bubble.innerHTML = `<p style="color:var(--red);margin:0;font-size:14px;">⚠️ ${msg || 'Failed to get response.'}</p>`
+    this.bubble.classList.remove('msg-bubble-streaming')
+  }
 }
 
-// ── Init ────────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════════════════
 async function init() {
   if (!AGENT_ID) { showError('No agent specified in URL.'); return }
   try {
-    // ✅ Correct endpoint: GET /chat/:agentId/config
     const res = await fetch(`${API}/chat/${AGENT_ID}/config`)
     if (!res.ok) throw new Error(`Agent not found (${res.status})`)
     agent = await res.json()
@@ -245,18 +360,10 @@ async function init() {
     document.getElementById('chat-header').style.display      = 'flex'
     document.title = (agent.name || 'Chat') + ' — SupportGent'
 
-    // Welcome message (plain text, not HTML)
     addWelcomeMsg(agent.welcome_message || `Hi! I'm ${agent.name || 'your assistant'}. How can I help you today?`)
 
-    // Show topic chips from cached_topics (these are generated at publish time)
-    if (agent.cached_topics?.length) {
-      renderTopics(agent.cached_topics)
-    }
-
-    // Pre-load products if shopping is enabled
-    if (agent.shopping_enabled) {
-      loadProducts()
-    }
+    if (agent.cached_topics?.length) renderTopics(agent.cached_topics)
+    if (agent.shopping_enabled) loadProducts()
 
   } catch(e) {
     console.error('init error', e)
@@ -264,7 +371,9 @@ async function init() {
   }
 }
 
-// ── Header & Colors ──────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// HEADER & COLORS
+// ══════════════════════════════════════════════════════════════════════════════
 function setupHeader(d) {
   document.getElementById('hdr-name').textContent = d.name || 'Agent'
   const av = document.getElementById('hdr-avatar')
@@ -305,7 +414,9 @@ function hexToRgb(hex) {
   return r ? `${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}` : null
 }
 
-// ── Message rendering ────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// MESSAGE RENDERING
+// ══════════════════════════════════════════════════════════════════════════════
 function getTime() {
   return new Date().toLocaleTimeString('en', {hour:'2-digit', minute:'2-digit'})
 }
@@ -316,7 +427,6 @@ function addWelcomeMsg(text) {
   group.className = 'msg-group agent'
   const bubble = document.createElement('div')
   bubble.className = 'msg-bubble-welcome'
-  // Welcome message is plain text from config — escape it
   bubble.textContent = text
   group.appendChild(bubble)
   const timeEl = document.createElement('div')
@@ -333,7 +443,7 @@ function addUserMsg(text) {
   group.className = 'msg-group user'
   const bubble = document.createElement('div')
   bubble.className = 'msg-bubble-user'
-  bubble.textContent = text   // user input is always plain text — escape
+  bubble.textContent = text
   group.appendChild(bubble)
   const timeEl = document.createElement('div')
   timeEl.className = 'msg-time'
@@ -343,7 +453,9 @@ function addUserMsg(text) {
   msgs.scrollTop = msgs.scrollHeight
 }
 
-// Creates an agent bubble that can be updated incrementally (streaming)
+/**
+ * Create agent bubble ready for streaming — returns {group, bubble, timeEl}
+ */
 function createAgentBubble() {
   const msgs = document.getElementById('chat-messages')
   const group = document.createElement('div')
@@ -359,7 +471,9 @@ function createAgentBubble() {
   return { group, bubble, timeEl }
 }
 
-// ── Typing indicator ─────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// TYPING INDICATOR
+// ══════════════════════════════════════════════════════════════════════════════
 function showTyping() {
   const msgs = document.getElementById('chat-messages')
   const wrap = document.createElement('div')
@@ -373,13 +487,13 @@ function showTyping() {
   return wrap
 }
 
-// ── Topic chips ──────────────────────────────────────────────────────────────
-// cached_topics from backend: [{icon, title, desc, question, suggested_prompt}]
+// ══════════════════════════════════════════════════════════════════════════════
+// TOPIC CHIPS
+// ══════════════════════════════════════════════════════════════════════════════
 function renderTopics(topics) {
   const wrap = document.getElementById('topics-wrap')
   wrap.innerHTML = ''
   topics.forEach((t, i) => {
-    // Store data on element — never inject JSON into onclick
     const btn = document.createElement('button')
     btn.className = 'topic-chip'
     btn.dataset.topicIdx = i
@@ -389,20 +503,19 @@ function renderTopics(topics) {
   })
 }
 
-// Minimal HTML escape for renderTopics
 function esc(s) {
   return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 }
 
 function sendTopicChip(topic) {
-  // Clear chips after one is selected
   document.getElementById('topics-wrap').innerHTML = ''
-  // Send the question field but include suggested_prompt as context
   const question = topic.question || topic.title || ''
   sendMessageText(question, topic.suggested_prompt || '')
 }
 
-// ── MAIN SEND (SSE streaming) ─────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// SEND MESSAGE
+// ══════════════════════════════════════════════════════════════════════════════
 function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
 }
@@ -420,7 +533,6 @@ async function sendMessage() {
 }
 
 async function sendMessageText(question, suggestedPrompt) {
-  // Hide topic chips once user starts chatting
   document.getElementById('topics-wrap').innerHTML = ''
 
   addUserMsg(question)
@@ -429,7 +541,6 @@ async function sendMessageText(question, suggestedPrompt) {
   isTyping = true
   document.getElementById('send-btn').disabled = true
 
-  // Try SSE streaming first; fall back to plain POST if it fails
   let streamOk = false
   try {
     streamOk = await streamResponse(question, suggestedPrompt)
@@ -446,77 +557,109 @@ async function sendMessageText(question, suggestedPrompt) {
   document.getElementById('chat-input').focus()
 }
 
-// ── SSE Streaming handler ────────────────────────────────────────────────────
-// Backend: POST /chat/:agentId/stream → text/event-stream
-// Events: {type:'chunk',html:'...'} | {type:'done',tokens:N,answer:'...'} | {type:'error',message:'...'}
+// ══════════════════════════════════════════════════════════════════════════════
+// SSE STREAMING HANDLER — LIVE TOKEN-BY-TOKEN
+// ══════════════════════════════════════════════════════════════════════════════
 async function streamResponse(question, suggestedPrompt) {
-  const { group, bubble } = createAgentBubble()
-  let accumulated = ''
+  // Create bubble before fetch so user sees it immediately
+  const { bubble } = createAgentBubble()
+  const renderer = new StreamRenderer(bubble)
 
   const body = JSON.stringify({
-    question,                                 // ✅ backend field is 'question', not 'message'
-    history:   msgHistory.slice(-20, -1),     // ✅ send history array (exclude last user msg)
-    session_id: sessionId || undefined,
+    question,
+    history:          msgHistory.slice(-20, -1),
+    session_id:       sessionId || undefined,
     suggested_prompt: suggestedPrompt || undefined
   })
 
-  const res = await fetch(`${API}/chat/${AGENT_ID}/stream`, {
-    method:  'POST',
-    headers: {'Content-Type':'application/json', 'Accept':'text/event-stream'},
-    body
-  })
+  let res
+  try {
+    res = await fetch(`${API}/chat/${AGENT_ID}/stream`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
+      body
+    })
+  } catch(e) {
+    renderer.error('Network error. Please check your connection.')
+    throw e
+  }
 
-  if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`)
+  if (!res.ok || !res.body) {
+    renderer.error(`Server error (${res.status}). Please try again.`)
+    throw new Error(`HTTP ${res.status}`)
+  }
 
   const reader  = res.body.getReader()
   const decoder = new TextDecoder()
-  let buffer    = ''
-  let done      = false
+  let lineBuffer = ''
+  let finalAnswer = ''
+  let gotDone = false
 
-  while (!done) {
-    const { value, done: rdDone } = await reader.read()
-    done = rdDone
-    if (value) buffer += decoder.decode(value, { stream:true })
+  try {
+    while (true) {
+      const { value, done } = await reader.read()
+      if (done) break
 
-    // Parse SSE lines
-    const lines = buffer.split('\n')
-    buffer = lines.pop() // keep incomplete line
+      // Decode chunk and append to line buffer
+      lineBuffer += decoder.decode(value, { stream: true })
 
-    for (const line of lines) {
-      if (!line.startsWith('data: ')) continue
-      let evt
-      try { evt = JSON.parse(line.slice(6)) } catch { continue }
+      // Split on double-newline (SSE event separator)
+      // Use a loop to consume all complete events in the buffer
+      let sepIdx
+      while ((sepIdx = lineBuffer.indexOf('\n\n')) !== -1) {
+        const eventBlock = lineBuffer.slice(0, sepIdx)
+        lineBuffer = lineBuffer.slice(sepIdx + 2)
 
-      if (evt.type === 'chunk' && evt.html) {
-        accumulated += evt.html
-        // Render accumulated HTML — backend returns styled HTML directly
-        bubble.innerHTML = accumulated
-        bubble.scrollIntoView({ block:'nearest' })
-      }
-      if (evt.type === 'done') {
-        if (evt.session_id) sessionId = evt.session_id
-        const finalHtml = evt.answer || accumulated
-        bubble.innerHTML = finalHtml
-        bubble.classList.remove('msg-bubble-streaming')
-        // After DOM is settled, wire up any sg-product-card add-to-cart buttons
-        wireProductCards(bubble)
-        // Add to history (strip HTML for text context)
-        msgHistory.push({ role:'assistant', content:finalHtml.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim() })
-        done = true
-      }
-      if (evt.type === 'error') {
-        bubble.innerHTML = `<p style="color:var(--red);margin:0;">${evt.message || 'Failed to get response.'}</p>`
-        bubble.classList.remove('msg-bubble-streaming')
-        done = true
+        // Skip heartbeat comments (': heartbeat')
+        if (eventBlock.startsWith(':')) continue
+
+        // Parse each 'data: ...' line in the event block
+        for (const line of eventBlock.split('\n')) {
+          if (!line.startsWith('data: ')) continue
+          let evt
+          try { evt = JSON.parse(line.slice(6)) } catch { continue }
+
+          if (evt.type === 'chunk' && evt.html) {
+            // ── LIVE TOKEN: push to renderer immediately ──────────────────
+            renderer.push(evt.html)
+          }
+
+          if (evt.type === 'done') {
+            if (evt.session_id) sessionId = evt.session_id
+            finalAnswer = evt.answer || ''
+            gotDone = true
+          }
+
+          if (evt.type === 'error') {
+            renderer.error(evt.message)
+            return true // handled — don't fallback
+          }
+        }
       }
     }
+  } finally {
+    reader.releaseLock()
   }
 
-  return true // success
+  // Finalize — use server's cleaned answer or what we accumulated
+  if (gotDone) {
+    renderer.finalize(finalAnswer)
+    // Store stripped text in history for context
+    const plain = (finalAnswer || renderer.raw).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+    msgHistory.push({ role: 'assistant', content: plain })
+  } else {
+    // Stream ended without done event — finalize with what we have
+    renderer.finalize(renderer.raw)
+    const plain = renderer.raw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+    msgHistory.push({ role: 'assistant', content: plain })
+  }
+
+  return true
 }
 
-// ── Non-streaming fallback ───────────────────────────────────────────────────
-// Backend: POST /chat/:agentId → {answer:'<html>...'}
+// ══════════════════════════════════════════════════════════════════════════════
+// NON-STREAMING FALLBACK
+// ══════════════════════════════════════════════════════════════════════════════
 async function nonStreamResponse(question, suggestedPrompt) {
   const typEl = showTyping()
   try {
@@ -525,15 +668,15 @@ async function nonStreamResponse(question, suggestedPrompt) {
       headers: {'Content-Type':'application/json'},
       body:    JSON.stringify({
         question,
-        history:         msgHistory.slice(-20, -1),
-        session_id:      sessionId || undefined,
+        history:          msgHistory.slice(-20, -1),
+        session_id:       sessionId || undefined,
         suggested_prompt: suggestedPrompt || undefined
       })
     })
     const d = await res.json()
     typEl.remove()
 
-    const { group, bubble } = createAgentBubble()
+    const { bubble } = createAgentBubble()
     const answerHtml = d.answer || d.message || '<p style="color:var(--text2);">No response received.</p>'
     bubble.innerHTML = answerHtml
     bubble.classList.remove('msg-bubble-streaming')
@@ -549,12 +692,11 @@ async function nonStreamResponse(question, suggestedPrompt) {
   }
 }
 
-// ── Wire sg-product-card add-to-cart buttons ─────────────────────────────────
-// Backend embeds <div class="sg-product-card" data-id="..." data-price="..." ...>
-// We add an "Add to Cart" button after the card renders
+// ══════════════════════════════════════════════════════════════════════════════
+// PRODUCT CARD WIRING
+// ══════════════════════════════════════════════════════════════════════════════
 function wireProductCards(container) {
   container.querySelectorAll('.sg-product-card').forEach(card => {
-    // Avoid double-wiring
     if (card.dataset.wired) return
     card.dataset.wired = '1'
     const id    = card.dataset.id
@@ -571,8 +713,13 @@ function wireProductCards(container) {
   })
 }
 
-// ── Products (shopping tab) ──────────────────────────────────────────────────
-// ✅ Correct endpoint: GET /chat/:agentId/products
+// ══════════════════════════════════════════════════════════════════════════════
+// PRODUCTS
+// ══════════════════════════════════════════════════════════════════════════════
+function currSym() {
+  return (agent?.payment_currency || 'INR') === 'USD' ? '$' : '₹'
+}
+
 async function loadProducts() {
   try {
     const res = await fetch(`${API}/chat/${AGENT_ID}/products`)
@@ -611,16 +758,14 @@ function renderProductsInChat(products) {
   msgs.scrollTop = msgs.scrollHeight
 }
 
-// ── Cart ─────────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// CART
+// ══════════════════════════════════════════════════════════════════════════════
 function addToCart(product) {
   const existing = cart.find(i => i._id === product._id)
-  if (existing) {
-    existing.qty++
-  } else {
-    cart.push({ ...product, qty:1 })
-  }
+  if (existing) { existing.qty++ }
+  else { cart.push({ ...product, qty:1 }) }
   updateCartBar()
-  // Brief confirmation inside chat
   const msgs = document.getElementById('chat-messages')
   const group = document.createElement('div')
   group.className = 'msg-group agent'
@@ -675,15 +820,13 @@ function changeQty(idx, delta) {
   if (cart.length) openCart(); else closeCart()
 }
 
-// ── Checkout ─────────────────────────────────────────────────────────────────
-// ✅ Correct endpoint: POST /chat/:agentId/checkout
-// ✅ Body: {items:[{product_id, qty}], customer:{}}
-// ✅ Response: {order_id (razorpay), order_db_id, key_id, amount, currency}
+// ══════════════════════════════════════════════════════════════════════════════
+// CHECKOUT
+// ══════════════════════════════════════════════════════════════════════════════
 async function checkout() {
   if (!cart.length) return
   closeCart()
 
-  // Show "preparing order" message
   const msgs = document.getElementById('chat-messages')
   const prep = document.createElement('div')
   prep.className = 'msg-group agent'
@@ -699,7 +842,7 @@ async function checkout() {
       method:  'POST',
       headers: {'Content-Type':'application/json'},
       body:    JSON.stringify({
-        items: cart.map(i => ({ product_id: i._id, qty: i.qty })),  // ✅ correct format
+        items: cart.map(i => ({ product_id: i._id, qty: i.qty })),
         customer: {}
       })
     })
@@ -711,18 +854,15 @@ async function checkout() {
       return
     }
 
-    // d.order_id = Razorpay order ID, d.key_id = public Razorpay key
     if (d.order_id && d.key_id) {
       const rz = new Razorpay({
         key:      d.key_id,
         amount:   d.amount,
         currency: d.currency || 'INR',
         name:     agent?.name || 'Store',
-        order_id: d.order_id,           // ✅ Razorpay order_id
+        order_id: d.order_id,
         theme:    { color: agent?.brand_color || '#6C5FF5' },
         handler:  async (resp) => {
-          // ✅ Correct verify endpoint: POST /chat/:agentId/verify-payment
-          // ✅ Correct body: razorpay_order_id, razorpay_payment_id, razorpay_signature, order_db_id
           try {
             const vres = await fetch(`${API}/chat/${AGENT_ID}/verify-payment`, {
               method:  'POST',
@@ -731,7 +871,7 @@ async function checkout() {
                 razorpay_order_id:   resp.razorpay_order_id,
                 razorpay_payment_id: resp.razorpay_payment_id,
                 razorpay_signature:  resp.razorpay_signature,
-                order_db_id:         d.order_db_id   // ✅ include the MongoDB _id
+                order_db_id:         d.order_db_id
               })
             })
             const vd = await vres.json()
@@ -760,7 +900,6 @@ async function checkout() {
   }
 }
 
-// Helper — add a simple plain-text agent message
 function showChatMsg(text) {
   const msgs = document.getElementById('chat-messages')
   const group = document.createElement('div')
@@ -773,7 +912,9 @@ function showChatMsg(text) {
   msgs.scrollTop = msgs.scrollHeight
 }
 
-// ── Error screen ─────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// ERROR SCREEN
+// ══════════════════════════════════════════════════════════════════════════════
 function showError(msg) {
   document.getElementById('loading-screen').innerHTML = `
     <div style="text-align:center;padding:40px 24px;">
@@ -783,7 +924,9 @@ function showError(msg) {
     </div>`
 }
 
-// ── Boot ─────────────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════════════════════════════════════
 init()
 </script>
 <!-- Razorpay SDK — loaded only if shopping is enabled -->
