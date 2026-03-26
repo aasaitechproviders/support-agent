@@ -1131,6 +1131,12 @@ async function streamResponse(question, suggestedPrompt) {
   const reader  = res.body.getReader()
   const decoder = new TextDecoder()
   let tokenCount = null
+  // -------- FIX: declare missing variables ----------
+  let lineBuffer = ''
+  let finalAnswer = ''
+  let gotDone = false
+  let serverTiming = null
+  // --------------------------------------------------
 
   try {
     while (true) {
