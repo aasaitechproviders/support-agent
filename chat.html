@@ -164,6 +164,40 @@ body {
   50%      { box-shadow: 0 0 0 5px var(--green-dim); }
 }
 
+/* ── Timing badge ───────────────────────────────────────────────── */
+.msg-timing {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: .02em;
+  margin-top: 4px;
+  padding: 3px 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .3s ease, transform .3s ease;
+  cursor: default;
+  user-select: none;
+}
+.msg-timing.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.msg-timing .timing-sep {
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--text4);
+  flex-shrink: 0;
+}
+.msg-timing .timing-fast { color: var(--green); }
+.msg-timing .timing-slow { color: var(--red); }
+.msg-timing .timing-mid  { color: var(--brand); }
+
 .hdr-actions {
   display: flex; align-items: center; gap: 6px; flex-shrink: 0;
 }
@@ -955,6 +989,35 @@ function createAgentBubble() {
   return { group, bubble, timeEl }
 }
 
+function addTimingBadge(group, timing) {
+  if (!timing) return
+  const { firstToken, totalTime, tokens } = timing
+  const badge = document.createElement('div')
+  badge.className = 'msg-timing'
+
+  const ftClass = firstToken < 1500 ? 'timing-fast' : firstToken < 3500 ? 'timing-mid' : 'timing-slow'
+  const ttClass = totalTime  < 4000 ? 'timing-fast' : totalTime  < 9000 ? 'timing-mid' : 'timing-slow'
+
+  const parts = [
+    `⚡ <span class="${ftClass}">First: ${(firstToken/1000).toFixed(2)}s</span>`,
+    `<span class="timing-sep"></span>`,
+    `⏱ <span class="${ttClass}">Total: ${(totalTime/1000).toFixed(2)}s</span>`,
+  ]
+  if (tokens) {
+    parts.push(`<span class="timing-sep"></span>`)
+    parts.push(`🔢 ${tokens.toLocaleString()} tokens`)
+  }
+  badge.innerHTML = parts.join('')
+
+  // Insert before the time element
+  const timeEl = group.querySelector('.msg-time')
+  if (timeEl) group.insertBefore(badge, timeEl)
+  else group.appendChild(badge)
+
+  // Animate in slightly after finalize
+  requestAnimationFrame(() => requestAnimationFrame(() => badge.classList.add('visible')))
+}
+
 // ══════════════════════════════════════════════════════════════════════════════
 // TYPING INDICATOR
 // ══════════════════════════════════════════════════════════════════════════════
@@ -1038,7 +1101,7 @@ async function sendMessageText(question, suggestedPrompt) {
 // SSE STREAMING
 // ══════════════════════════════════════════════════════════════════════════════
 async function streamResponse(question, suggestedPrompt) {
-  const { bubble } = createAgentBubble()
+  const { group, bubble } = createAgentBubble()
   const renderer = new StreamRenderer(bubble)
 
   const body = JSON.stringify({
@@ -1047,6 +1110,9 @@ async function streamResponse(question, suggestedPrompt) {
     session_id:       sessionId || undefined,
     suggested_prompt: suggestedPrompt || undefined
   })
+
+  const clientSendTime = Date.now()
+  let clientFirstChunkTime = null
 
   let res
   try {
@@ -1064,7 +1130,7 @@ async function streamResponse(question, suggestedPrompt) {
 
   const reader  = res.body.getReader()
   const decoder = new TextDecoder()
-  let lineBuffer = '', finalAnswer = '', gotDone = false
+  let tokenCount = null
 
   try {
     while (true) {
@@ -1079,8 +1145,17 @@ async function streamResponse(question, suggestedPrompt) {
         for (const line of block.split('\n')) {
           if (!line.startsWith('data: ')) continue
           let evt; try { evt = JSON.parse(line.slice(6)) } catch { continue }
-          if (evt.type === 'chunk' && evt.html) renderer.push(evt.html)
-          if (evt.type === 'done')  { if (evt.session_id) sessionId = evt.session_id; finalAnswer = evt.answer || ''; gotDone = true; }
+          if (evt.type === 'chunk' && evt.html) {
+            if (clientFirstChunkTime === null) clientFirstChunkTime = Date.now()
+            renderer.push(evt.html)
+          }
+          if (evt.type === 'done') {
+            if (evt.session_id) sessionId = evt.session_id
+            finalAnswer = evt.answer || ''
+            gotDone = true
+            serverTiming = evt.timing || null
+            tokenCount = evt.tokens || null
+          }
           if (evt.type === 'error') { renderer.error(evt.message); return true }
         }
       }
@@ -1094,6 +1169,15 @@ async function streamResponse(question, suggestedPrompt) {
     renderer.finalize(renderer.raw)
     msgHistory.push({ role:'assistant', content: renderer.raw.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim() })
   }
+
+  const clientTotal = Date.now() - clientSendTime
+  const clientFirst = clientFirstChunkTime ? clientFirstChunkTime - clientSendTime : clientTotal
+  addTimingBadge(group, {
+    firstToken: serverTiming?.first_token_ms ?? clientFirst,
+    totalTime:  serverTiming?.total_stream_ms ?? clientTotal,
+    tokens:     tokenCount,
+  })
+
   return true
 }
 
