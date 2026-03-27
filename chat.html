@@ -47,7 +47,6 @@
     .agent-status{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--green);margin-top:2px;font-weight:600;}
     .status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 2.5px var(--green-dim);animation:sdot 2.6s ease infinite;}
     @keyframes sdot{0%,100%{box-shadow:0 0 0 2.5px var(--green-dim)}50%{box-shadow:0 0 0 5px var(--green-dim)}}
-    .hdr-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
     .powered-by{font-size:9.5px;color:var(--text4);text-align:right;line-height:1.55;letter-spacing:.01em;}
     .powered-by a{color:var(--brand);font-weight:700;text-decoration:none;transition:opacity .15s;}
     .powered-by a:hover{opacity:.7;}
@@ -82,8 +81,6 @@
     .msg-bubble-agent a:hover{border-color:var(--brand);}
     .msg-bubble-welcome{max-width:100%;padding:16px 18px;border-radius:18px;background:linear-gradient(135deg,var(--brand-dim) 0%,rgba(108,95,245,.03) 100%);border:1px solid var(--border2);color:var(--text);font-size:13.5px;line-height:1.78;letter-spacing:-.005em;position:relative;overflow:hidden;}
     .msg-bubble-welcome::before{content:'';position:absolute;top:-24px;left:-24px;width:90px;height:90px;background:radial-gradient(circle,var(--brand-glow) 0%,transparent 70%);pointer-events:none;}
-
-    /* SALES MESSAGE BUBBLE - plain text */
     .msg-bubble-sales{max-width:92%;padding:13px 16px;border-radius:4px 20px 20px 20px;background:var(--surface-solid);border:1px solid var(--border3);color:var(--text);box-shadow:var(--sh-md);font-size:13.5px;line-height:1.72;letter-spacing:-.005em;}
 
     /* DATE SEP */
@@ -111,151 +108,33 @@
     .topic-chip:hover{background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:var(--sh-brand);transform:translateY(-2px);}
     .topic-chip:active{transform:translateY(0) scale(.97);}
 
-    /* ═══════════════════════════════════════════════════════════════
-       PRODUCT CARDS — v3.0 native rendering
-    ═══════════════════════════════════════════════════════════════ */
-    .products-row {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 8px 0 4px;
-      scrollbar-width: none;
-      max-width: 92%;
-    }
-    .products-row::-webkit-scrollbar { display: none; }
+    /* PRODUCT CARDS */
+    .products-row{display:flex;gap:10px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:none;max-width:92%;}
+    .products-row::-webkit-scrollbar{display:none;}
+    .product-card{min-width:148px;max-width:148px;background:var(--surface-solid);border:1px solid var(--border3);border-radius:var(--r);overflow:hidden;flex-shrink:0;transition:all .22s cubic-bezier(.22,1,.36,1);box-shadow:var(--sh-sm);display:flex;flex-direction:column;animation:cardIn .35s cubic-bezier(.22,1,.36,1) both;}
+    @keyframes cardIn{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .product-card:nth-child(1){animation-delay:0ms;}.product-card:nth-child(2){animation-delay:60ms;}.product-card:nth-child(3){animation-delay:120ms;}.product-card:nth-child(4){animation-delay:180ms;}
+    .product-card:hover{border-color:var(--brand);transform:translateY(-4px);box-shadow:var(--sh-brand-lg);}
+    .product-img-wrap{width:100%;height:100px;overflow:hidden;position:relative;background:linear-gradient(135deg,var(--surface3),var(--brand-dim));}
+    .product-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s cubic-bezier(.22,1,.36,1);}
+    .product-card:hover .product-img{transform:scale(1.07);}
+    .product-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;background:linear-gradient(135deg,var(--surface3),var(--brand-dim));}
+    .product-cat-badge{position:absolute;top:7px;left:7px;background:rgba(0,0,0,.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;font-size:9px;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:20px;text-transform:uppercase;pointer-events:none;}
+    .product-info{padding:10px 11px 0;flex:1;}
+    .product-name{font-size:11.5px;font-weight:700;margin-bottom:3px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;letter-spacing:-.01em;color:var(--text);}
+    .product-desc{font-size:10px;color:var(--text3);line-height:1.45;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .product-price{font-size:15px;font-weight:800;color:var(--brand);font-family:var(--mono);letter-spacing:-.02em;margin-bottom:8px;}
+    .product-btn{display:block;width:100%;text-align:center;background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;padding:9px;font-size:11px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.01em;margin-top:auto;}
+    .product-btn:hover{opacity:.88;}.product-btn:active{transform:scale(.97);}
+    .product-btn.in-cart{background:var(--green);}
 
-    .product-card {
-      min-width: 148px; max-width: 148px;
-      background: var(--surface-solid);
-      border: 1px solid var(--border3);
-      border-radius: var(--r);
-      overflow: hidden;
-      flex-shrink: 0;
-      transition: all .22s cubic-bezier(.22,1,.36,1);
-      box-shadow: var(--sh-sm);
-      display: flex;
-      flex-direction: column;
-      animation: cardIn .35s cubic-bezier(.22,1,.36,1) both;
-    }
-    @keyframes cardIn {
-      from { opacity:0; transform:translateY(12px) scale(.95); }
-      to   { opacity:1; transform:translateY(0) scale(1); }
-    }
-    .product-card:nth-child(1) { animation-delay: 0ms; }
-    .product-card:nth-child(2) { animation-delay: 60ms; }
-    .product-card:nth-child(3) { animation-delay: 120ms; }
-    .product-card:nth-child(4) { animation-delay: 180ms; }
-    .product-card:hover {
-      border-color: var(--brand);
-      transform: translateY(-4px);
-      box-shadow: var(--sh-brand-lg);
-    }
-    .product-img-wrap {
-      width: 100%; height: 100px;
-      overflow: hidden; position: relative;
-      background: linear-gradient(135deg,var(--surface3),var(--brand-dim));
-    }
-    .product-img {
-      width: 100%; height: 100%;
-      object-fit: cover; display: block;
-      transition: transform .35s cubic-bezier(.22,1,.36,1);
-    }
-    .product-card:hover .product-img { transform: scale(1.07); }
-    .product-img-placeholder {
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 32px;
-      background: linear-gradient(135deg,var(--surface3),var(--brand-dim));
-    }
-
-    /* category badge on image */
-    .product-cat-badge {
-      position: absolute; top: 7px; left: 7px;
-      background: rgba(0,0,0,.52);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      color: #fff;
-      font-size: 9px; font-weight: 700; letter-spacing: .04em;
-      padding: 2px 7px; border-radius: 20px;
-      text-transform: uppercase;
-      pointer-events: none;
-    }
-
-    .product-info { padding: 10px 11px 0; flex: 1; }
-    .product-name {
-      font-size: 11.5px; font-weight: 700;
-      margin-bottom: 3px;
-      line-height: 1.35;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      letter-spacing: -.01em;
-      color: var(--text);
-    }
-    .product-desc {
-      font-size: 10px; color: var(--text3); line-height: 1.45;
-      margin-bottom: 6px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .product-price {
-      font-size: 15px; font-weight: 800;
-      color: var(--brand);
-      font-family: var(--mono);
-      letter-spacing: -.02em;
-      margin-bottom: 8px;
-    }
-    .product-btn {
-      display: block; width: 100%;
-      text-align: center;
-      background: linear-gradient(135deg,var(--brand),var(--brand-dark));
-      color: #fff; padding: 9px;
-      font-size: 11px; font-weight: 700;
-      font-family: var(--font);
-      border: none; cursor: pointer;
-      transition: opacity .15s, transform .1s;
-      letter-spacing: .01em;
-      margin-top: auto;
-    }
-    .product-btn:hover { opacity:.88; }
-    .product-btn:active { transform: scale(.97); }
-    .product-btn.in-cart {
-      background: var(--green);
-    }
-
-    /* Checkout action card — shown when AI says action:'checkout' */
-    .checkout-action-card {
-      max-width: 92%;
-      background: linear-gradient(135deg,var(--brand-dim),rgba(108,95,245,.04));
-      border: 1.5px solid var(--border2);
-      border-radius: var(--r);
-      padding: 14px 16px;
-      margin-top: 6px;
-      animation: msgIn .3s cubic-bezier(.22,1,.36,1) both;
-    }
-    .checkout-action-card-title {
-      font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px;
-      display: flex; align-items: center; gap: 7px;
-    }
-    .checkout-action-card p {
-      font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 12px;
-    }
-    .checkout-action-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: linear-gradient(135deg,var(--brand),var(--brand-dark));
-      color: #fff; border: none; border-radius: 10px;
-      padding: 10px 18px;
-      font-size: 12.5px; font-weight: 700;
-      font-family: var(--font);
-      cursor: pointer;
-      transition: all .18s cubic-bezier(.22,1,.36,1);
-      box-shadow: var(--sh-brand);
-    }
-    .checkout-action-btn:hover { transform: translateY(-1px); box-shadow: var(--sh-brand-lg); }
-    .checkout-action-btn:active { transform: scale(.97); }
+    /* CHECKOUT ACTION CARD */
+    .checkout-action-card{max-width:92%;background:linear-gradient(135deg,var(--brand-dim),rgba(108,95,245,.04));border:1.5px solid var(--border2);border-radius:var(--r);padding:14px 16px;margin-top:6px;animation:msgIn .3s cubic-bezier(.22,1,.36,1) both;}
+    .checkout-action-card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:7px;}
+    .checkout-action-card p{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+    .checkout-action-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:12.5px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all .18s cubic-bezier(.22,1,.36,1);box-shadow:var(--sh-brand);}
+    .checkout-action-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-brand-lg);}
+    .checkout-action-btn:active{transform:scale(.97);}
 
     /* INPUT */
     .chat-input-wrap{background:var(--glass);backdrop-filter:blur(24px) saturate(1.9);-webkit-backdrop-filter:blur(24px) saturate(1.9);border-top:1px solid var(--glass-border);padding:10px 12px 14px;flex-shrink:0;}
@@ -272,8 +151,7 @@
     .lang-btn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-dim);}
     .lang-btn.open{border-color:var(--brand);color:var(--brand);background:var(--brand-dim);}
     .lang-btn.recording{border-color:rgba(239,68,68,.5);background:rgba(239,68,68,.07);color:#ef4444;}
-    .lb-flag{font-size:14px;line-height:1;}
-    .lb-code{font-size:11px;font-weight:800;letter-spacing:.03em;}
+    .lb-flag{font-size:14px;line-height:1;}.lb-code{font-size:11px;font-weight:800;letter-spacing:.03em;}
     .lb-arrow{font-size:8px;opacity:.5;margin-left:1px;transition:transform .15s;}
     .lang-btn.open .lb-arrow{transform:rotate(180deg);}
     .rec-pulse{width:6px;height:6px;border-radius:50%;background:#ef4444;animation:recP 1s ease-in-out infinite;flex-shrink:0;display:none;}
@@ -288,8 +166,7 @@
     .lang-dd-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text2);transition:background .1s;}
     .lang-dd-item:hover{background:var(--surface2);color:var(--text);}
     .lang-dd-item.active{background:var(--brand-dim);color:var(--brand);}
-    .lang-dd-item .dd-flag{font-size:16px;flex-shrink:0;}
-    .lang-dd-item .dd-name{flex:1;}
+    .lang-dd-item .dd-flag{font-size:16px;flex-shrink:0;}.lang-dd-item .dd-name{flex:1;}
     .lang-dd-item .dd-check{font-size:12px;color:var(--brand);opacity:0;}
     .lang-dd-item.active .dd-check{opacity:1;}
     .lang-dd-sep{height:1px;background:var(--border);margin:4px 6px;}
@@ -313,21 +190,14 @@
     .chat-input-row.listening .voice-wave{display:flex;}
     .chat-input-row.listening .chat-input{display:none;}
     .wave-bar{width:3px;min-width:3px;border-radius:3px;background:var(--brand);flex-shrink:0;animation:waveBar .8s ease-in-out infinite;}
-    .wave-bar:nth-child(1){height:8px;animation-delay:0s;}
-    .wave-bar:nth-child(2){height:14px;animation-delay:.1s;}
-    .wave-bar:nth-child(3){height:20px;animation-delay:.2s;}
-    .wave-bar:nth-child(4){height:14px;animation-delay:.3s;}
-    .wave-bar:nth-child(5){height:8px;animation-delay:.4s;}
+    .wave-bar:nth-child(1){height:8px;animation-delay:0s;}.wave-bar:nth-child(2){height:14px;animation-delay:.1s;}.wave-bar:nth-child(3){height:20px;animation-delay:.2s;}.wave-bar:nth-child(4){height:14px;animation-delay:.3s;}.wave-bar:nth-child(5){height:8px;animation-delay:.4s;}
     .voice-wave .voice-label{font-size:12px;font-weight:600;color:#ef4444;margin-left:6px;white-space:nowrap;animation:voicePulse 1.2s ease infinite;}
     @keyframes waveBar{0%,100%{transform:scaleY(.45);opacity:.45}50%{transform:scaleY(1);opacity:1}}
     @keyframes voicePulse{0%,100%{opacity:1}50%{opacity:.35}}
-
-    /* Voice interim */
     .voice-interim{display:none;position:absolute;bottom:calc(100% + 10px);left:14px;right:14px;background:var(--surface-solid);border:1px solid var(--border2);border-radius:14px;padding:10px 14px;font-size:13px;font-weight:500;color:var(--text2);box-shadow:var(--sh-md);z-index:10;animation:fadeSlideUp .18s ease;pointer-events:none;line-height:1.5;max-height:80px;overflow:hidden;}
     .voice-interim.show{display:block;}
     @keyframes fadeSlideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-    .voice-interim-live{color:var(--text3);}
-    .voice-interim-final{color:var(--text);font-weight:600;}
+    .voice-interim-live{color:var(--text3);}.voice-interim-final{color:var(--text);font-weight:600;}
     .input-inner{position:relative;}
 
     /* CART BAR */
@@ -363,8 +233,6 @@
     .checkout-btn{background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;border:none;border-radius:14px;padding:12px 24px;font-size:13.5px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all .18s cubic-bezier(.22,1,.36,1);box-shadow:var(--sh-brand);letter-spacing:-.01em;}
     .checkout-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-brand-lg);}
     .checkout-btn:active{transform:scale(.97);}
-
-    /* EMPTY CART STATE */
     .cart-empty{text-align:center;padding:32px 20px;color:var(--text3);}
     .cart-empty-icon{font-size:42px;margin-bottom:12px;}
     .cart-empty-text{font-size:13px;font-weight:600;color:var(--text3);}
@@ -375,14 +243,13 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     .loading-label{font-size:12px;color:var(--text3);font-weight:500;letter-spacing:.01em;}
 
-    /* TOAST NOTIFICATION */
+    /* TOAST */
     .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:#fff;padding:9px 16px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;pointer-events:none;opacity:0;z-index:999;transition:all .25s cubic-bezier(.22,1,.36,1);}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
   <div class="chat-header" id="chat-header" style="display:none;">
     <div class="agent-avatar" id="hdr-avatar">✦</div>
     <div class="agent-info">
@@ -394,25 +261,19 @@
     </div>
   </div>
 
-  <!-- LOADING -->
   <div class="loading-screen" id="loading-screen">
     <div class="spin-ring"></div>
     <div class="loading-label">Loading agent…</div>
   </div>
 
-  <!-- MESSAGES -->
   <div class="chat-messages" id="chat-messages" style="display:none;"></div>
-
-  <!-- TOPIC CHIPS -->
   <div class="topics-wrap" id="topics-wrap"></div>
 
-  <!-- CART BAR -->
   <div class="cart-bar" id="cart-bar" onclick="openCart()">
     <span style="display:flex;align-items:center;gap:2px;">🛒 Cart <span class="cart-count" id="cart-count">0</span></span>
     <span style="font-size:11.5px;opacity:.85;letter-spacing:.01em;">View &amp; Checkout →</span>
   </div>
 
-  <!-- INPUT AREA -->
   <div class="chat-input-wrap" id="chat-input-wrap" style="display:none;">
     <div class="input-inner">
       <div class="voice-interim" id="voice-interim">
@@ -435,9 +296,7 @@
             </button>
             <div class="lang-dropdown" id="langDropdown"></div>
           </div>
-          <button class="mic-btn" id="mic-btn" onclick="toggleVoice()" title="Voice input">
-            <span id="mic-icon">🎙</span>
-          </button>
+          <button class="mic-btn" id="mic-btn" onclick="toggleVoice()" title="Voice input"><span id="mic-icon">🎙</span></button>
           <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Send">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
@@ -448,7 +307,6 @@
     </div>
   </div>
 
-  <!-- CART SHEET -->
   <div class="modal-overlay" id="cart-overlay" onclick="if(event.target===this)closeCart()">
     <div class="cart-sheet">
       <div class="cart-handle"></div>
@@ -464,40 +322,27 @@
     </div>
   </div>
 
-  <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
   <script>
-    // ══════════════════════════════════════════════════════════════════
-    // CONFIG
-    // ══════════════════════════════════════════════════════════════════
     const API      = 'https://fypouhme3gqldqk6sk75b75udy0ltonb.lambda-url.ap-southeast-2.on.aws'
     const params   = new URLSearchParams(location.search)
     const AGENT_ID = params.get('agent') || ''
 
-    // ══════════════════════════════════════════════════════════════════
-    // STATE
-    // ══════════════════════════════════════════════════════════════════
-    let agent     = null
-    let allProds  = []          // full product objects from /products
-    let prodMap   = {}          // id → product object for O(1) lookup
-    let cart      = []
-    let msgHistory = []         // { role, content, products? }
-    let sessionId = null
-    let isTyping  = false
-    let agentType = 'general'
+    let agent      = null
+    let allProds   = []
+    let prodMap    = {}       // id → product object for O(1) lookup
+    let cart       = []
+    let msgHistory = []
+    let sessionId  = null
+    let isTyping   = false
+    let agentType  = 'general'
 
-    // ══════════════════════════════════════════════════════════════════
-    // STREAM RENDERER — HTML streaming (non-sales agents)
-    // ══════════════════════════════════════════════════════════════════
+    // ── StreamRenderer — non-sales HTML token streaming ───────────────────────
     class StreamRenderer {
       constructor(bubble) {
-        this.bubble = bubble
-        this.raw = ''
-        this.cursor = null
-        this._rafId = null
-        this._pendingRaw = ''
-        this._dirty = false
+        this.bubble = bubble; this.raw = ''
+        this._rafId = null; this._pendingRaw = ''; this._dirty = false
         this.cursor = document.createElement('span')
         this.cursor.className = 'stream-cursor'
         this.cursor.setAttribute('aria-hidden','true')
@@ -509,13 +354,10 @@
       _flush() {
         this._dirty = false
         if (!this._pendingRaw) return
-        this.raw += this._pendingRaw
-        this._pendingRaw = ''
-        this.bubble.innerHTML = this.raw
-        this.bubble.appendChild(this.cursor)
+        this.raw += this._pendingRaw; this._pendingRaw = ''
+        this.bubble.innerHTML = this.raw; this.bubble.appendChild(this.cursor)
         const msgs = document.getElementById('chat-messages')
-        const dist = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight
-        if (dist < 140) msgs.scrollTop = msgs.scrollHeight
+        if (msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 140) msgs.scrollTop = msgs.scrollHeight
       }
       finalize(finalHtml) {
         if (this._rafId) cancelAnimationFrame(this._rafId)
@@ -531,66 +373,55 @@
       }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // INIT
-    // ══════════════════════════════════════════════════════════════════
+    // ── INIT ──────────────────────────────────────────────────────────────────
     async function init() {
       if (!AGENT_ID) { showError('No agent specified in URL.'); return }
       try {
         const res = await fetch(`${API}/chat/${AGENT_ID}/config`)
         if (!res.ok) throw new Error(`Agent not found (${res.status})`)
-        agent = await res.json()
+        agent     = await res.json()
         agentType = agent.agent_type || 'general'
 
-        setupColors(agent)
-        setupHeader(agent)
-
-        document.getElementById('loading-screen').style.display = 'none'
-        document.getElementById('chat-messages').style.display = 'flex'
+        setupColors(agent); setupHeader(agent)
+        document.getElementById('loading-screen').style.display  = 'none'
+        document.getElementById('chat-messages').style.display   = 'flex'
         document.getElementById('chat-input-wrap').style.display = 'block'
-        document.getElementById('chat-header').style.display = 'flex'
+        document.getElementById('chat-header').style.display     = 'flex'
         document.title = (agent.name || 'Chat') + ' — SupportGent'
 
         addDateSeparator()
         addWelcomeMsg(agent.welcome_message || `Hi! I'm ${agent.name || 'your assistant'}. How can I help you today?`)
-
         if (agent.cached_topics?.length) renderTopics(agent.cached_topics)
 
-        // Always load products for sales agents (needed for card rendering)
-        if (agent.shopping_enabled || agentType === 'sales') loadProducts()
+        // Await product load so prodMap is populated before first AI response
+        if (agent.shopping_enabled || agentType === 'sales') await loadProducts()
 
         initVoice()
       } catch(e) {
-        console.error('init error',e)
-        showError('Failed to load agent. ' + (e.message||'Please try again.'))
+        console.error('init error', e)
+        showError('Failed to load agent. ' + (e.message || 'Please try again.'))
       }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // HEADER & COLORS
-    // ══════════════════════════════════════════════════════════════════
+    // ── HEADER & COLORS ───────────────────────────────────────────────────────
     function setupHeader(d) {
       document.getElementById('hdr-name').textContent = d.name || 'Agent'
       const av = document.getElementById('hdr-avatar')
-      if (d.logo_base64) {
-        av.innerHTML = `<img src="${d.logo_base64}" alt="${d.name}"/>`
-      } else {
-        av.textContent = (d.name?.[0]?.toUpperCase()) || '✦'
-        if (d.brand_color) av.style.background = `linear-gradient(135deg,${d.brand_color},${dimColor(d.brand_color)})`
-      }
+      if (d.logo_base64) { av.innerHTML = `<img src="${d.logo_base64}" alt="${d.name}"/>` }
+      else { av.textContent = (d.name?.[0]?.toUpperCase()) || '✦'; if (d.brand_color) av.style.background = `linear-gradient(135deg,${d.brand_color},${dimColor(d.brand_color)})` }
     }
     function setupColors(d) {
       if (!d.brand_color) return
       const c = d.brand_color, rgb = hexToRgb(c), dark = dimColor(c)
-      document.documentElement.style.setProperty('--brand',c)
-      document.documentElement.style.setProperty('--brand-2',lightenColor(c,20))
-      document.documentElement.style.setProperty('--brand-dark',dark)
+      document.documentElement.style.setProperty('--brand', c)
+      document.documentElement.style.setProperty('--brand-2', lightenColor(c, 20))
+      document.documentElement.style.setProperty('--brand-dark', dark)
       if (rgb) {
-        document.documentElement.style.setProperty('--brand-dim',`rgba(${rgb},.08)`)
-        document.documentElement.style.setProperty('--brand-glow',`rgba(${rgb},.20)`)
-        document.documentElement.style.setProperty('--brand-glow-lg',`rgba(${rgb},.32)`)
-        document.documentElement.style.setProperty('--border',`rgba(${rgb},.10)`)
-        document.documentElement.style.setProperty('--border2',`rgba(${rgb},.16)`)
+        document.documentElement.style.setProperty('--brand-dim', `rgba(${rgb},.08)`)
+        document.documentElement.style.setProperty('--brand-glow', `rgba(${rgb},.20)`)
+        document.documentElement.style.setProperty('--brand-glow-lg', `rgba(${rgb},.32)`)
+        document.documentElement.style.setProperty('--border', `rgba(${rgb},.10)`)
+        document.documentElement.style.setProperty('--border2', `rgba(${rgb},.16)`)
       }
       if (d.theme === 'dark') document.body.classList.add('theme-dark')
     }
@@ -598,15 +429,11 @@
     function dimColor(hex) { const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); if(!r)return hex; const d=v=>Math.max(0,Math.round(parseInt(v,16)*.75)); return `#${d(r[1]).toString(16).padStart(2,'0')}${d(r[2]).toString(16).padStart(2,'0')}${d(r[3]).toString(16).padStart(2,'0')}` }
     function lightenColor(hex,amt) { const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex); if(!r)return hex; const l=v=>Math.min(255,Math.round(parseInt(v,16)+amt)); return `#${l(r[1]).toString(16).padStart(2,'0')}${l(r[2]).toString(16).padStart(2,'0')}${l(r[3]).toString(16).padStart(2,'0')}` }
 
-    // ══════════════════════════════════════════════════════════════════
-    // MESSAGES
-    // ══════════════════════════════════════════════════════════════════
+    // ── MESSAGES ──────────────────────────────────────────────────────────────
     function getTime() { return new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}) }
-
     function addDateSeparator() {
       const msgs = document.getElementById('chat-messages')
-      const sep = document.createElement('div')
-      sep.className = 'date-sep'
+      const sep = document.createElement('div'); sep.className = 'date-sep'
       sep.textContent = new Date().toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'})
       msgs.appendChild(sep)
     }
@@ -616,8 +443,7 @@
       const bubble = document.createElement('div'); bubble.className = 'msg-bubble-welcome'; bubble.textContent = text
       group.appendChild(bubble)
       const timeEl = document.createElement('div'); timeEl.className = 'msg-time'; timeEl.textContent = getTime()
-      group.appendChild(timeEl)
-      msgs.appendChild(group); msgs.scrollTop = msgs.scrollHeight
+      group.appendChild(timeEl); msgs.appendChild(group); msgs.scrollTop = msgs.scrollHeight
     }
     function addUserMsg(text) {
       const msgs = document.getElementById('chat-messages')
@@ -625,8 +451,7 @@
       const bubble = document.createElement('div'); bubble.className = 'msg-bubble-user'; bubble.textContent = text
       group.appendChild(bubble)
       const timeEl = document.createElement('div'); timeEl.className = 'msg-time'; timeEl.textContent = getTime()
-      group.appendChild(timeEl)
-      msgs.appendChild(group); msgs.scrollTop = msgs.scrollHeight
+      group.appendChild(timeEl); msgs.appendChild(group); msgs.scrollTop = msgs.scrollHeight
     }
     function createAgentBubble() {
       const msgs = document.getElementById('chat-messages')
@@ -634,8 +459,7 @@
       const bubble = document.createElement('div'); bubble.className = 'msg-bubble-agent msg-bubble-streaming'
       group.appendChild(bubble)
       const timeEl = document.createElement('div'); timeEl.className = 'msg-time'; timeEl.textContent = getTime()
-      group.appendChild(timeEl)
-      msgs.appendChild(group)
+      group.appendChild(timeEl); msgs.appendChild(group)
       return { group, bubble, timeEl }
     }
     function addTimingBadge(group, timing) {
@@ -656,123 +480,138 @@
       requestAnimationFrame(() => requestAnimationFrame(() => badge.classList.add('visible')))
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // SALES RESPONSE RENDERING — v3.0
-    // Message text + native product cards + optional checkout action
-    // ══════════════════════════════════════════════════════════════════
-    function renderSalesResponse(message, productIds, action, group) {
+    // ── SALES RESPONSE FINALIZER ──────────────────────────────────────────────
+    // salesGroup  — may already exist from sales_chunk streaming (has text bubble in DOM)
+    // salesTextBubble — the text bubble already appended, or null
+    // Called once sales_response event arrives with full parsed data
+    function finalizeSalesResponse(salesData, salesGroup, salesTextBubble) {
       const msgs = document.getElementById('chat-messages')
 
-      // 1. Text message bubble
-      if (message && message.trim()) {
+      if (!salesGroup) {
+        salesGroup = document.createElement('div')
+        salesGroup.className = 'msg-group agent'
+      }
+
+      // Finalize text bubble
+      if (salesTextBubble) {
+        // Already streaming — overwrite with final parsed message to ensure accuracy
+        salesTextBubble.textContent = salesData.message || salesTextBubble.textContent
+      } else if (salesData.message) {
         const bubble = document.createElement('div')
         bubble.className = 'msg-bubble-sales'
-        bubble.textContent = message
-        group.appendChild(bubble)
+        bubble.textContent = salesData.message
+        salesGroup.appendChild(bubble)
       }
 
-      // 2. Product cards row
-      if (productIds && productIds.length > 0) {
-        const resolved = productIds.map(id => prodMap[id]).filter(Boolean)
-        if (resolved.length > 0) {
-          const row = renderProductCards(resolved)
-          group.appendChild(row)
-        }
-      }
-
-      // 3. Checkout action card
-      if (action === 'checkout') {
-        const checkoutCard = document.createElement('div')
-        checkoutCard.className = 'checkout-action-card'
-
-        // Gather cart-ready products
-        const toCheckout = (productIds || []).map(id => prodMap[id]).filter(Boolean)
-
-        checkoutCard.innerHTML = `
-          <div class="checkout-action-card-title">🛒 Ready to checkout?</div>
-          <p>I've added your selected item${toCheckout.length > 1 ? 's' : ''} to cart. Proceed to secure payment when you're ready.</p>
-          <button class="checkout-action-btn" onclick="triggerCheckout(${JSON.stringify(toCheckout.map(p=>p._id))})">
-            Pay Securely →
-          </button>`
-        group.appendChild(checkoutCard)
-
-        // Auto-add to cart
+      // If checkout action — add to cart FIRST so renderProductCards sees correct cart state
+      if (salesData.action === 'checkout') {
+        const toCheckout = (salesData.products || []).map(id => prodMap[id]).filter(Boolean)
         toCheckout.forEach(p => {
-          if (!cart.find(i => i._id === String(p._id))) {
+          if (!cart.find(i => i._id === String(p._id)))
             cart.push({ _id: String(p._id), name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency, qty: 1 })
-          }
         })
         updateCartBar()
       }
 
-      // 4. Time + scroll
+      // Product cards — rendered AFTER cart update so qty steppers show correctly
+      if (salesData.products?.length > 0) {
+        const resolved = salesData.products.map(id => prodMap[id]).filter(Boolean)
+        if (resolved.length) salesGroup.appendChild(renderProductCards(resolved))
+      }
+
+      // Checkout action card
+      if (salesData.action === 'checkout') {
+        const toCheckout = (salesData.products || []).map(id => prodMap[id]).filter(Boolean)
+        const checkoutCard = document.createElement('div')
+        checkoutCard.className = 'checkout-action-card'
+        checkoutCard.innerHTML = `
+          <div class="checkout-action-card-title">🛒 Ready to checkout?</div>
+          <p>I've added your selected item${toCheckout.length > 1 ? 's' : ''} to cart. Proceed to secure payment when you're ready.</p>
+          <button class="checkout-action-btn" onclick="triggerCheckout(${JSON.stringify(toCheckout.map(p => p._id))})">Pay Securely →</button>`
+        salesGroup.appendChild(checkoutCard)
+      }
+
       const timeEl = document.createElement('div'); timeEl.className = 'msg-time'; timeEl.textContent = getTime()
-      group.appendChild(timeEl)
-      msgs.appendChild(group)
+      salesGroup.appendChild(timeEl)
+
+      // Append to DOM only if not already there (sales_chunk already appended it)
+      if (!salesGroup.parentNode) msgs.appendChild(salesGroup)
       msgs.scrollTop = msgs.scrollHeight
+
+      return salesGroup
     }
 
     function renderProductCards(products) {
-      const row = document.createElement('div')
-      row.className = 'products-row'
-
+      const row = document.createElement('div'); row.className = 'products-row'
       products.forEach((p, idx) => {
-        const card = document.createElement('div')
-        card.className = 'product-card'
-        card.style.animationDelay = `${idx * 60}ms`
-
+        const card = document.createElement('div'); card.className = 'product-card'; card.style.animationDelay = `${idx * 60}ms`
         const sym = p.currency === 'USD' ? '$' : '₹'
-        const inCart = cart.find(i => i._id === String(p._id))
 
-        const imgWrap = document.createElement('div')
-        imgWrap.className = 'product-img-wrap'
-
+        const imgWrap = document.createElement('div'); imgWrap.className = 'product-img-wrap'
         if (p.image_url) {
-          const img = document.createElement('img')
-          img.className = 'product-img'
-          img.src = p.image_url
-          img.alt = p.name
+          const img = document.createElement('img'); img.className = 'product-img'; img.src = p.image_url; img.alt = p.name
           img.onerror = () => { imgWrap.innerHTML = `<div class="product-img-placeholder">📦</div>` }
           imgWrap.appendChild(img)
-        } else {
-          imgWrap.innerHTML = `<div class="product-img-placeholder">📦</div>`
-        }
-
+        } else { imgWrap.innerHTML = `<div class="product-img-placeholder">📦</div>` }
         if (p.category) {
-          const badge = document.createElement('div')
-          badge.className = 'product-cat-badge'
-          badge.textContent = p.category
-          imgWrap.appendChild(badge)
+          const badge = document.createElement('div'); badge.className = 'product-cat-badge'; badge.textContent = p.category; imgWrap.appendChild(badge)
         }
 
-        const info = document.createElement('div')
-        info.className = 'product-info'
+        const info = document.createElement('div'); info.className = 'product-info'
         info.innerHTML = `
           <div class="product-name">${esc(p.name)}</div>
           ${p.description ? `<div class="product-desc">${esc(p.description)}</div>` : ''}
           <div class="product-price">${sym}${Number(p.price).toLocaleString()}</div>`
 
-        const btn = document.createElement('button')
-        btn.className = 'product-btn' + (inCart ? ' in-cart' : '')
-        btn.textContent = inCart ? '✓ In Cart' : 'Add to Cart'
-        btn.onclick = () => {
-          addToCart({ _id: String(p._id), name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency })
-          btn.textContent = '✓ In Cart'
-          btn.classList.add('in-cart')
+        // Action area — shows "Add to Cart" OR inline qty stepper depending on cart state
+        const actionArea = document.createElement('div')
+        actionArea.style.cssText = 'margin-top:auto;'
+        actionArea.dataset.pid = String(p._id)
+
+        function refreshAction() {
+          const inCart = cart.find(i => i._id === String(p._id))
+          if (inCart) {
+            actionArea.innerHTML = `
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--brand-dim);border-top:1px solid var(--border2);">
+                <button onclick="cardQty('${p._id}',-1)" style="width:26px;height:26px;border-radius:7px;border:1.5px solid var(--border2);background:var(--surface-solid);cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--text2);font-family:var(--font);">−</button>
+                <span style="font-size:13px;font-weight:800;font-family:var(--mono);color:var(--brand);">${inCart.qty}</span>
+                <button onclick="cardQty('${p._id}',1)" style="width:26px;height:26px;border-radius:7px;border:1.5px solid var(--border2);background:var(--surface-solid);cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--text2);font-family:var(--font);">+</button>
+              </div>`
+          } else {
+            actionArea.innerHTML = `<button class="product-btn" onclick="cardAdd('${p._id}')">Add to Cart</button>`
+          }
         }
 
-        card.appendChild(imgWrap)
-        card.appendChild(info)
-        card.appendChild(btn)
-        row.appendChild(card)
-      })
+        actionArea._refresh = refreshAction
+        refreshAction()
 
+        card.appendChild(imgWrap); card.appendChild(info); card.appendChild(actionArea); row.appendChild(card)
+      })
       return row
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // TYPING INDICATOR
-    // ══════════════════════════════════════════════════════════════════
+    // Add product to cart from card button
+    function cardAdd(productId) {
+      const p = prodMap[productId]; if (!p) return
+      addToCart({ _id: String(p._id), name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency })
+    }
+
+    // Adjust qty from card stepper
+    function cardQty(productId, delta) {
+      const existing = cart.find(i => i._id === String(productId))
+      if (!existing) return
+      existing.qty += delta
+      if (existing.qty <= 0) cart.splice(cart.indexOf(existing), 1)
+      updateCartBar()
+      _refreshAllCardActions(productId)
+    }
+
+    // Refresh all card action areas for a given product id (may appear in multiple rows)
+    function _refreshAllCardActions(productId) {
+      document.querySelectorAll(`[data-pid="${productId}"]`).forEach(el => { if (el._refresh) el._refresh() })
+    }
+
+    // ── TYPING INDICATOR ──────────────────────────────────────────────────────
     function showTyping() {
       const msgs = document.getElementById('chat-messages')
       const wrap = document.createElement('div'); wrap.className = 'msg-group agent'
@@ -782,77 +621,61 @@
       return wrap
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // TOPICS
-    // ══════════════════════════════════════════════════════════════════
+    // ── TOPICS ────────────────────────────────────────────────────────────────
     function renderTopics(topics) {
       const wrap = document.getElementById('topics-wrap'); wrap.innerHTML = ''
       topics.forEach(t => {
         const btn = document.createElement('button'); btn.className = 'topic-chip'
-        btn.innerHTML = `<span>${t.icon||'💬'}</span>${esc(t.title||t.question||'')}`
-        btn.addEventListener('click',()=>sendTopicChip(t))
-        wrap.appendChild(btn)
+        btn.innerHTML = `<span>${t.icon || '💬'}</span>${esc(t.title || t.question || '')}`
+        btn.addEventListener('click', () => sendTopicChip(t)); wrap.appendChild(btn)
       })
     }
-    function esc(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
-    function sendTopicChip(topic) { document.getElementById('topics-wrap').innerHTML=''; sendMessageText(topic.question||topic.title||'',topic.suggested_prompt||'') }
+    function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+    function sendTopicChip(topic) { document.getElementById('topics-wrap').innerHTML = ''; sendMessageText(topic.question || topic.title || '', topic.suggested_prompt || '') }
 
-    // ══════════════════════════════════════════════════════════════════
-    // SEND
-    // ══════════════════════════════════════════════════════════════════
-    function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()} }
-    function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px' }
+    // ── SEND ──────────────────────────────────────────────────────────────────
+    function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }
+    function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px' }
 
     async function sendMessage() {
       if (_recActive) _stopVoice(false)
       const inp = document.getElementById('chat-input')
       const text = inp.value.trim()
-      if (!text||isTyping) return
-      inp.value=''; inp.style.height='auto'
-      await sendMessageText(text,'')
+      if (!text || isTyping) return
+      inp.value = ''; inp.style.height = 'auto'
+      await sendMessageText(text, '')
     }
 
     async function sendMessageText(question, suggestedPrompt) {
-      document.getElementById('topics-wrap').innerHTML=''
+      document.getElementById('topics-wrap').innerHTML = ''
       addUserMsg(question)
-      msgHistory.push({ role:'user', content:question })
-      isTyping = true
-      document.getElementById('send-btn').disabled = true
-
+      msgHistory.push({ role: 'user', content: question })
+      isTyping = true; document.getElementById('send-btn').disabled = true
       try {
-        const streamOk = await streamResponse(question, suggestedPrompt)
-        if (!streamOk) await nonStreamResponse(question, suggestedPrompt)
-      } catch(e) {
-        console.warn('[send] error',e)
-        await nonStreamResponse(question, suggestedPrompt)
-      }
-
-      isTyping = false
-      document.getElementById('send-btn').disabled = false
+        const ok = await streamResponse(question, suggestedPrompt)
+        if (!ok) await nonStreamResponse(question, suggestedPrompt)
+      } catch(e) { console.warn('[send]', e); await nonStreamResponse(question, suggestedPrompt) }
+      isTyping = false; document.getElementById('send-btn').disabled = false
       document.getElementById('chat-input').focus()
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // SSE STREAMING — handles both HTML (non-sales) and sales_response
-    // ══════════════════════════════════════════════════════════════════
+    // ── SSE STREAMING ─────────────────────────────────────────────────────────
     async function streamResponse(question, suggestedPrompt) {
-      // For sales agents: don't create streaming bubble yet — wait for JSON
-      let group = null, renderer = null
-      if (agentType !== 'sales') {
-        const created = createAgentBubble()
-        group = created.group; 
-        renderer = new StreamRenderer(created.bubble)
-      } else {
-        // Sales: show typing indicator while waiting
-        group = showTyping()
-      }
+      // Sales: show typing indicator, replaced on first sales_chunk event
+      // Non-sales: create streaming bubble immediately
+      let typingEl        = null   // typing dots (sales only)
+      let group           = null   // msg-group (non-sales)
+      let renderer        = null   // StreamRenderer (non-sales)
+      let salesGroup      = null   // msg-group built during sales_chunk streaming
+      let salesTextBubble = null   // text bubble being updated by sales_chunk
+      let salesRawText    = ''     // accumulated text from sales_chunk events
 
-      const body = JSON.stringify({
-        question,
-        history: buildHistoryForServer(),
-        session_id: sessionId || undefined,
-        suggested_prompt: suggestedPrompt || undefined,
-      })
+      if (agentType === 'sales') {
+        typingEl = showTyping()
+      } else {
+        const created = createAgentBubble()
+        group = created.group; renderer = new StreamRenderer(created.bubble)
+      }
 
       const clientSendTime = Date.now()
       let clientFirstChunkTime = null
@@ -860,72 +683,84 @@
       let res
       try {
         res = await fetch(`${API}/chat/${AGENT_ID}/stream`, {
-          method:'POST',
-          headers:{'Content-Type':'application/json','Accept':'text/event-stream'},
-          body,
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
+          body: JSON.stringify({
+            question,
+            history: buildHistoryForServer(),
+            session_id: sessionId || undefined,
+            suggested_prompt: suggestedPrompt || undefined,
+          }),
         })
       } catch(e) {
         if (renderer) renderer.error('Network error.')
-        else { group.remove(); showChatMsg('⚠️ Network error. Please check your connection.') }
+        else { if (typingEl) typingEl.remove(); showChatMsg('⚠️ Network error. Please check your connection.') }
         throw e
       }
 
-      if (!res.ok||!res.body) {
+      if (!res.ok || !res.body) {
         if (renderer) renderer.error(`Server error (${res.status}).`)
-        else { group.remove(); showChatMsg(`⚠️ Server error (${res.status}).`) }
+        else { if (typingEl) typingEl.remove(); showChatMsg(`⚠️ Server error (${res.status}).`) }
         throw new Error(`HTTP ${res.status}`)
       }
 
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let lineBuffer = ''
-      let finalAnswer = ''
-      let gotDone = false
-      let salesData = null
-      let serverTiming = null
-      let tokenCount = null
+      const reader = res.body.getReader(), decoder = new TextDecoder()
+      let lineBuffer = '', finalAnswer = '', gotDone = false
+      let salesData = null, serverTiming = null, tokenCount = null
 
       try {
         while (true) {
           const { value, done } = await reader.read()
           if (done) break
-          lineBuffer += decoder.decode(value,{stream:true})
+          lineBuffer += decoder.decode(value, { stream: true })
           let sepIdx
           while ((sepIdx = lineBuffer.indexOf('\n\n')) !== -1) {
-            const block = lineBuffer.slice(0,sepIdx)
-            lineBuffer = lineBuffer.slice(sepIdx+2)
+            const block = lineBuffer.slice(0, sepIdx); lineBuffer = lineBuffer.slice(sepIdx + 2)
             if (block.startsWith(':')) continue
             for (const line of block.split('\n')) {
               if (!line.startsWith('data: ')) continue
               let evt; try { evt = JSON.parse(line.slice(6)) } catch { continue }
 
-              // HTML chunk (non-sales)
-              if (evt.type==='chunk'&&evt.html&&renderer) {
-                if (clientFirstChunkTime===null) clientFirstChunkTime = Date.now()
+              // ── sales_chunk: progressive message text streaming ───────────
+              if (evt.type === 'sales_chunk' && evt.text) {
+                if (clientFirstChunkTime === null) clientFirstChunkTime = Date.now()
+                // First chunk: remove typing indicator, create the streaming group
+                if (!salesGroup) {
+                  if (typingEl) { typingEl.remove(); typingEl = null }
+                  salesGroup = document.createElement('div'); salesGroup.className = 'msg-group agent'
+                  salesTextBubble = document.createElement('div'); salesTextBubble.className = 'msg-bubble-sales'
+                  salesGroup.appendChild(salesTextBubble)
+                  document.getElementById('chat-messages').appendChild(salesGroup)
+                }
+                salesRawText += evt.text
+                salesTextBubble.textContent = salesRawText
+                const msgs = document.getElementById('chat-messages')
+                if (msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 140) msgs.scrollTop = msgs.scrollHeight
+              }
+
+              // ── HTML chunk (non-sales streaming) ─────────────────────────
+              if (evt.type === 'chunk' && evt.html && renderer) {
+                if (clientFirstChunkTime === null) clientFirstChunkTime = Date.now()
                 renderer.push(evt.html)
               }
 
-              // Standard done event (non-sales)
-              if (evt.type==='done') {
+              // ── done (non-sales) ──────────────────────────────────────────
+              if (evt.type === 'done') {
                 if (evt.session_id) sessionId = evt.session_id
-                finalAnswer = evt.answer || ''
-                gotDone = true
-                serverTiming = evt.timing || null
-                tokenCount = evt.tokens || null
+                finalAnswer = evt.answer || ''; gotDone = true
+                serverTiming = evt.timing || null; tokenCount = evt.tokens || null
               }
 
-              // Sales response event (v3.0)
-              if (evt.type==='sales_response') {
-                salesData = evt
-                gotDone = true
-                serverTiming = evt.timing || null
-                tokenCount = evt.tokens || null
-                if (clientFirstChunkTime===null) clientFirstChunkTime = Date.now()
+              // ── sales_response: final event with products + action ─────────
+              if (evt.type === 'sales_response') {
+                salesData = evt; gotDone = true
+                serverTiming = evt.timing || null; tokenCount = evt.tokens || null
+                if (clientFirstChunkTime === null) clientFirstChunkTime = Date.now()
               }
 
-              if (evt.type==='error') {
+              if (evt.type === 'error') {
                 if (renderer) renderer.error(evt.message)
-                else { group.remove(); showChatMsg(`⚠️ ${evt.message}`) }
+                else { if (typingEl) typingEl.remove(); showChatMsg(`⚠️ ${evt.message}`) }
                 return true
               }
             }
@@ -936,42 +771,30 @@
       const clientTotal = Date.now() - clientSendTime
       const clientFirst = clientFirstChunkTime ? clientFirstChunkTime - clientSendTime : clientTotal
 
-      // Handle sales response
+      // ── Finalize sales ────────────────────────────────────────────────────
       if (salesData) {
-        group.remove() // remove typing indicator
-        const salesGroup = document.createElement('div'); salesGroup.className = 'msg-group agent'
-        renderSalesResponse(salesData.message, salesData.products, salesData.action, salesGroup)
+        if (typingEl) { typingEl.remove(); typingEl = null }
 
-        // Push to history with product names for context
-        const productNames = (salesData.products||[]).map(id => prodMap[id]?.name).filter(Boolean)
-        msgHistory.push({ role:'assistant', content: salesData.message || '', products: productNames })
+        const finalGroup = finalizeSalesResponse(salesData, salesGroup, salesTextBubble)
 
-        addTimingBadge(salesGroup, {
+        const productNames = (salesData.products || []).map(id => prodMap[id]?.name).filter(Boolean)
+        msgHistory.push({ role: 'assistant', content: salesData.message || salesRawText || '', products: productNames })
+
+        addTimingBadge(finalGroup, {
           firstToken: serverTiming?.first_token_ms ?? clientFirst,
           totalTime:  serverTiming?.total_stream_ms ?? clientTotal,
           tokens:     tokenCount,
         })
-
-        // Auto-trigger checkout if action says so
-        if (salesData.action === 'checkout' && salesData.products?.length) {
-          const toCheckout = salesData.products.map(id => prodMap[id]).filter(Boolean)
-          toCheckout.forEach(p => {
-            if (!cart.find(i => i._id === String(p._id))) {
-              cart.push({ _id:String(p._id), name:p.name, price:p.price, image_url:p.image_url||'', currency:p.currency, qty:1 })
-            }
-          })
-          updateCartBar()
-        }
         return true
       }
 
-      // Handle HTML response (non-sales)
+      // ── Finalize non-sales HTML ───────────────────────────────────────────
       if (gotDone && renderer) {
         renderer.finalize(finalAnswer)
-        msgHistory.push({ role:'assistant', content: (finalAnswer||renderer.raw).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,600) })
+        msgHistory.push({ role: 'assistant', content: (finalAnswer || renderer.raw).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,600) })
       } else if (renderer) {
         renderer.finalize(renderer.raw)
-        msgHistory.push({ role:'assistant', content: renderer.raw.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,600) })
+        msgHistory.push({ role: 'assistant', content: renderer.raw.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,600) })
       }
 
       if (group) {
@@ -984,34 +807,26 @@
       return true
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // NON-STREAMING FALLBACK
-    // ══════════════════════════════════════════════════════════════════
+    // ── NON-STREAMING FALLBACK ────────────────────────────────────────────────
     async function nonStreamResponse(question, suggestedPrompt) {
       const typEl = showTyping()
       try {
         const res = await fetch(`${API}/chat/${AGENT_ID}`, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ question, history:buildHistoryForServer(), session_id:sessionId||undefined, suggested_prompt:suggestedPrompt||undefined })
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question, history: buildHistoryForServer(), session_id: sessionId || undefined, suggested_prompt: suggestedPrompt || undefined })
         })
-        const d = await res.json()
-        typEl.remove()
-
-        // Sales JSON response
+        const d = await res.json(); typEl.remove()
         if (d.type === 'sales_response') {
-          const salesGroup = document.createElement('div'); salesGroup.className = 'msg-group agent'
-          renderSalesResponse(d.message, d.products, d.action, salesGroup)
-          const productNames = (d.products||[]).map(id => prodMap[id]?.name).filter(Boolean)
-          msgHistory.push({ role:'assistant', content:d.message||'', products:productNames })
+          const g = finalizeSalesResponse(d, null, null)
+          const productNames = (d.products || []).map(id => prodMap[id]?.name).filter(Boolean)
+          msgHistory.push({ role: 'assistant', content: d.message || '', products: productNames })
           return
         }
-
-        // HTML response
-        const { group, bubble } = createAgentBubble()
+        const { bubble } = createAgentBubble()
         bubble.innerHTML = d.answer || d.message || '<p style="color:var(--text2);">No response received.</p>'
         bubble.classList.remove('msg-bubble-streaming')
         document.getElementById('chat-messages').scrollTop = 999999
-        msgHistory.push({ role:'assistant', content:(d.answer||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,600) })
+        msgHistory.push({ role: 'assistant', content: (d.answer || '').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,600) })
       } catch(e) {
         typEl.remove()
         const { bubble } = createAgentBubble()
@@ -1020,60 +835,50 @@
       }
     }
 
-    // Build history array to send to backend
-    // Sales: include products array for context
-    // Others: strip products, keep content only
     function buildHistoryForServer() {
       const MAX = agentType === 'sales' ? 20 : 12
       return msgHistory.slice(-MAX, -1).map(m => {
-        if (agentType === 'sales') {
-          return { role: m.role, content: m.content, products: m.products || [] }
-        }
+        if (agentType === 'sales') return { role: m.role, content: m.content, products: m.products || [] }
         return { role: m.role, content: m.content }
       })
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // PRODUCTS
-    // ══════════════════════════════════════════════════════════════════
+    // ── PRODUCTS ──────────────────────────────────────────────────────────────
     function currSym(currency) { return (currency || agent?.payment_currency || 'INR') === 'USD' ? '$' : '₹' }
-
     async function loadProducts() {
       try {
         const res = await fetch(`${API}/chat/${AGENT_ID}/products`)
         if (!res.ok) return
         allProds = await res.json()
-        // Build id → product map for O(1) lookup during card rendering
-        prodMap = {}
+        prodMap  = {}
         allProds.forEach(p => { prodMap[String(p._id)] = p })
-      } catch(e) { console.warn('[products]',e.message) }
+      } catch(e) { console.warn('[products]', e.message) }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // CART
-    // ══════════════════════════════════════════════════════════════════
+    // ── CART ──────────────────────────────────────────────────────────────────
     function addToCart(product) {
       const existing = cart.find(i => i._id === product._id)
       if (existing) existing.qty++
-      else cart.push({ ...product, qty:1 })
+      else cart.push({ ...product, qty: 1 })
       updateCartBar()
       showToast(`${product.name} added to cart 🛒`)
     }
     function updateCartBar() {
-      const total = cart.reduce((a,i)=>a+i.qty,0)
+      const total = cart.reduce((a, i) => a + i.qty, 0)
       document.getElementById('cart-count').textContent = total
       document.getElementById('cart-bar').classList.toggle('show', total > 0)
+      // Refresh all visible product card action areas so qtys stay in sync
+      document.querySelectorAll('[data-pid]').forEach(el => { if (el._refresh) el._refresh() })
     }
     function openCart() {
       const itemsEl = document.getElementById('cart-items')
       if (!cart.length) {
         itemsEl.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div class="cart-empty-text">Your cart is empty</div></div>`
       } else {
-        itemsEl.innerHTML = cart.map((item,i) => {
+        itemsEl.innerHTML = cart.map((item, i) => {
           const sym = currSym(item.currency)
-          return `
-          <div class="cart-item">
-            <div class="cart-item-thumb">${item.image_url?`<img src="${item.image_url}" alt="">`:'📦'}</div>
+          return `<div class="cart-item">
+            <div class="cart-item-thumb">${item.image_url ? `<img src="${item.image_url}" alt="">` : '📦'}</div>
             <div style="flex:1;min-width:0;">
               <div class="cart-item-name">${esc(item.name)}</div>
               <div class="cart-item-unit">${sym}${item.price} each</div>
@@ -1083,33 +888,28 @@
                 <button class="qty-btn" onclick="changeQty(${i},1)">+</button>
               </div>
             </div>
-            <div class="cart-item-total">${sym}${(item.price*item.qty).toFixed(2)}</div>
+            <div class="cart-item-total">${sym}${(item.price * item.qty).toFixed(2)}</div>
           </div>`
         }).join('')
       }
-      const total = cart.reduce((a,i)=>a+(i.price*i.qty),0)
+      const total = cart.reduce((a, i) => a + (i.price * i.qty), 0)
       document.getElementById('cart-total').textContent = currSym() + total.toFixed(2)
       document.getElementById('cart-overlay').classList.add('open')
     }
     function closeCart() { document.getElementById('cart-overlay').classList.remove('open') }
-    function changeQty(idx,delta) {
+    function changeQty(idx, delta) {
       cart[idx].qty += delta
-      if (cart[idx].qty <= 0) cart.splice(idx,1)
+      if (cart[idx].qty <= 0) cart.splice(idx, 1)
       updateCartBar()
       if (cart.length) openCart(); else closeCart()
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // CHECKOUT
-    // ══════════════════════════════════════════════════════════════════
+    // ── CHECKOUT ──────────────────────────────────────────────────────────────
     async function triggerCheckout(productIds) {
-      // Add these products to cart if not already there
       productIds.forEach(id => {
-        const p = prodMap[id]
-        if (!p) return
-        if (!cart.find(i => i._id === String(id))) {
-          cart.push({ _id:String(p._id), name:p.name, price:p.price, image_url:p.image_url||'', currency:p.currency, qty:1 })
-        }
+        const p = prodMap[id]; if (!p) return
+        if (!cart.find(i => i._id === String(id)))
+          cart.push({ _id: String(p._id), name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency, qty: 1 })
       })
       updateCartBar()
       await checkout()
@@ -1117,64 +917,81 @@
 
     async function checkout() {
       if (!cart.length) return
+      // Guard: prevent double invocation (ondismiss can fire multiple times)
+      if (checkout._running) return
+      checkout._running = true
+
       closeCart()
       const msgs = document.getElementById('chat-messages')
-      const prep = document.createElement('div'); prep.className='msg-group agent'
-      const prepBub = document.createElement('div'); prepBub.className='msg-bubble-agent'
-      prepBub.innerHTML='<p style="margin:0;color:var(--text2);">⏳ Preparing your order…</p>'
-      prep.appendChild(prepBub); msgs.appendChild(prep); msgs.scrollTop=msgs.scrollHeight
+      const prep = document.createElement('div'); prep.className = 'msg-group agent'
+      const prepBub = document.createElement('div'); prepBub.className = 'msg-bubble-agent'
+      prepBub.innerHTML = '<p style="margin:0;color:var(--text2);">⏳ Preparing your order…</p>'
+      prep.appendChild(prepBub); msgs.appendChild(prep); msgs.scrollTop = msgs.scrollHeight
 
       try {
         const res = await fetch(`${API}/chat/${AGENT_ID}/checkout`, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ items:cart.map(i=>({product_id:i._id,qty:i.qty})), customer:{} })
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: cart.map(i => ({ product_id: i._id, qty: i.qty })), customer: {} })
         })
         const d = await res.json(); prep.remove()
-        if (!res.ok||d.error) { showChatMsg(`❌ ${d.error||'Unable to create order.'}`); return }
-        if (d.order_id&&d.key_id) {
+
+        if (!res.ok || d.error) {
+          checkout._running = false
+          showChatMsg(`❌ ${d.error || 'Unable to create order.'}`); return
+        }
+
+        if (d.order_id && d.key_id) {
           const rz = new Razorpay({
-            key:d.key_id, amount:d.amount, currency:d.currency||'INR',
-            name:agent?.name||'Store', order_id:d.order_id,
-            theme:{color:agent?.brand_color||'#6C5FF5'},
+            key: d.key_id, amount: d.amount, currency: d.currency || 'INR',
+            name: agent?.name || 'Store', order_id: d.order_id,
+            theme: { color: agent?.brand_color || '#6C5FF5' },
             handler: async (resp) => {
+              checkout._running = false
               try {
-                const vres = await fetch(`${API}/chat/${AGENT_ID}/verify-payment`,{
-                  method:'POST',headers:{'Content-Type':'application/json'},
-                  body:JSON.stringify({razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature,order_db_id:d.order_db_id})
+                const vres = await fetch(`${API}/chat/${AGENT_ID}/verify-payment`, {
+                  method: 'POST', headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ razorpay_order_id: resp.razorpay_order_id, razorpay_payment_id: resp.razorpay_payment_id, razorpay_signature: resp.razorpay_signature, order_db_id: d.order_db_id })
                 })
                 const vd = await vres.json()
-                if (vres.ok&&!vd.error) {
-                  cart=[]; updateCartBar()
+                if (vres.ok && !vd.error) {
+                  cart = []; updateCartBar()
                   showChatMsg('✅ Payment successful! Your order has been placed. Thank you! 🎉')
-                } else showChatMsg(`❌ Verification failed: ${vd.error||'Unknown error'}`)
+                } else showChatMsg(`❌ Verification failed: ${vd.error || 'Unknown error'}`)
               } catch { showChatMsg('❌ Payment verification failed. Please contact support.') }
             },
-            modal:{ondismiss:()=>showChatMsg('Payment was cancelled. Your cart is saved — tap Cart to try again.')}
+            modal: {
+              ondismiss: () => {
+                checkout._running = false
+                showChatMsg('Payment was cancelled. Your cart is saved — tap Cart to try again.')
+              }
+            }
           })
           rz.open()
-        } else { showChatMsg(d.message||'❌ Unable to process payment. Please try again.') }
-      } catch(e) { prep.remove(); showChatMsg('❌ Checkout failed. Please try again.'); console.error('[checkout]',e) }
+        } else {
+          checkout._running = false
+          showChatMsg(d.message || '❌ Unable to process payment. Please try again.')
+        }
+      } catch(e) {
+        prep.remove(); checkout._running = false
+        showChatMsg('❌ Checkout failed. Please try again.'); console.error('[checkout]', e)
+      }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // NOTIFICATIONS
-    // ══════════════════════════════════════════════════════════════════
+    // ── NOTIFICATIONS ─────────────────────────────────────────────────────────
     function showChatMsg(text) {
       const msgs = document.getElementById('chat-messages')
-      const group = document.createElement('div'); group.className='msg-group agent'
-      const bub = document.createElement('div'); bub.className='msg-bubble-agent'
-      bub.innerHTML=`<p style="margin:0;font-size:13.5px;">${text}</p>`
-      group.appendChild(bub); msgs.appendChild(group); msgs.scrollTop=msgs.scrollHeight
+      const group = document.createElement('div'); group.className = 'msg-group agent'
+      const bub = document.createElement('div'); bub.className = 'msg-bubble-agent'
+      bub.innerHTML = `<p style="margin:0;font-size:13.5px;">${text}</p>`
+      group.appendChild(bub); msgs.appendChild(group); msgs.scrollTop = msgs.scrollHeight
     }
     function showToast(msg) {
       const t = document.getElementById('toast')
-      t.textContent = msg
-      t.classList.add('show')
-      clearTimeout(t._timer)
-      t._timer = setTimeout(()=>t.classList.remove('show'), 2200)
+      t.textContent = msg; t.classList.add('show')
+      clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 2200)
     }
     function showError(msg) {
-      document.getElementById('loading-screen').innerHTML=`
+      document.getElementById('loading-screen').innerHTML = `
       <div style="text-align:center;padding:40px 24px;">
         <div style="font-size:44px;margin-bottom:16px;">⚠️</div>
         <div style="font-size:14.5px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em;">Something went wrong</div>
@@ -1182,140 +999,123 @@
       </div>`
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // VOICE ENGINE
-    // ══════════════════════════════════════════════════════════════════
+    // ── VOICE ENGINE ──────────────────────────────────────────────────────────
     const VOICE_LANGS = [
-      {code:'en-IN',flag:'🇮🇳',label:'English (India)'},
-      {code:'ta-IN',flag:'🇮🇳',label:'Tamil'},
-      {code:'hi-IN',flag:'🇮🇳',label:'Hindi'},
-      {code:'te-IN',flag:'🇮🇳',label:'Telugu'},
-      {code:'kn-IN',flag:'🇮🇳',label:'Kannada'},
-      {code:'ml-IN',flag:'🇮🇳',label:'Malayalam'},
-      {code:'mr-IN',flag:'🇮🇳',label:'Marathi'},
-      {code:'bn-IN',flag:'🇮🇳',label:'Bengali'},
-      {code:'gu-IN',flag:'🇮🇳',label:'Gujarati'},
-      {code:'pa-IN',flag:'🇮🇳',label:'Punjabi'},
+      {code:'en-IN',flag:'🇮🇳',label:'English (India)'},{code:'ta-IN',flag:'🇮🇳',label:'Tamil'},{code:'hi-IN',flag:'🇮🇳',label:'Hindi'},
+      {code:'te-IN',flag:'🇮🇳',label:'Telugu'},{code:'kn-IN',flag:'🇮🇳',label:'Kannada'},{code:'ml-IN',flag:'🇮🇳',label:'Malayalam'},
+      {code:'mr-IN',flag:'🇮🇳',label:'Marathi'},{code:'bn-IN',flag:'🇮🇳',label:'Bengali'},{code:'gu-IN',flag:'🇮🇳',label:'Gujarati'},{code:'pa-IN',flag:'🇮🇳',label:'Punjabi'},
       {sep:true},
-      {code:'en-US',flag:'🇺🇸',label:'English (US)'},
-      {code:'en-GB',flag:'🇬🇧',label:'English (UK)'},
-      {code:'ar-SA',flag:'🇸🇦',label:'Arabic'},
-      {code:'zh-CN',flag:'🇨🇳',label:'Chinese'},
-      {code:'fr-FR',flag:'🇫🇷',label:'French'},
-      {code:'de-DE',flag:'🇩🇪',label:'German'},
-      {code:'ja-JP',flag:'🇯🇵',label:'Japanese'},
-      {code:'ko-KR',flag:'🇰🇷',label:'Korean'},
-      {code:'pt-BR',flag:'🇧🇷',label:'Portuguese'},
-      {code:'es-ES',flag:'🇪🇸',label:'Spanish'},
+      {code:'en-US',flag:'🇺🇸',label:'English (US)'},{code:'en-GB',flag:'🇬🇧',label:'English (UK)'},{code:'ar-SA',flag:'🇸🇦',label:'Arabic'},
+      {code:'zh-CN',flag:'🇨🇳',label:'Chinese'},{code:'fr-FR',flag:'🇫🇷',label:'French'},{code:'de-DE',flag:'🇩🇪',label:'German'},
+      {code:'ja-JP',flag:'🇯🇵',label:'Japanese'},{code:'ko-KR',flag:'🇰🇷',label:'Korean'},{code:'pt-BR',flag:'🇧🇷',label:'Portuguese'},{code:'es-ES',flag:'🇪🇸',label:'Spanish'},
     ]
     let _rec=null,_recActive=false,_finalText='',_interimText='',_idleTimer=null,_silTimer=null,_ddOpen=false
-    let _voiceLang=localStorage.getItem('sg_voice_lang')||'en-IN'
+    let _voiceLang = localStorage.getItem('sg_voice_lang') || 'en-IN'
 
     function initVoice() {
-      const SR=window.SpeechRecognition||window.webkitSpeechRecognition
-      const mic=document.getElementById('mic-btn')
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+      const mic = document.getElementById('mic-btn')
       if (!mic) return
       if (!SR) {
-        mic.disabled=true; mic.title='Voice input needs Chrome or Edge'; mic.style.opacity='.3'
-        const lw=document.getElementById('langWrap'); if(lw)lw.style.display='none'
+        mic.disabled = true; mic.title = 'Voice input needs Chrome or Edge'; mic.style.opacity = '.3'
+        const lw = document.getElementById('langWrap'); if (lw) lw.style.display = 'none'
         return
       }
-      const dd=document.getElementById('langDropdown')
+      const dd = document.getElementById('langDropdown')
       if (dd) {
-        dd.innerHTML=`<div class="lang-dd-head">Voice Language</div>`+
-          VOICE_LANGS.map(l=>l.sep
-            ?`<div class="lang-dd-sep"></div>`
-            :`<div class="lang-dd-item ${l.code===_voiceLang?'active':''}" onclick="selectVoiceLang('${l.code}',this)"><span class="dd-flag">${l.flag}</span><span class="dd-name">${l.label}</span><span class="dd-check">✓</span></div>`
+        dd.innerHTML = `<div class="lang-dd-head">Voice Language</div>` +
+          VOICE_LANGS.map(l => l.sep
+            ? `<div class="lang-dd-sep"></div>`
+            : `<div class="lang-dd-item ${l.code === _voiceLang ? 'active' : ''}" onclick="selectVoiceLang('${l.code}',this)"><span class="dd-flag">${l.flag}</span><span class="dd-name">${l.label}</span><span class="dd-check">✓</span></div>`
           ).join('')
       }
       _syncLangBtn()
-      document.addEventListener('click',e=>{if(_ddOpen&&!e.target.closest('#langWrap'))_closeLangDD()})
+      document.addEventListener('click', e => { if (_ddOpen && !e.target.closest('#langWrap')) _closeLangDD() })
     }
-    function toggleLangDD(){_ddOpen?_closeLangDD():_openLangDD()}
-    function _openLangDD(){document.getElementById('langDropdown')?.classList.add('open');document.getElementById('langBtn')?.classList.add('open');_ddOpen=true}
-    function _closeLangDD(){document.getElementById('langDropdown')?.classList.remove('open');document.getElementById('langBtn')?.classList.remove('open');_ddOpen=false}
-    function selectVoiceLang(code,el){
-      _voiceLang=code;localStorage.setItem('sg_voice_lang',code)
-      document.querySelectorAll('.lang-dd-item').forEach(x=>x.classList.remove('active'))
-      if(el)el.classList.add('active')
-      _syncLangBtn();_closeLangDD()
-      if(_recActive){_stopRecognition();setTimeout(_spawnRec,150)}
+    function toggleLangDD() { _ddOpen ? _closeLangDD() : _openLangDD() }
+    function _openLangDD() { document.getElementById('langDropdown')?.classList.add('open'); document.getElementById('langBtn')?.classList.add('open'); _ddOpen = true }
+    function _closeLangDD() { document.getElementById('langDropdown')?.classList.remove('open'); document.getElementById('langBtn')?.classList.remove('open'); _ddOpen = false }
+    function selectVoiceLang(code, el) {
+      _voiceLang = code; localStorage.setItem('sg_voice_lang', code)
+      document.querySelectorAll('.lang-dd-item').forEach(x => x.classList.remove('active'))
+      if (el) el.classList.add('active')
+      _syncLangBtn(); _closeLangDD()
+      if (_recActive) { _stopRecognition(); setTimeout(_spawnRec, 150) }
     }
-    function _syncLangBtn(){
-      const found=VOICE_LANGS.find(l=>l.code===_voiceLang)
-      const flag=document.getElementById('lbFlag');const code=document.getElementById('lbCode')
-      if(flag&&found)flag.textContent=found.flag
-      if(code&&found)code.textContent=found.code.split('-')[0].toUpperCase()
+    function _syncLangBtn() {
+      const found = VOICE_LANGS.find(l => l.code === _voiceLang)
+      const flag = document.getElementById('lbFlag'), code = document.getElementById('lbCode')
+      if (flag && found) flag.textContent = found.flag
+      if (code && found) code.textContent = found.code.split('-')[0].toUpperCase()
     }
-    function toggleVoice(){
-      const SR=window.SpeechRecognition||window.webkitSpeechRecognition
-      if(!SR){showChatMsg('🎙 Voice input needs Chrome or Edge browser.');return}
-      _recActive?_stopVoice(true):_startVoice()
+    function toggleVoice() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+      if (!SR) { showChatMsg('🎙 Voice input needs Chrome or Edge browser.'); return }
+      _recActive ? _stopVoice(true) : _startVoice()
     }
-    function _startVoice(){
-      if(_recActive)return
-      _recActive=true;_finalText='';_interimText=''
-      const row=document.getElementById('input-row')
-      if(row)row.classList.add('listening')
-      _updateVoiceInterim();_setMicUI(true)
-      _idleTimer=setTimeout(()=>{
-        if(_recActive&&!_finalText.trim()){
+    function _startVoice() {
+      if (_recActive) return
+      _recActive = true; _finalText = ''; _interimText = ''
+      const row = document.getElementById('input-row'); if (row) row.classList.add('listening')
+      _updateVoiceInterim(); _setMicUI(true)
+      _idleTimer = setTimeout(() => {
+        if (_recActive && !_finalText.trim()) {
           _stopVoice(false)
-          const i=document.getElementById('chat-input')
-          if(i){i.placeholder='💬 No speech detected — try again';setTimeout(()=>{i.placeholder='Ask anything…'},3000)}
+          const i = document.getElementById('chat-input')
+          if (i) { i.placeholder = '💬 No speech detected — try again'; setTimeout(() => { i.placeholder = 'Ask anything…' }, 3000) }
         }
-      },11000)
+      }, 11000)
       _spawnRec()
     }
-    function _spawnRec(){
-      if(!_recActive)return
-      const SR=window.SpeechRecognition||window.webkitSpeechRecognition
-      _rec=new SR();_rec.continuous=false;_rec.interimResults=true;_rec.maxAlternatives=1;_rec.lang=_voiceLang;_interimText=''
-      _rec.onresult=e=>{
-        _clearSil();_clearIdle();let interim=''
-        for(let i=e.resultIndex;i<e.results.length;i++){
-          const t=e.results[i][0].transcript
-          if(e.results[i].isFinal){_finalText+=t+' ';_interimText=''}else interim+=t
+    function _spawnRec() {
+      if (!_recActive) return
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+      _rec = new SR(); _rec.continuous = false; _rec.interimResults = true; _rec.maxAlternatives = 1; _rec.lang = _voiceLang; _interimText = ''
+      _rec.onresult = e => {
+        _clearSil(); _clearIdle(); let interim = ''
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const t = e.results[i][0].transcript
+          if (e.results[i].isFinal) { _finalText += t + ' '; _interimText = '' } else interim += t
         }
-        _interimText=interim;_updateVoiceInterim()
-        _silTimer=setTimeout(()=>{if(_recActive&&_finalText.trim())_stopVoice(true)},9000)
+        _interimText = interim; _updateVoiceInterim()
+        _silTimer = setTimeout(() => { if (_recActive && _finalText.trim()) _stopVoice(true) }, 9000)
       }
-      _rec.onerror=e=>{
-        if(e.error==='not-allowed'||e.error==='service-not-allowed'){showChatMsg('🔴 Mic access denied.');_stopVoice(false);return}
-        if(e.error==='aborted')return
-        if(e.error==='no-speech'){if(_recActive)setTimeout(_spawnRec,100);return}
-        console.warn('[Voice]',e.error)
+      _rec.onerror = e => {
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { showChatMsg('🔴 Mic access denied.'); _stopVoice(false); return }
+        if (e.error === 'aborted') return
+        if (e.error === 'no-speech') { if (_recActive) setTimeout(_spawnRec, 100); return }
+        console.warn('[Voice]', e.error)
       }
-      _rec.onend=()=>{_interimText='';if(_recActive)setTimeout(_spawnRec,80)}
-      try{_rec.start()}catch(err){console.warn('[Voice] start:',err.message)}
+      _rec.onend = () => { _interimText = ''; if (_recActive) setTimeout(_spawnRec, 80) }
+      try { _rec.start() } catch(err) { console.warn('[Voice] start:', err.message) }
     }
-    function _updateVoiceInterim(){
-      const box=document.getElementById('voice-interim')
-      const finEl=document.getElementById('voice-final-text');const intEl=document.getElementById('voice-interim-text')
-      const inp=document.getElementById('chat-input');const hasText=_finalText.trim()||_interimText
-      if(finEl)finEl.textContent=_finalText;if(intEl)intEl.textContent=_interimText
-      if(box)box.classList.toggle('show',!!hasText)
-      if(inp)inp.value=(_finalText+_interimText).trimStart()
+    function _updateVoiceInterim() {
+      const box = document.getElementById('voice-interim')
+      const finEl = document.getElementById('voice-final-text'), intEl = document.getElementById('voice-interim-text')
+      const inp = document.getElementById('chat-input'), hasText = _finalText.trim() || _interimText
+      if (finEl) finEl.textContent = _finalText; if (intEl) intEl.textContent = _interimText
+      if (box) box.classList.toggle('show', !!hasText)
+      if (inp) inp.value = (_finalText + _interimText).trimStart()
     }
-    function _stopRecognition(){try{_rec?.stop()}catch(_){};_rec=null}
-    function _stopVoice(andSend){
-      _recActive=false;_clearSil();_clearIdle();_stopRecognition()
-      const row=document.getElementById('input-row');const inp=document.getElementById('chat-input');const box=document.getElementById('voice-interim')
-      _interimText=''
-      if(row)row.classList.remove('listening');if(box)box.classList.remove('show')
-      if(inp){inp.placeholder='Ask anything…';inp.value=_finalText.trim();autoResize(inp)}
+    function _stopRecognition() { try { _rec?.stop() } catch(_) {}; _rec = null }
+    function _stopVoice(andSend) {
+      _recActive = false; _clearSil(); _clearIdle(); _stopRecognition()
+      const row = document.getElementById('input-row'), inp = document.getElementById('chat-input'), box = document.getElementById('voice-interim')
+      _interimText = ''
+      if (row) row.classList.remove('listening'); if (box) box.classList.remove('show')
+      if (inp) { inp.placeholder = 'Ask anything…'; inp.value = _finalText.trim(); autoResize(inp) }
       _setMicUI(false)
-      if(andSend&&_finalText.trim())setTimeout(sendMessage,100)
+      if (andSend && _finalText.trim()) setTimeout(sendMessage, 100)
     }
-    function _clearSil(){if(_silTimer){clearTimeout(_silTimer);_silTimer=null}}
-    function _clearIdle(){if(_idleTimer){clearTimeout(_idleTimer);_idleTimer=null}}
-    function _setMicUI(on){
-      const btn=document.getElementById('mic-btn');const ico=document.getElementById('mic-icon');const langBtn=document.getElementById('langBtn')
-      if(!btn)return
-      btn.classList.toggle('recording',on)
-      if(ico)ico.textContent=on?'⏹':'🎙'
-      btn.title=on?'Recording — tap to stop & send':'Voice input'
-      if(langBtn)langBtn.classList.toggle('recording',on)
+    function _clearSil() { if (_silTimer) { clearTimeout(_silTimer); _silTimer = null } }
+    function _clearIdle() { if (_idleTimer) { clearTimeout(_idleTimer); _idleTimer = null } }
+    function _setMicUI(on) {
+      const btn = document.getElementById('mic-btn'), ico = document.getElementById('mic-icon'), langBtn = document.getElementById('langBtn')
+      if (!btn) return
+      btn.classList.toggle('recording', on)
+      if (ico) ico.textContent = on ? '⏹' : '🎙'
+      btn.title = on ? 'Recording — tap to stop & send' : 'Voice input'
+      if (langBtn) langBtn.classList.toggle('recording', on)
     }
 
     // BOOT
