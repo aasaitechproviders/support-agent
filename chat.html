@@ -111,7 +111,7 @@
     /* PRODUCT CARDS */
     .products-row{display:flex;gap:10px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:none;max-width:92%;}
     .products-row::-webkit-scrollbar{display:none;}
-    .product-card{min-width:148px;max-width:148px;background:var(--surface-solid);border:1px solid var(--border3);border-radius:var(--r);overflow:hidden;flex-shrink:0;transition:all .22s cubic-bezier(.22,1,.36,1);box-shadow:var(--sh-sm);display:flex;flex-direction:column;animation:cardIn .35s cubic-bezier(.22,1,.36,1) both;}
+    .product-card{min-width:148px;max-width:148px;background:var(--surface-solid);border:1px solid var(--border3);border-radius:var(--r);overflow:hidden;flex-shrink:0;transition:all .22s cubic-bezier(.22,1,.36,1);box-shadow:var(--sh-sm);display:flex;flex-direction:column;animation:cardIn .35s cubic-bezier(.22,1,.36,1) both;cursor:pointer;}
     @keyframes cardIn{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
     .product-card:nth-child(1){animation-delay:0ms;}.product-card:nth-child(2){animation-delay:60ms;}.product-card:nth-child(3){animation-delay:120ms;}.product-card:nth-child(4){animation-delay:180ms;}
     .product-card:hover{border-color:var(--brand);transform:translateY(-4px);box-shadow:var(--sh-brand-lg);}
@@ -207,7 +207,7 @@
     .cart-bar:hover{opacity:.9;}
     .cart-count{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:1px 9px;font-size:11px;font-weight:800;margin-left:6px;font-family:var(--mono);}
 
-    /* MODAL */
+    /* MODAL — shared base */
     .modal-overlay{position:fixed;inset:0;background:rgba(11,13,26,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:100;display:flex;align-items:flex-end;justify-content:center;visibility:hidden;opacity:0;transition:opacity .25s,visibility .25s;}
     .modal-overlay.open{visibility:visible;opacity:1;}
     .cart-sheet{background:var(--surface-solid);border-radius:26px 26px 0 0;width:100%;max-width:480px;max-height:84vh;overflow-y:auto;padding:6px 20px 32px;box-shadow:0 -20px 60px rgba(0,0,0,.14);transform:translateY(40px);transition:transform .32s cubic-bezier(.22,1,.36,1);}
@@ -236,6 +236,45 @@
     .cart-empty{text-align:center;padding:32px 20px;color:var(--text3);}
     .cart-empty-icon{font-size:42px;margin-bottom:12px;}
     .cart-empty-text{font-size:13px;font-weight:600;color:var(--text3);}
+
+    /* ── PRODUCT DETAIL MODAL ─────────────────────────────────────────────── */
+    #product-modal-overlay{z-index:200;align-items:flex-end;}
+    .product-modal-sheet{background:var(--surface-solid);border-radius:26px 26px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 -20px 60px rgba(0,0,0,.18);transform:translateY(50px);transition:transform .34s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;}
+    .modal-overlay.open .product-modal-sheet{transform:translateY(0);}
+    .product-modal-sheet::-webkit-scrollbar{width:3px;}
+    .product-modal-sheet::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+    /* modal image */
+    .pm-img-wrap{width:100%;height:220px;flex-shrink:0;position:relative;background:linear-gradient(135deg,var(--surface3),var(--brand-dim));border-radius:26px 26px 0 0;overflow:hidden;}
+    .pm-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s cubic-bezier(.22,1,.36,1);}
+    .product-modal-sheet:hover .pm-img{transform:scale(1.03);}
+    .pm-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;}
+    .pm-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:rgba(11,13,26,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;transition:all .18s cubic-bezier(.22,1,.36,1);z-index:10;line-height:1;}
+    .pm-close:hover{background:rgba(11,13,26,.7);transform:scale(1.08);}
+    .pm-cat-badge{position:absolute;bottom:14px;left:14px;background:rgba(0,0,0,.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;font-size:10px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:20px;text-transform:uppercase;}
+
+    /* modal body */
+    .pm-body{padding:20px 20px 28px;display:flex;flex-direction:column;gap:0;}
+    .pm-handle{width:34px;height:4px;background:var(--border2);border-radius:4px;margin:0 auto 16px;}
+    .pm-name{font-size:17px;font-weight:800;letter-spacing:-.03em;color:var(--text);line-height:1.3;margin-bottom:6px;}
+    .pm-price{font-size:24px;font-weight:800;color:var(--brand);font-family:var(--mono);letter-spacing:-.03em;margin-bottom:14px;}
+    .pm-desc-label{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;}
+    .pm-desc{font-size:13.5px;color:var(--text2);line-height:1.75;margin-bottom:18px;}
+    .pm-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+    .pm-meta-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;font-size:11px;font-weight:700;color:var(--text2);}
+    .pm-meta-chip span{font-size:13px;}
+    .pm-divider{height:1px;background:var(--border);margin:0 0 20px;}
+
+    /* modal action row */
+    .pm-action-wrap{display:flex;gap:10px;align-items:center;}
+    .pm-qty-control{display:flex;align-items:center;gap:0;background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;overflow:hidden;flex-shrink:0;}
+    .pm-qty-btn{width:38px;height:44px;border:none;background:transparent;cursor:pointer;font-size:18px;font-weight:700;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .14s;font-family:var(--font);}
+    .pm-qty-btn:hover{background:var(--brand-dim);color:var(--brand);}
+    .pm-qty-num{font-size:14px;font-weight:800;font-family:var(--mono);min-width:28px;text-align:center;color:var(--text);}
+    .pm-add-btn{flex:1;height:44px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;font-size:13.5px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all .18s cubic-bezier(.22,1,.36,1);box-shadow:var(--sh-brand);letter-spacing:-.01em;display:flex;align-items:center;justify-content:center;gap:7px;}
+    .pm-add-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-brand-lg);}
+    .pm-add-btn:active{transform:scale(.97);}
+    .pm-add-btn.in-cart{background:linear-gradient(135deg,var(--green),#047857);}
 
     /* LOADING */
     .loading-screen{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
@@ -307,6 +346,7 @@
     </div>
   </div>
 
+  <!-- CART MODAL -->
   <div class="modal-overlay" id="cart-overlay" onclick="if(event.target===this)closeCart()">
     <div class="cart-sheet">
       <div class="cart-handle"></div>
@@ -322,6 +362,13 @@
     </div>
   </div>
 
+  <!-- PRODUCT DETAIL MODAL -->
+  <div class="modal-overlay" id="product-modal-overlay" onclick="if(event.target===this)closeProductModal()">
+    <div class="product-modal-sheet" id="product-modal-sheet">
+      <!-- filled dynamically -->
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
@@ -331,14 +378,14 @@
 
     let agent      = null
     let allProds   = []
-    let prodMap    = {}       // id → product object for O(1) lookup
+    let prodMap    = {}
     let cart       = []
     let msgHistory = []
     let sessionId  = null
     let isTyping   = false
     let agentType  = 'general'
 
-    // ── StreamRenderer — non-sales HTML token streaming ───────────────────────
+    // ── StreamRenderer ────────────────────────────────────────────────────────
     class StreamRenderer {
       constructor(bubble) {
         this.bubble = bubble; this.raw = ''
@@ -393,8 +440,15 @@
         addWelcomeMsg(agent.welcome_message || `Hi! I'm ${agent.name || 'your assistant'}. How can I help you today?`)
         if (agent.cached_topics?.length) renderTopics(agent.cached_topics)
 
-        // Await product load so prodMap is populated before first AI response
         if (agent.shopping_enabled || agentType === 'sales') await loadProducts()
+
+        // ESC key closes whichever modal is open
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape') {
+            if (document.getElementById('product-modal-overlay').classList.contains('open')) closeProductModal()
+            else if (document.getElementById('cart-overlay').classList.contains('open')) closeCart()
+          }
+        })
 
         initVoice()
       } catch(e) {
@@ -480,10 +534,99 @@
       requestAnimationFrame(() => requestAnimationFrame(() => badge.classList.add('visible')))
     }
 
+    // ── PRODUCT DETAIL MODAL ──────────────────────────────────────────────────
+    let _modalProductId = null
+
+    function openProductModal(productId) {
+      const p = prodMap[productId]
+      if (!p) return
+      _modalProductId = String(productId)
+
+      const sym    = p.currency === 'USD' ? '$' : '₹'
+      const sheet  = document.getElementById('product-modal-sheet')
+      const inCart = cart.find(i => i._id === _modalProductId)
+
+      // Build modal qty state
+      let modalQty = inCart ? inCart.qty : 1
+
+      function renderSheet() {
+        const inCart  = cart.find(i => i._id === _modalProductId)
+        const btnText = inCart ? `✓ In Cart (${inCart.qty})` : `🛒 Add to Cart`
+        const btnCls  = inCart ? 'pm-add-btn in-cart' : 'pm-add-btn'
+
+        sheet.innerHTML = `
+          <div class="pm-img-wrap">
+            ${p.image_url
+              ? `<img class="pm-img" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.parentElement.innerHTML='<div class=\\'pm-img-placeholder\\'>📦</div>'">`
+              : `<div class="pm-img-placeholder">📦</div>`}
+            <button class="pm-close" id="pm-close-btn" title="Close">✕</button>
+            ${p.category ? `<div class="pm-cat-badge">${esc(p.category)}</div>` : ''}
+          </div>
+          <div class="pm-body">
+            <div class="pm-handle"></div>
+            <div class="pm-name">${esc(p.name)}</div>
+            <div class="pm-price">${sym}${Number(p.price).toLocaleString()}</div>
+            ${p.description ? `
+              <div class="pm-desc-label">Description</div>
+              <div class="pm-desc">${esc(p.description)}</div>` : ''}
+            <div class="pm-meta">
+              ${p.category ? `<div class="pm-meta-chip"><span>🏷</span>${esc(p.category)}</div>` : ''}
+              ${p.sku      ? `<div class="pm-meta-chip"><span>🔖</span>SKU: ${esc(p.sku)}</div>` : ''}
+              ${p.stock_qty != null ? `<div class="pm-meta-chip"><span>${p.stock_qty > 10 ? '✅' : p.stock_qty > 0 ? '⚠️' : '❌'}</span>${p.stock_qty > 0 ? `${p.stock_qty} in stock` : 'Out of stock'}</div>` : ''}
+            </div>
+            <div class="pm-divider"></div>
+            <div class="pm-action-wrap" id="pm-action-wrap">
+              <div class="pm-qty-control">
+                <button class="pm-qty-btn" id="pm-minus">−</button>
+                <span class="pm-qty-num" id="pm-qty-num">${modalQty}</span>
+                <button class="pm-qty-btn" id="pm-plus">+</button>
+              </div>
+              <button class="${btnCls}" id="pm-add-btn">${btnText}</button>
+            </div>
+          </div>`
+
+        // Wire up buttons
+        sheet.querySelector('#pm-close-btn').addEventListener('click', closeProductModal)
+
+        sheet.querySelector('#pm-minus').addEventListener('click', (e) => {
+          e.stopPropagation()
+          if (modalQty > 1) { modalQty--; sheet.querySelector('#pm-qty-num').textContent = modalQty }
+        })
+        sheet.querySelector('#pm-plus').addEventListener('click', (e) => {
+          e.stopPropagation()
+          modalQty++; sheet.querySelector('#pm-qty-num').textContent = modalQty
+        })
+        sheet.querySelector('#pm-add-btn').addEventListener('click', (e) => {
+          e.stopPropagation()
+          const existing = cart.find(i => i._id === _modalProductId)
+          if (existing) {
+            existing.qty = modalQty
+            if (existing.qty <= 0) cart.splice(cart.indexOf(existing), 1)
+          } else {
+            for (let i = 0; i < modalQty; i++) {
+              addToCart({ _id: _modalProductId, name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency }, true)
+            }
+          }
+          updateCartBar()
+          _refreshAllCardActions(_modalProductId)
+          // Re-render just the action button to reflect new cart state
+          const btn = sheet.querySelector('#pm-add-btn')
+          const cartItem = cart.find(i => i._id === _modalProductId)
+          if (btn && cartItem) { btn.textContent = `✓ In Cart (${cartItem.qty})`; btn.className = 'pm-add-btn in-cart' }
+          showToast(`${p.name} added to cart 🛒`)
+        })
+      }
+
+      renderSheet()
+      document.getElementById('product-modal-overlay').classList.add('open')
+    }
+
+    function closeProductModal() {
+      document.getElementById('product-modal-overlay').classList.remove('open')
+      _modalProductId = null
+    }
+
     // ── SALES RESPONSE FINALIZER ──────────────────────────────────────────────
-    // salesGroup  — may already exist from sales_chunk streaming (has text bubble in DOM)
-    // salesTextBubble — the text bubble already appended, or null
-    // Called once sales_response event arrives with full parsed data
     function finalizeSalesResponse(salesData, salesGroup, salesTextBubble) {
       const msgs = document.getElementById('chat-messages')
 
@@ -492,9 +635,7 @@
         salesGroup.className = 'msg-group agent'
       }
 
-      // Finalize text bubble
       if (salesTextBubble) {
-        // Already streaming — overwrite with final parsed message to ensure accuracy
         salesTextBubble.textContent = salesData.message || salesTextBubble.textContent
       } else if (salesData.message) {
         const bubble = document.createElement('div')
@@ -503,7 +644,6 @@
         salesGroup.appendChild(bubble)
       }
 
-      // If checkout action — add to cart FIRST so renderProductCards sees correct cart state
       if (salesData.action === 'checkout') {
         const toCheckout = (salesData.products || []).map(id => prodMap[id]).filter(Boolean)
         toCheckout.forEach(p => {
@@ -513,13 +653,13 @@
         updateCartBar()
       }
 
-      // Product cards — rendered AFTER cart update so qty steppers show correctly
       if (salesData.products?.length > 0) {
-        const resolved = salesData.products.map(id => prodMap[id]).filter(Boolean)
+        // Deduplicate product IDs before rendering
+        const uniqueIds = [...new Set(salesData.products.map(String))]
+        const resolved  = uniqueIds.map(id => prodMap[id]).filter(Boolean)
         if (resolved.length) salesGroup.appendChild(renderProductCards(resolved))
       }
 
-      // Checkout action card
       if (salesData.action === 'checkout') {
         const toCheckout = (salesData.products || []).map(id => prodMap[id]).filter(Boolean)
         const checkoutCard = document.createElement('div')
@@ -534,7 +674,6 @@
       const timeEl = document.createElement('div'); timeEl.className = 'msg-time'; timeEl.textContent = getTime()
       salesGroup.appendChild(timeEl)
 
-      // Append to DOM only if not already there (sales_chunk already appended it)
       if (!salesGroup.parentNode) msgs.appendChild(salesGroup)
       msgs.scrollTop = msgs.scrollHeight
 
@@ -542,8 +681,16 @@
     }
 
     function renderProductCards(products) {
+      // Deduplicate by _id before rendering
+      const seen = new Set()
+      const unique = products.filter(p => {
+        const id = String(p._id)
+        if (seen.has(id)) return false
+        seen.add(id); return true
+      })
+
       const row = document.createElement('div'); row.className = 'products-row'
-      products.forEach((p, idx) => {
+      unique.forEach((p, idx) => {
         const card = document.createElement('div'); card.className = 'product-card'; card.style.animationDelay = `${idx * 60}ms`
         const sym = p.currency === 'USD' ? '$' : '₹'
 
@@ -563,7 +710,6 @@
           ${p.description ? `<div class="product-desc">${esc(p.description)}</div>` : ''}
           <div class="product-price">${sym}${Number(p.price).toLocaleString()}</div>`
 
-        // Action area — shows "Add to Cart" OR inline qty stepper depending on cart state
         const actionArea = document.createElement('div')
         actionArea.style.cssText = 'margin-top:auto;'
         actionArea.dataset.pid = String(p._id)
@@ -573,40 +719,54 @@
           if (inCart) {
             actionArea.innerHTML = `
               <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--brand-dim);border-top:1px solid var(--border2);">
-                <button onclick="cardQty('${p._id}',-1)" style="width:26px;height:26px;border-radius:7px;border:1.5px solid var(--border2);background:var(--surface-solid);cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--text2);font-family:var(--font);">−</button>
+                <button onclick="cardQty('${p._id}',-1,event)" style="width:26px;height:26px;border-radius:7px;border:1.5px solid var(--border2);background:var(--surface-solid);cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--text2);font-family:var(--font);">−</button>
                 <span style="font-size:13px;font-weight:800;font-family:var(--mono);color:var(--brand);">${inCart.qty}</span>
-                <button onclick="cardQty('${p._id}',1)" style="width:26px;height:26px;border-radius:7px;border:1.5px solid var(--border2);background:var(--surface-solid);cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--text2);font-family:var(--font);">+</button>
+                <button onclick="cardQty('${p._id}',1,event)" style="width:26px;height:26px;border-radius:7px;border:1.5px solid var(--border2);background:var(--surface-solid);cursor:pointer;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--text2);font-family:var(--font);">+</button>
               </div>`
           } else {
-            actionArea.innerHTML = `<button class="product-btn" onclick="cardAdd('${p._id}')">Add to Cart</button>`
+            actionArea.innerHTML = `<button class="product-btn" onclick="cardAdd('${p._id}',event)">Add to Cart</button>`
           }
         }
 
         actionArea._refresh = refreshAction
         refreshAction()
 
+        // Stop card click from propagating through action area
+        actionArea.addEventListener('click', e => e.stopPropagation())
+
+        // Clicking card (image / info) → opens product detail modal
+        card.addEventListener('click', () => openProductModal(String(p._id)))
+
         card.appendChild(imgWrap); card.appendChild(info); card.appendChild(actionArea); row.appendChild(card)
       })
       return row
     }
 
-    // Add product to cart from card button
-    function cardAdd(productId) {
+    function cardAdd(productId, event) {
+      if (event) event.stopPropagation()
       const p = prodMap[productId]; if (!p) return
       addToCart({ _id: String(p._id), name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency })
     }
 
-    // Adjust qty from card stepper
-    function cardQty(productId, delta) {
+    function cardQty(productId, delta, event) {
+      if (event) event.stopPropagation()
       const existing = cart.find(i => i._id === String(productId))
       if (!existing) return
       existing.qty += delta
       if (existing.qty <= 0) cart.splice(cart.indexOf(existing), 1)
       updateCartBar()
       _refreshAllCardActions(productId)
+      // Sync modal if open on same product
+      if (_modalProductId === String(productId)) {
+        const btn = document.querySelector('#pm-add-btn')
+        if (btn) {
+          const ci = cart.find(i => i._id === String(productId))
+          if (ci) { btn.textContent = `✓ In Cart (${ci.qty})`; btn.className = 'pm-add-btn in-cart' }
+          else { btn.textContent = '🛒 Add to Cart'; btn.className = 'pm-add-btn' }
+        }
+      }
     }
 
-    // Refresh all card action areas for a given product id (may appear in multiple rows)
     function _refreshAllCardActions(productId) {
       document.querySelectorAll(`[data-pid="${productId}"]`).forEach(el => { if (el._refresh) el._refresh() })
     }
@@ -661,14 +821,12 @@
 
     // ── SSE STREAMING ─────────────────────────────────────────────────────────
     async function streamResponse(question, suggestedPrompt) {
-      // Sales: show typing indicator, replaced on first sales_chunk event
-      // Non-sales: create streaming bubble immediately
-      let typingEl        = null   // typing dots (sales only)
-      let group           = null   // msg-group (non-sales)
-      let renderer        = null   // StreamRenderer (non-sales)
-      let salesGroup      = null   // msg-group built during sales_chunk streaming
-      let salesTextBubble = null   // text bubble being updated by sales_chunk
-      let salesRawText    = ''     // accumulated text from sales_chunk events
+      let typingEl        = null
+      let group           = null
+      let renderer        = null
+      let salesGroup      = null
+      let salesTextBubble = null
+      let salesRawText    = ''
 
       if (agentType === 'sales') {
         typingEl = showTyping()
@@ -721,10 +879,8 @@
               if (!line.startsWith('data: ')) continue
               let evt; try { evt = JSON.parse(line.slice(6)) } catch { continue }
 
-              // ── sales_chunk: progressive message text streaming ───────────
               if (evt.type === 'sales_chunk' && evt.text) {
                 if (clientFirstChunkTime === null) clientFirstChunkTime = Date.now()
-                // First chunk: remove typing indicator, create the streaming group
                 if (!salesGroup) {
                   if (typingEl) { typingEl.remove(); typingEl = null }
                   salesGroup = document.createElement('div'); salesGroup.className = 'msg-group agent'
@@ -738,20 +894,17 @@
                 if (msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 140) msgs.scrollTop = msgs.scrollHeight
               }
 
-              // ── HTML chunk (non-sales streaming) ─────────────────────────
               if (evt.type === 'chunk' && evt.html && renderer) {
                 if (clientFirstChunkTime === null) clientFirstChunkTime = Date.now()
                 renderer.push(evt.html)
               }
 
-              // ── done (non-sales) ──────────────────────────────────────────
               if (evt.type === 'done') {
                 if (evt.session_id) sessionId = evt.session_id
                 finalAnswer = evt.answer || ''; gotDone = true
                 serverTiming = evt.timing || null; tokenCount = evt.tokens || null
               }
 
-              // ── sales_response: final event with products + action ─────────
               if (evt.type === 'sales_response') {
                 salesData = evt; gotDone = true
                 serverTiming = evt.timing || null; tokenCount = evt.tokens || null
@@ -771,24 +924,15 @@
       const clientTotal = Date.now() - clientSendTime
       const clientFirst = clientFirstChunkTime ? clientFirstChunkTime - clientSendTime : clientTotal
 
-      // ── Finalize sales ────────────────────────────────────────────────────
       if (salesData) {
         if (typingEl) { typingEl.remove(); typingEl = null }
-
         const finalGroup = finalizeSalesResponse(salesData, salesGroup, salesTextBubble)
-
         const productNames = (salesData.products || []).map(id => prodMap[id]?.name).filter(Boolean)
         msgHistory.push({ role: 'assistant', content: salesData.message || salesRawText || '', products: productNames })
-
-        addTimingBadge(finalGroup, {
-          firstToken: serverTiming?.first_token_ms ?? clientFirst,
-          totalTime:  serverTiming?.total_stream_ms ?? clientTotal,
-          tokens:     tokenCount,
-        })
+        addTimingBadge(finalGroup, { firstToken: serverTiming?.first_token_ms ?? clientFirst, totalTime: serverTiming?.total_stream_ms ?? clientTotal, tokens: tokenCount })
         return true
       }
 
-      // ── Finalize non-sales HTML ───────────────────────────────────────────
       if (gotDone && renderer) {
         renderer.finalize(finalAnswer)
         msgHistory.push({ role: 'assistant', content: (finalAnswer || renderer.raw).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,600) })
@@ -797,13 +941,7 @@
         msgHistory.push({ role: 'assistant', content: renderer.raw.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,600) })
       }
 
-      if (group) {
-        addTimingBadge(group, {
-          firstToken: serverTiming?.first_token_ms ?? clientFirst,
-          totalTime:  serverTiming?.total_stream_ms ?? clientTotal,
-          tokens:     tokenCount,
-        })
-      }
+      if (group) addTimingBadge(group, { firstToken: serverTiming?.first_token_ms ?? clientFirst, totalTime: serverTiming?.total_stream_ms ?? clientTotal, tokens: tokenCount })
       return true
     }
 
@@ -817,8 +955,9 @@
         })
         const d = await res.json(); typEl.remove()
         if (d.type === 'sales_response') {
-          const g = finalizeSalesResponse(d, null, null)
-          const productNames = (d.products || []).map(id => prodMap[id]?.name).filter(Boolean)
+          const uniqueIds = [...new Set((d.products || []).map(String))]
+          const g = finalizeSalesResponse({ ...d, products: uniqueIds }, null, null)
+          const productNames = uniqueIds.map(id => prodMap[id]?.name).filter(Boolean)
           msgHistory.push({ role: 'assistant', content: d.message || '', products: productNames })
           return
         }
@@ -856,18 +995,17 @@
     }
 
     // ── CART ──────────────────────────────────────────────────────────────────
-    function addToCart(product) {
+    function addToCart(product, silent = false) {
       const existing = cart.find(i => i._id === product._id)
       if (existing) existing.qty++
       else cart.push({ ...product, qty: 1 })
       updateCartBar()
-      showToast(`${product.name} added to cart 🛒`)
+      if (!silent) showToast(`${product.name} added to cart 🛒`)
     }
     function updateCartBar() {
       const total = cart.reduce((a, i) => a + i.qty, 0)
       document.getElementById('cart-count').textContent = total
       document.getElementById('cart-bar').classList.toggle('show', total > 0)
-      // Refresh all visible product card action areas so qtys stay in sync
       document.querySelectorAll('[data-pid]').forEach(el => { if (el._refresh) el._refresh() })
     }
     function openCart() {
@@ -917,7 +1055,6 @@
 
     async function checkout() {
       if (!cart.length) return
-      // Guard: prevent double invocation (ondismiss can fire multiple times)
       if (checkout._running) return
       checkout._running = true
 
