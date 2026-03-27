@@ -47,7 +47,6 @@
     }
 
     /* ── LAYOUT SHELL ─────────────────────────────────────────────────────── */
-    /* On tablets/desktop we constrain to a centred column */
     #app-shell{
       display:flex;
       flex-direction:column;
@@ -221,12 +220,10 @@
       padding:8px 0 10px;
       scrollbar-width:none;
       -webkit-overflow-scrolling:touch;
-      /* allow it to break out to full message width */
       max-width:min(92vw, 680px);
       width:100%;
     }
     .products-row::-webkit-scrollbar{display:none;}
-    /* Snap scrolling for a polished feel on mobile */
     .products-row{scroll-snap-type:x mandatory;}
 
     .product-card{
@@ -370,7 +367,6 @@
     #cart-fab:active{transform:scale(.94);}
     @keyframes fabIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
 
-    /* Cart count badge on FAB */
     #cart-fab-badge{
       position:absolute;top:-3px;right:-3px;
       min-width:20px;height:20px;
@@ -394,7 +390,7 @@
     }
     .modal-overlay.open{visibility:visible;opacity:1;}
 
-    /* ── CART SHEET ───────────────────────────────────────────────────────── */
+    /* ── CART SHEET (bottom sheet) ────────────────────────────────────────── */
     .cart-sheet{
       background:var(--surface-solid);
       border-radius:26px 26px 0 0;
@@ -449,22 +445,38 @@
     .cart-empty-icon{font-size:40px;margin-bottom:12px;}
     .cart-empty-text{font-size:13px;font-weight:600;color:var(--text3);}
 
-    /* ── PRODUCT DETAIL MODAL ─────────────────────────────────────────────── */
-    #product-modal-overlay{z-index:200;align-items:flex-end;}
+    /* ── PRODUCT DETAIL MODAL — CENTERED ─────────────────────────────────── */
+    /*  Override the base overlay to use center-center alignment             */
+    #product-modal-overlay{
+      z-index:200;
+      align-items:center;   /* vertical center */
+      justify-content:center; /* horizontal center */
+      padding:20px;         /* breathing room on small screens */
+    }
+
     .product-modal-sheet{
-      background:var(--surface-solid);border-radius:26px 26px 0 0;
-      width:100%;max-width:480px;max-height:90vh;
+      background:var(--surface-solid);
+      border-radius:26px;   /* fully rounded — no flat top/bottom edges */
+      width:100%;
+      max-width:440px;
+      max-height:88vh;
       overflow-y:auto;
-      box-shadow:0 -20px 60px rgba(0,0,0,.18);
-      transform:translateY(50px);
-      transition:transform .34s cubic-bezier(.22,1,.36,1);
+      box-shadow:0 24px 80px rgba(0,0,0,.22);
+      /* Centered entrance: scale up from slightly smaller */
+      transform:scale(.92) translateY(16px);
+      opacity:0;
+      transition:transform .34s cubic-bezier(.22,1,.36,1), opacity .28s ease;
       display:flex;flex-direction:column;
     }
-    .modal-overlay.open .product-modal-sheet{transform:translateY(0);}
+    /* When overlay is open, animate the sheet in */
+    #product-modal-overlay.open .product-modal-sheet{
+      transform:scale(1) translateY(0);
+      opacity:1;
+    }
     .product-modal-sheet::-webkit-scrollbar{width:3px;}
     .product-modal-sheet::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
 
-    .pm-img-wrap{width:100%;height:210px;flex-shrink:0;position:relative;background:linear-gradient(135deg,var(--surface3),var(--brand-dim));border-radius:26px 26px 0 0;overflow:hidden;}
+    .pm-img-wrap{width:100%;height:200px;flex-shrink:0;position:relative;background:linear-gradient(135deg,var(--surface3),var(--brand-dim));border-radius:26px 26px 0 0;overflow:hidden;}
     .pm-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s cubic-bezier(.22,1,.36,1);}
     .product-modal-sheet:hover .pm-img{transform:scale(1.03);}
     .pm-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;}
@@ -472,8 +484,7 @@
     .pm-close:hover{background:rgba(11,13,26,.7);transform:scale(1.08);}
     .pm-cat-badge{position:absolute;bottom:13px;left:13px;background:rgba(0,0,0,.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;font-size:10px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:20px;text-transform:uppercase;}
 
-    .pm-body{padding:18px 20px max(24px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:0;}
-    .pm-handle{width:34px;height:4px;background:var(--border2);border-radius:4px;margin:0 auto 14px;}
+    .pm-body{padding:18px 20px max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:0;}
     .pm-name{font-size:16px;font-weight:800;letter-spacing:-.03em;color:var(--text);line-height:1.3;margin-bottom:5px;}
     .pm-price{font-size:22px;font-weight:800;color:var(--brand);font-family:var(--mono);letter-spacing:-.03em;margin-bottom:12px;}
     .pm-desc-label{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
@@ -483,15 +494,51 @@
     .pm-meta-chip span{font-size:12px;}
     .pm-divider{height:1px;background:var(--border);margin:0 0 18px;}
 
+    /* ── PRODUCT MODAL ACTION AREA ────────────────────────────────────────── */
+    /*
+      Logic:
+      - qty === 0  →  show "Add to Cart" button only
+      - qty >= 1   →  show qty stepper + "Update Cart" action (no separate add button)
+      Qty changes immediately sync the cart.
+    */
     .pm-action-wrap{display:flex;gap:10px;align-items:center;}
-    .pm-qty-control{display:flex;align-items:center;gap:0;background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;overflow:hidden;flex-shrink:0;}
-    .pm-qty-btn{width:38px;height:44px;border:none;background:transparent;cursor:pointer;font-size:18px;font-weight:700;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .14s;font-family:var(--font);-webkit-tap-highlight-color:transparent;}
-    .pm-qty-btn:hover{background:var(--brand-dim);color:var(--brand);}
-    .pm-qty-num{font-size:14px;font-weight:800;font-family:var(--mono);min-width:28px;text-align:center;color:var(--text);}
-    .pm-add-btn{flex:1;height:44px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all .18s cubic-bezier(.22,1,.36,1);box-shadow:var(--sh-brand);letter-spacing:-.01em;display:flex;align-items:center;justify-content:center;gap:7px;-webkit-tap-highlight-color:transparent;}
+
+    /* "Add to Cart" button — shown when qty in cart is 0 */
+    .pm-add-btn{
+      flex:1;height:44px;border-radius:12px;border:none;
+      background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+      color:#fff;font-size:13px;font-weight:700;font-family:var(--font);
+      cursor:pointer;transition:all .18s cubic-bezier(.22,1,.36,1);
+      box-shadow:var(--sh-brand);letter-spacing:-.01em;
+      display:flex;align-items:center;justify-content:center;gap:7px;
+      -webkit-tap-highlight-color:transparent;
+    }
     .pm-add-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-brand-lg);}
     .pm-add-btn:active{transform:scale(.97);}
-    .pm-add-btn.in-cart{background:linear-gradient(135deg,var(--green),#047857);}
+
+    /* Qty stepper (shown when item is in cart) */
+    .pm-qty-stepper{
+      display:flex;align-items:center;gap:0;
+      background:var(--surface2);border:1.5px solid var(--border2);
+      border-radius:12px;overflow:hidden;width:100%;
+    }
+    .pm-qty-btn{
+      width:44px;height:44px;border:none;background:transparent;cursor:pointer;
+      font-size:20px;font-weight:700;color:var(--text2);
+      display:flex;align-items:center;justify-content:center;
+      transition:all .14s;font-family:var(--font);flex-shrink:0;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .pm-qty-btn:hover{background:var(--brand-dim);color:var(--brand);}
+    .pm-qty-btn.pm-remove-btn:hover{background:var(--red-dim);color:var(--red);}
+    .pm-qty-num{
+      flex:1;text-align:center;font-size:16px;font-weight:800;
+      font-family:var(--mono);color:var(--text);
+      /* visual separator lines */
+      border-left:1px solid var(--border2);
+      border-right:1px solid var(--border2);
+      height:44px;display:flex;align-items:center;justify-content:center;
+    }
 
     /* LOADING */
     .loading-screen{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
@@ -514,20 +561,14 @@
 
     /* ── RESPONSIVE TWEAKS ───────────────────────────────────────────────── */
     @media(min-width:601px){
-      /* On tablet/desktop, FAB is relative to the app shell */
       #cart-fab{position:absolute;}
-      .modal-overlay{/* centred sheet already handled by max-width */}
-      .cart-sheet,.product-modal-sheet{
-        border-radius:26px;
-        margin-bottom:40px;
-        max-height:78vh;
-      }
     }
     @media(max-width:400px){
       .product-card{min-width:128px;max-width:128px;}
       .msg-bubble-user,.msg-bubble-agent,.msg-bubble-sales{font-size:13px;}
+      /* on very small screens let the centered modal fill more width */
+      #product-modal-overlay{padding:12px;}
     }
-    /* Prevent iOS bounce on main scroll */
     .chat-messages{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
   </style>
 </head>
@@ -595,7 +636,7 @@
 
 </div><!-- /#app-shell -->
 
-<!-- CART MODAL — outside app-shell so overlay covers full screen -->
+<!-- CART MODAL -->
 <div class="modal-overlay" id="cart-overlay" onclick="if(event.target===this)closeCart()">
   <div class="cart-sheet">
     <div class="cart-handle"></div>
@@ -604,12 +645,11 @@
       <button class="cart-close-btn" onclick="closeCart()" title="Close">✕</button>
     </div>
     <div id="cart-items"></div>
-    <!-- summary injected by openCart() -->
     <div id="cart-summary-block"></div>
   </div>
 </div>
 
-<!-- PRODUCT DETAIL MODAL -->
+<!-- PRODUCT DETAIL MODAL — centered -->
 <div class="modal-overlay" id="product-modal-overlay" onclick="if(event.target===this)closeProductModal()">
   <div class="product-modal-sheet" id="product-modal-sheet"></div>
 </div>
@@ -779,81 +819,129 @@
   }
 
   // ── PRODUCT DETAIL MODAL ────────────────────────────────────────────────
+  /*
+    UX rules for the action area:
+    • qty in cart === 0  →  full-width "Add to Cart" button
+    • qty in cart >= 1   →  full-width stepper  [−] [qty] [+]
+      - tapping −  decreases qty immediately (removes from cart if reaches 0 → reverts to "Add to Cart")
+      - tapping +  increases qty immediately
+      No separate "Update Cart" click required.
+  */
   let _modalProductId = null
 
   function openProductModal(productId) {
     const p = prodMap[productId]
     if (!p) return
     _modalProductId = String(productId)
+    _renderProductModal()
+    document.getElementById('product-modal-overlay').classList.add('open')
+  }
+
+  function _renderProductModal() {
+    const p = prodMap[_modalProductId]
+    if (!p) return
     const sym    = p.currency === 'USD' ? '$' : '₹'
     const sheet  = document.getElementById('product-modal-sheet')
     const inCart = cart.find(i => i._id === _modalProductId)
-    let modalQty = inCart ? inCart.qty : 1
 
-    function renderSheet() {
-      const inCart  = cart.find(i => i._id === _modalProductId)
-      const btnText = inCart ? `✓ In Cart (${inCart.qty})` : `🛒 Add to Cart`
-      const btnCls  = inCart ? 'pm-add-btn in-cart' : 'pm-add-btn'
-      sheet.innerHTML = `
-        <div class="pm-img-wrap">
-          ${p.image_url
-            ? `<img class="pm-img" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.parentElement.innerHTML='<div class=\\'pm-img-placeholder\\'>📦</div>'">`
-            : `<div class="pm-img-placeholder">📦</div>`}
-          <button class="pm-close" id="pm-close-btn" title="Close">✕</button>
-          ${p.category ? `<div class="pm-cat-badge">${esc(p.category)}</div>` : ''}
+    sheet.innerHTML = `
+      <div class="pm-img-wrap">
+        ${p.image_url
+          ? `<img class="pm-img" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.parentElement.innerHTML='<div class=\\'pm-img-placeholder\\'>📦</div>'">`
+          : `<div class="pm-img-placeholder">📦</div>`}
+        <button class="pm-close" id="pm-close-btn" title="Close">✕</button>
+        ${p.category ? `<div class="pm-cat-badge">${esc(p.category)}</div>` : ''}
+      </div>
+      <div class="pm-body">
+        <div class="pm-name">${esc(p.name)}</div>
+        <div class="pm-price">${sym}${Number(p.price).toLocaleString()}</div>
+        ${p.description ? `<div class="pm-desc-label">Description</div><div class="pm-desc">${esc(p.description)}</div>` : ''}
+        <div class="pm-meta">
+          ${p.category  ? `<div class="pm-meta-chip"><span>🏷</span>${esc(p.category)}</div>` : ''}
+          ${p.sku       ? `<div class="pm-meta-chip"><span>🔖</span>SKU: ${esc(p.sku)}</div>` : ''}
+          ${p.stock_qty != null ? `<div class="pm-meta-chip"><span>${p.stock_qty > 10 ? '✅' : p.stock_qty > 0 ? '⚠️' : '❌'}</span>${p.stock_qty > 0 ? `${p.stock_qty} in stock` : 'Out of stock'}</div>` : ''}
         </div>
-        <div class="pm-body">
-          <div class="pm-handle"></div>
-          <div class="pm-name">${esc(p.name)}</div>
-          <div class="pm-price">${sym}${Number(p.price).toLocaleString()}</div>
-          ${p.description ? `<div class="pm-desc-label">Description</div><div class="pm-desc">${esc(p.description)}</div>` : ''}
-          <div class="pm-meta">
-            ${p.category ? `<div class="pm-meta-chip"><span>🏷</span>${esc(p.category)}</div>` : ''}
-            ${p.sku      ? `<div class="pm-meta-chip"><span>🔖</span>SKU: ${esc(p.sku)}</div>` : ''}
-            ${p.stock_qty != null ? `<div class="pm-meta-chip"><span>${p.stock_qty > 10 ? '✅' : p.stock_qty > 0 ? '⚠️' : '❌'}</span>${p.stock_qty > 0 ? `${p.stock_qty} in stock` : 'Out of stock'}</div>` : ''}
-          </div>
-          <div class="pm-divider"></div>
-          <div class="pm-action-wrap" id="pm-action-wrap">
-            <div class="pm-qty-control">
-              <button class="pm-qty-btn" id="pm-minus">−</button>
-              <span class="pm-qty-num" id="pm-qty-num">${modalQty}</span>
-              <button class="pm-qty-btn" id="pm-plus">+</button>
-            </div>
-            <button class="${btnCls}" id="pm-add-btn">${btnText}</button>
-          </div>
-        </div>`
+        <div class="pm-divider"></div>
+        <div class="pm-action-wrap" id="pm-action-wrap"></div>
+      </div>`
 
-      sheet.querySelector('#pm-close-btn').addEventListener('click', closeProductModal)
-      sheet.querySelector('#pm-minus').addEventListener('click', e => {
+    sheet.querySelector('#pm-close-btn').addEventListener('click', closeProductModal)
+    _refreshModalAction()
+  }
+
+  function _refreshModalAction() {
+    const actionWrap = document.getElementById('pm-action-wrap')
+    if (!actionWrap || !_modalProductId) return
+    const inCart = cart.find(i => i._id === _modalProductId)
+
+    if (!inCart) {
+      /* ── No items in cart: show "Add to Cart" button ── */
+      actionWrap.innerHTML = ''
+      const btn = document.createElement('button')
+      btn.className = 'pm-add-btn'
+      btn.innerHTML = '🛒 Add to Cart'
+      btn.addEventListener('click', e => {
         e.stopPropagation()
-        if (modalQty > 1) { modalQty--; sheet.querySelector('#pm-qty-num').textContent = modalQty }
-      })
-      sheet.querySelector('#pm-plus').addEventListener('click', e => {
-        e.stopPropagation()
-        modalQty++; sheet.querySelector('#pm-qty-num').textContent = modalQty
-      })
-      sheet.querySelector('#pm-add-btn').addEventListener('click', e => {
-        e.stopPropagation()
-        const existing = cart.find(i => i._id === _modalProductId)
-        if (existing) {
-          existing.qty = modalQty
-          if (existing.qty <= 0) cart.splice(cart.indexOf(existing), 1)
-        } else {
-          for (let i = 0; i < modalQty; i++) {
-            addToCart({ _id: _modalProductId, name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency }, true)
-          }
-        }
-        updateCartBar()
+        const p = prodMap[_modalProductId]; if (!p) return
+        addToCart({ _id: _modalProductId, name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency })
+        _refreshModalAction()
         _refreshAllCardActions(_modalProductId)
-        const btn = sheet.querySelector('#pm-add-btn')
-        const cartItem = cart.find(i => i._id === _modalProductId)
-        if (btn && cartItem) { btn.textContent = `✓ In Cart (${cartItem.qty})`; btn.className = 'pm-add-btn in-cart' }
-        showToast(`${p.name} added to cart 🛒`)
       })
-    }
+      actionWrap.appendChild(btn)
+    } else {
+      /* ── Item already in cart: show full-width stepper ── */
+      actionWrap.innerHTML = ''
+      const stepper = document.createElement('div')
+      stepper.className = 'pm-qty-stepper'
 
-    renderSheet()
-    document.getElementById('product-modal-overlay').classList.add('open')
+      const minusBtn = document.createElement('button')
+      minusBtn.className = 'pm-qty-btn pm-remove-btn'
+      minusBtn.textContent = inCart.qty === 1 ? '🗑' : '−'
+      minusBtn.title = inCart.qty === 1 ? 'Remove from cart' : 'Decrease quantity'
+      minusBtn.addEventListener('click', e => {
+        e.stopPropagation()
+        _modalQtyDelta(-1)
+      })
+
+      const numEl = document.createElement('div')
+      numEl.className = 'pm-qty-num'
+      numEl.textContent = inCart.qty
+
+      const plusBtn = document.createElement('button')
+      plusBtn.className = 'pm-qty-btn'
+      plusBtn.textContent = '+'
+      plusBtn.title = 'Increase quantity'
+      plusBtn.addEventListener('click', e => {
+        e.stopPropagation()
+        _modalQtyDelta(+1)
+      })
+
+      stepper.appendChild(minusBtn)
+      stepper.appendChild(numEl)
+      stepper.appendChild(plusBtn)
+      actionWrap.appendChild(stepper)
+    }
+  }
+
+  function _modalQtyDelta(delta) {
+    if (!_modalProductId) return
+    const p = prodMap[_modalProductId]; if (!p) return
+    const existing = cart.find(i => i._id === _modalProductId)
+    if (existing) {
+      existing.qty += delta
+      if (existing.qty <= 0) {
+        cart.splice(cart.indexOf(existing), 1)
+        showToast(`${p.name} removed from cart`)
+      } else {
+        showToast(delta > 0 ? `${p.name} qty updated to ${existing.qty}` : `${p.name} qty updated to ${existing.qty}`)
+      }
+    } else if (delta > 0) {
+      cart.push({ _id: _modalProductId, name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency, qty: 1 })
+      showToast(`${p.name} added to cart 🛒`)
+    }
+    updateCartBar()
+    _refreshModalAction()
+    _refreshAllCardActions(_modalProductId)
   }
 
   function closeProductModal() {
@@ -955,6 +1043,7 @@
     if (event) event.stopPropagation()
     const p = prodMap[productId]; if (!p) return
     addToCart({ _id: String(p._id), name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency })
+    _refreshAllCardActions(String(p._id))
   }
   function cardQty(productId, delta, event) {
     if (event) event.stopPropagation()
@@ -964,14 +1053,8 @@
     if (existing.qty <= 0) cart.splice(cart.indexOf(existing), 1)
     updateCartBar()
     _refreshAllCardActions(productId)
-    if (_modalProductId === String(productId)) {
-      const btn = document.querySelector('#pm-add-btn')
-      if (btn) {
-        const ci = cart.find(i => i._id === String(productId))
-        if (ci) { btn.textContent = `✓ In Cart (${ci.qty})`; btn.className = 'pm-add-btn in-cart' }
-        else { btn.textContent = '🛒 Add to Cart'; btn.className = 'pm-add-btn' }
-      }
-    }
+    /* also sync the modal if it's open for this product */
+    if (_modalProductId === String(productId)) _refreshModalAction()
   }
   function _refreshAllCardActions(productId) {
     document.querySelectorAll(`[data-pid="${productId}"]`).forEach(el => { if (el._refresh) el._refresh() })
