@@ -46,7 +46,6 @@
       overflow:hidden;
     }
 
-    /* ── LAYOUT SHELL ─────────────────────────────────────────────────────── */
     #app-shell{
       display:flex;
       flex-direction:column;
@@ -61,7 +60,6 @@
       #app-shell{max-width:100%;box-shadow:none;}
     }
 
-    /* HEADER */
     .chat-header{
       background:var(--glass);
       backdrop-filter:blur(24px) saturate(1.9);
@@ -102,7 +100,6 @@
     .powered-by a{color:var(--brand);font-weight:700;text-decoration:none;transition:opacity .15s;}
     .powered-by a:hover{opacity:.7;}
 
-    /* TIMING BADGE */
     .msg-timing{
       display:inline-flex;align-items:center;gap:6px;
       font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.02em;
@@ -118,7 +115,6 @@
     .msg-timing .timing-slow{color:var(--red);}
     .msg-timing .timing-mid{color:var(--brand);}
 
-    /* MESSAGES */
     .chat-messages{
       flex:1;overflow-y:auto;
       padding:18px 14px 8px;
@@ -134,7 +130,6 @@
     .msg-group.agent{align-items:flex-start;}
     @keyframes msgIn{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-    /* BUBBLES */
     .msg-bubble-user{
       max-width:min(80%, 540px);
       padding:10px 15px;
@@ -173,17 +168,14 @@
       color:var(--text);box-shadow:var(--sh-md);font-size:13.5px;line-height:1.72;letter-spacing:-.005em;
     }
 
-    /* DATE SEP */
     .date-sep{display:flex;align-items:center;gap:10px;margin:8px 0 4px;color:var(--text3);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
     .date-sep::before,.date-sep::after{content:'';flex:1;height:1px;background:var(--border);}
     .msg-time{font-size:9.5px;color:var(--text4);padding:0 4px;letter-spacing:.02em;font-weight:500;}
 
-    /* STREAMING */
     .stream-cursor{display:inline-block;width:2px;height:.9em;background:var(--brand);border-radius:2px;vertical-align:text-bottom;margin-left:2px;animation:blink-cur .5s step-start infinite;}
     @keyframes blink-cur{50%{opacity:0}}
     .msg-bubble-streaming{border-color:var(--brand)!important;box-shadow:0 0 0 1px var(--brand-glow),var(--sh-md)!important;}
 
-    /* TYPING */
     .typing-indicator{display:none;align-items:center;gap:5px;padding:12px 16px;background:var(--surface-solid);border:1px solid var(--border3);border-radius:4px 18px 18px 18px;box-shadow:var(--sh-sm);}
     .typing-indicator.show{display:flex;}
     .typing-dot{width:5.5px;height:5.5px;border-radius:50%;background:var(--text4);animation:tdot .9s infinite ease-in-out;}
@@ -191,7 +183,6 @@
     .typing-dot:nth-child(3){animation-delay:.36s;}
     @keyframes tdot{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-5px);opacity:1;background:var(--brand)}}
 
-    /* TOPICS */
     .topics-wrap{
       display:flex;gap:7px;
       padding:8px 14px 4px;
@@ -212,7 +203,6 @@
     .topic-chip:hover{background:var(--brand);color:#fff;border-color:var(--brand);box-shadow:var(--sh-brand);transform:translateY(-2px);}
     .topic-chip:active{transform:translateY(0) scale(.97);}
 
-    /* ── PRODUCT CARDS — horizontal scroll ───────────────────────────────── */
     .products-row{
       display:flex;
       gap:10px;
@@ -253,7 +243,6 @@
     .product-btn:hover{opacity:.88;}.product-btn:active{transform:scale(.97);}
     .product-btn.in-cart{background:var(--green);}
 
-    /* CHECKOUT ACTION CARD */
     .checkout-action-card{
       max-width:min(92%, 540px);
       background:linear-gradient(135deg,var(--brand-dim),rgba(108,95,245,.04));
@@ -266,7 +255,6 @@
     .checkout-action-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-brand-lg);}
     .checkout-action-btn:active{transform:scale(.97);}
 
-    /* INPUT */
     .chat-input-wrap{
       background:var(--glass);
       backdrop-filter:blur(24px) saturate(1.9);
@@ -288,7 +276,6 @@
     .chat-input::placeholder{color:var(--text4);}
     .input-tools{display:flex;align-items:center;gap:4px;flex-shrink:0;}
 
-    /* Language */
     .lang-wrap{position:relative;flex-shrink:0;}
     .lang-btn{height:34px;min-width:60px;padding:0 9px;border-radius:10px;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text2);font-family:var(--font);transition:all .15s cubic-bezier(.22,1,.36,1);white-space:nowrap;user-select:none;-webkit-tap-highlight-color:transparent;}
     .lang-btn:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-dim);}
@@ -314,21 +301,18 @@
     .lang-dd-item.active .dd-check{opacity:1;}
     .lang-dd-sep{height:1px;background:var(--border);margin:4px 6px;}
 
-    /* Mic */
     .mic-btn{width:34px;height:34px;border-radius:10px;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;flex-shrink:0;transition:all .18s cubic-bezier(.22,1,.36,1);-webkit-tap-highlight-color:transparent;}
     .mic-btn:hover{border-color:var(--brand);background:var(--brand-dim);}
     .mic-btn.recording{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.55);animation:micGlow 1.2s ease-in-out infinite;}
     @keyframes micGlow{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.45)}50%{box-shadow:0 0 0 7px rgba(239,68,68,0)}}
     .mic-btn:disabled{opacity:.3;cursor:not-allowed;}
 
-    /* Send */
     .send-btn{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand-dark));border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s cubic-bezier(.22,1,.36,1);box-shadow:0 2px 12px var(--brand-glow);-webkit-tap-highlight-color:transparent;}
     .send-btn:hover{transform:scale(1.08);box-shadow:var(--sh-brand);}
     .send-btn:active{transform:scale(.94);}
     .send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
     .send-btn svg{color:#fff;}
 
-    /* Voice wave */
     .voice-wave{display:none;align-items:center;gap:3px;flex:1;padding:0 4px 0 0;overflow:hidden;}
     .chat-input-row.listening .voice-wave{display:flex;}
     .chat-input-row.listening .chat-input{display:none;}
@@ -343,7 +327,6 @@
     .voice-interim-live{color:var(--text3);}.voice-interim-final{color:var(--text);font-weight:600;}
     .input-inner{position:relative;}
 
-    /* ── FLOATING CART BUTTON ─────────────────────────────────────────────── */
     #cart-fab{
       position:absolute;
       bottom:82px;
@@ -378,7 +361,6 @@
       pointer-events:none;
     }
 
-    /* ── MODAL SHARED ─────────────────────────────────────────────────────── */
     .modal-overlay{
       position:fixed;inset:0;
       background:rgba(11,13,26,.55);
@@ -390,7 +372,6 @@
     }
     .modal-overlay.open{visibility:visible;opacity:1;}
 
-    /* ── CART SHEET (bottom sheet) ────────────────────────────────────────── */
     .cart-sheet{
       background:var(--surface-solid);
       border-radius:26px 26px 0 0;
@@ -422,7 +403,6 @@
     .qty-label{font-size:13px;font-weight:700;min-width:20px;text-align:center;font-family:var(--mono);}
     .cart-item-total{font-size:13.5px;font-weight:800;font-family:var(--mono);white-space:nowrap;letter-spacing:-.02em;margin-left:auto;flex-shrink:0;}
 
-    /* Cart summary */
     .cart-summary{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-top:16px;}
     .cart-summary-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text2);margin-bottom:6px;}
     .cart-summary-row:last-child{margin-bottom:0;}
@@ -445,46 +425,28 @@
     .cart-empty-icon{font-size:40px;margin-bottom:12px;}
     .cart-empty-text{font-size:13px;font-weight:600;color:var(--text3);}
 
-    /* ── PRODUCT DETAIL MODAL — CENTERED ─────────────────────────────────── */
-    /*  Override the base overlay to use center-center alignment             */
-    #product-modal-overlay{
-      z-index:200;
-      align-items:center;   /* vertical center */
-      justify-content:center; /* horizontal center */
-      padding:20px;         /* breathing room on small screens */
-    }
-
+    #product-modal-overlay{z-index:200;align-items:flex-end;}
     .product-modal-sheet{
-      background:var(--surface-solid);
-      border-radius:26px;   /* fully rounded — no flat top/bottom edges */
-      width:100%;
-      max-width:440px;
-      max-height:88vh;
+      background:var(--surface-solid);border-radius:26px 26px 0 0;
+      width:100%;max-width:480px;max-height:90vh;
       overflow-y:auto;
-      box-shadow:0 24px 80px rgba(0,0,0,.22);
-      /* Centered entrance: scale up from slightly smaller */
-      transform:scale(.92) translateY(16px);
-      opacity:0;
-      transition:transform .34s cubic-bezier(.22,1,.36,1), opacity .28s ease;
+      box-shadow:0 -20px 60px rgba(0,0,0,.18);
+      transform:translateY(50px);
+      transition:transform .34s cubic-bezier(.22,1,.36,1);
       display:flex;flex-direction:column;
     }
-    /* When overlay is open, animate the sheet in */
-    #product-modal-overlay.open .product-modal-sheet{
-      transform:scale(1) translateY(0);
-      opacity:1;
-    }
+    .modal-overlay.open .product-modal-sheet{transform:translateY(0);}
     .product-modal-sheet::-webkit-scrollbar{width:3px;}
     .product-modal-sheet::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
-
-    .pm-img-wrap{width:100%;height:200px;flex-shrink:0;position:relative;background:linear-gradient(135deg,var(--surface3),var(--brand-dim));border-radius:26px 26px 0 0;overflow:hidden;}
+    .pm-img-wrap{width:100%;height:210px;flex-shrink:0;position:relative;background:linear-gradient(135deg,var(--surface3),var(--brand-dim));border-radius:26px 26px 0 0;overflow:hidden;}
     .pm-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s cubic-bezier(.22,1,.36,1);}
     .product-modal-sheet:hover .pm-img{transform:scale(1.03);}
     .pm-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;}
     .pm-close{position:absolute;top:13px;right:13px;width:32px;height:32px;border-radius:50%;background:rgba(11,13,26,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:#fff;transition:all .18s cubic-bezier(.22,1,.36,1);z-index:10;line-height:1;-webkit-tap-highlight-color:transparent;}
     .pm-close:hover{background:rgba(11,13,26,.7);transform:scale(1.08);}
     .pm-cat-badge{position:absolute;bottom:13px;left:13px;background:rgba(0,0,0,.52);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;font-size:10px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:20px;text-transform:uppercase;}
-
-    .pm-body{padding:18px 20px max(20px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:0;}
+    .pm-body{padding:18px 20px max(24px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:0;}
+    .pm-handle{width:34px;height:4px;background:var(--border2);border-radius:4px;margin:0 auto 14px;}
     .pm-name{font-size:16px;font-weight:800;letter-spacing:-.03em;color:var(--text);line-height:1.3;margin-bottom:5px;}
     .pm-price{font-size:22px;font-weight:800;color:var(--brand);font-family:var(--mono);letter-spacing:-.03em;margin-bottom:12px;}
     .pm-desc-label{font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
@@ -493,60 +455,21 @@
     .pm-meta-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;background:var(--surface2);border:1px solid var(--border2);border-radius:20px;font-size:10.5px;font-weight:700;color:var(--text2);}
     .pm-meta-chip span{font-size:12px;}
     .pm-divider{height:1px;background:var(--border);margin:0 0 18px;}
-
-    /* ── PRODUCT MODAL ACTION AREA ────────────────────────────────────────── */
-    /*
-      Logic:
-      - qty === 0  →  show "Add to Cart" button only
-      - qty >= 1   →  show qty stepper + "Update Cart" action (no separate add button)
-      Qty changes immediately sync the cart.
-    */
     .pm-action-wrap{display:flex;gap:10px;align-items:center;}
-
-    /* "Add to Cart" button — shown when qty in cart is 0 */
-    .pm-add-btn{
-      flex:1;height:44px;border-radius:12px;border:none;
-      background:linear-gradient(135deg,var(--brand),var(--brand-dark));
-      color:#fff;font-size:13px;font-weight:700;font-family:var(--font);
-      cursor:pointer;transition:all .18s cubic-bezier(.22,1,.36,1);
-      box-shadow:var(--sh-brand);letter-spacing:-.01em;
-      display:flex;align-items:center;justify-content:center;gap:7px;
-      -webkit-tap-highlight-color:transparent;
-    }
+    .pm-qty-control{display:flex;align-items:center;gap:0;background:var(--surface2);border:1.5px solid var(--border2);border-radius:12px;overflow:hidden;flex-shrink:0;}
+    .pm-qty-btn{width:38px;height:44px;border:none;background:transparent;cursor:pointer;font-size:18px;font-weight:700;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .14s;font-family:var(--font);-webkit-tap-highlight-color:transparent;}
+    .pm-qty-btn:hover{background:var(--brand-dim);color:var(--brand);}
+    .pm-qty-num{font-size:14px;font-weight:800;font-family:var(--mono);min-width:28px;text-align:center;color:var(--text);}
+    .pm-add-btn{flex:1;height:44px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;transition:all .18s cubic-bezier(.22,1,.36,1);box-shadow:var(--sh-brand);letter-spacing:-.01em;display:flex;align-items:center;justify-content:center;gap:7px;-webkit-tap-highlight-color:transparent;}
     .pm-add-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-brand-lg);}
     .pm-add-btn:active{transform:scale(.97);}
+    .pm-add-btn.in-cart{background:linear-gradient(135deg,var(--green),#047857);}
 
-    /* Qty stepper (shown when item is in cart) */
-    .pm-qty-stepper{
-      display:flex;align-items:center;gap:0;
-      background:var(--surface2);border:1.5px solid var(--border2);
-      border-radius:12px;overflow:hidden;width:100%;
-    }
-    .pm-qty-btn{
-      width:44px;height:44px;border:none;background:transparent;cursor:pointer;
-      font-size:20px;font-weight:700;color:var(--text2);
-      display:flex;align-items:center;justify-content:center;
-      transition:all .14s;font-family:var(--font);flex-shrink:0;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .pm-qty-btn:hover{background:var(--brand-dim);color:var(--brand);}
-    .pm-qty-btn.pm-remove-btn:hover{background:var(--red-dim);color:var(--red);}
-    .pm-qty-num{
-      flex:1;text-align:center;font-size:16px;font-weight:800;
-      font-family:var(--mono);color:var(--text);
-      /* visual separator lines */
-      border-left:1px solid var(--border2);
-      border-right:1px solid var(--border2);
-      height:44px;display:flex;align-items:center;justify-content:center;
-    }
-
-    /* LOADING */
     .loading-screen{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
     .spin-ring{width:34px;height:34px;border:2.5px solid var(--surface3);border-top-color:var(--brand);border-radius:50%;animation:spin .75s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg)}}
     .loading-label{font-size:12px;color:var(--text3);font-weight:500;letter-spacing:.01em;}
 
-    /* TOAST */
     .toast{
       position:fixed;
       bottom:90px;left:50%;
@@ -559,15 +482,17 @@
     }
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-    /* ── RESPONSIVE TWEAKS ───────────────────────────────────────────────── */
     @media(min-width:601px){
       #cart-fab{position:absolute;}
+      .cart-sheet,.product-modal-sheet{
+        border-radius:26px;
+        margin-bottom:40px;
+        max-height:78vh;
+      }
     }
     @media(max-width:400px){
       .product-card{min-width:128px;max-width:128px;}
       .msg-bubble-user,.msg-bubble-agent,.msg-bubble-sales{font-size:13px;}
-      /* on very small screens let the centered modal fill more width */
-      #product-modal-overlay{padding:12px;}
     }
     .chat-messages{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
   </style>
@@ -580,22 +505,21 @@
     <div class="agent-avatar" id="hdr-avatar">✦</div>
     <div class="agent-info">
       <div class="agent-name" id="hdr-name">Agent</div>
-      <div class="agent-status"><span class="status-dot"></span>Online</div>
+      <div class="agent-status"><span class="status-dot"></span><span id="agent-status-text">Online</span></div>
     </div>
     <div class="hdr-actions">
-      <div class="powered-by">Powered by<br><a href="https://supportagent.aasaitech.in" target="_blank" rel="noopener">SupportGent</a></div>
+      <div class="powered-by"><span id="powered-by-text">Powered by</span><br><a href="https://supportagent.aasaitech.in" target="_blank" rel="noopener">SupportGent</a></div>
     </div>
   </div>
 
   <div class="loading-screen" id="loading-screen">
     <div class="spin-ring"></div>
-    <div class="loading-label">Loading agent…</div>
+    <div class="loading-label" id="loading-label">Loading agent…</div>
   </div>
 
   <div class="chat-messages" id="chat-messages" style="display:none;"></div>
   <div class="topics-wrap" id="topics-wrap"></div>
 
-  <!-- FLOATING CART BUTTON -->
   <button id="cart-fab" onclick="openCart()" title="View cart" aria-label="View cart">
     🛒
     <span id="cart-fab-badge">0</span>
@@ -634,14 +558,13 @@
     </div>
   </div>
 
-</div><!-- /#app-shell -->
+</div>
 
-<!-- CART MODAL -->
 <div class="modal-overlay" id="cart-overlay" onclick="if(event.target===this)closeCart()">
   <div class="cart-sheet">
     <div class="cart-handle"></div>
     <div class="cart-header-row">
-      <div class="cart-sheet-title">🛒 Your Cart</div>
+      <div class="cart-sheet-title" id="cart-sheet-title">🛒 Your Cart</div>
       <button class="cart-close-btn" onclick="closeCart()" title="Close">✕</button>
     </div>
     <div id="cart-items"></div>
@@ -649,7 +572,6 @@
   </div>
 </div>
 
-<!-- PRODUCT DETAIL MODAL — centered -->
 <div class="modal-overlay" id="product-modal-overlay" onclick="if(event.target===this)closeProductModal()">
   <div class="product-modal-sheet" id="product-modal-sheet"></div>
 </div>
@@ -657,16 +579,166 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  const CHAT_STRINGS = {
+    en: {
+      loadingAgent:'Loading agent…',online:'Online',poweredBy:'Powered by',askAnything:'Ask anything…',
+      voiceLanguage:'Voice language',send:'Send',close:'Close',somethingWrong:'Something went wrong',
+      failedGetResp:'Failed to get response.',noAgentUrl:'No agent specified in URL.',
+      agentNotFound:'Agent not found',failedLoad:'Failed to load agent.',tryAgain:'Please try again.',
+      addToCart:'🛒 Add to Cart',inCart:'✓ In Cart',inCartLabel:'In Cart',yourCart:'🛒 Your Cart',
+      cartEmpty:'Your cart is empty',items:'Items',delivery:'Delivery',free:'Free',total:'Total',
+      checkout:'Checkout',paySecurely:'Pay Securely →',voiceLangDD:'Voice Language',
+      sorryError:'Sorry, I encountered an error. Please try again.',
+      paymentFailed:'❌ Unable to process payment. Please try again.',
+      checkoutFailed:'❌ Checkout failed. Please try again.',
+      noSpeech:'💬 No speech detected — try again',each:'each',
+      addedToCart:"I've added your selected item to cart. Proceed to secure payment when you're ready.",
+      addedToCartMany:"I've added your selected items to cart. Proceed to secure payment when you're ready.",
+      defaultWelcome:"Hi! I'm {name}. How can I help you today?",
+    },
+    ta: {
+      loadingAgent:'ஏஜெண்ட் ஏற்றுகிறது…',online:'நிகழ்நேரத்தில்',poweredBy:'இயக்கப்படுகிறது',
+      askAnything:'எதையும் கேளுங்கள்…',voiceLanguage:'குரல் மொழி',send:'அனுப்பு',close:'மூடு',
+      somethingWrong:'ஏதோ தவறு நடந்தது',failedGetResp:'பதில் கிடைக்கவில்லை.',
+      noAgentUrl:'URL-ல் ஏஜெண்ட் குறிப்பிடப்படவில்லை.',agentNotFound:'ஏஜெண்ட் கிடைக்கவில்லை',
+      failedLoad:'ஏஜெண்டை ஏற்றுவதில் தோல்வி.',tryAgain:'மீண்டும் முயற்சிக்கவும்.',
+      addToCart:'🛒 கார்ட்டில் சேர்',inCart:'✓ கார்ட்டில் உள்ளது',inCartLabel:'கார்ட்டில் உள்ளது',
+      yourCart:'🛒 உங்கள் கார்ட்',cartEmpty:'உங்கள் கார்ட் காலியாக உள்ளது',items:'பொருட்கள்',
+      delivery:'டெலிவரி',free:'இலவசம்',total:'மொத்தம்',checkout:'செக்அவுட்',
+      paySecurely:'பாதுகாப்பாக பணம் செலுத்து →',voiceLangDD:'குரல் மொழி',
+      sorryError:'மன்னிக்கவும், பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.',
+      paymentFailed:'❌ பணம் செலுத்த முடியவில்லை. மீண்டும் முயற்சிக்கவும்.',
+      checkoutFailed:'❌ செக்அவுட் தோல்வி. மீண்டும் முயற்சிக்கவும்.',
+      noSpeech:'💬 பேச்சு கண்டறியப்படவில்லை — மீண்டும் முயற்சி',each:'தலா',
+      addedToCart:"தேர்ந்தெடுத்த பொருளை கார்ட்டில் சேர்த்தேன். பணம் செலுத்த தொடரவும்.",
+      addedToCartMany:"தேர்ந்தெடுத்த பொருட்களை கார்ட்டில் சேர்த்தேன். பணம் செலுத்த தொடரவும்.",
+      defaultWelcome:"வணக்கம்! நான் {name}. உங்களுக்கு எப்படி உதவலாம்?",
+    },
+    te: {
+      loadingAgent:'ఏజెంట్ లోడవుతోంది…',online:'ఆన్‌లైన్',poweredBy:'ఆధారంగా',
+      askAnything:'ఏదైనా అడగండి…',voiceLanguage:'వాయిస్ భాష',send:'పంపు',close:'మూసివేయి',
+      somethingWrong:'ఏదో తప్పు జరిగింది',failedGetResp:'ప్రతిస్పందన రాలేదు.',
+      noAgentUrl:'URL లో ఏజెంట్ పేర్కొనలేదు.',agentNotFound:'ఏజెంట్ దొరకలేదు',
+      failedLoad:'ఏజెంట్ లోడ్ చేయడం విఫలమైంది.',tryAgain:'మళ్ళీ ప్రయత్నించండి.',
+      addToCart:'🛒 కార్ట్‌కు జోడించు',inCart:'✓ కార్ట్‌లో ఉంది',inCartLabel:'కార్ట్‌లో ఉంది',
+      yourCart:'🛒 మీ కార్ట్',cartEmpty:'మీ కార్ట్ ఖాళీగా ఉంది',items:'వస్తువులు',
+      delivery:'డెలివరీ',free:'ఉచితం',total:'మొత్తం',checkout:'చెక్అవుట్',
+      paySecurely:'సురక్షితంగా చెల్లించండి →',voiceLangDD:'వాయిస్ భాష',
+      sorryError:'క్షమించండి, లోపం వచ్చింది. మళ్ళీ ప్రయత్నించండి.',
+      paymentFailed:'❌ చెల్లింపు విఫలమైంది. మళ్ళీ ప్రయత్నించండి.',
+      checkoutFailed:'❌ చెక్అవుట్ విఫలమైంది. మళ్ళీ ప్రయత్నించండి.',
+      noSpeech:'💬 మాట గుర్తించబడలేదు — మళ్ళీ ప్రయత్నించండి',each:'ఒక్కొక్కటి',
+      addedToCart:"ఎంచుకున్న వస్తువు కార్ట్‌కు జోడించాను. చెల్లింపుకు కొనసాగండి.",
+      addedToCartMany:"ఎంచుకున్న వస్తువులు కార్ట్‌కు జోడించాను. చెల్లింపుకు కొనసాగండి.",
+      defaultWelcome:"నమస్కారం! నేను {name}. మీకు ఎలా సహాయం చేయగలను?",
+    },
+    kn: {
+      loadingAgent:'ಏಜೆಂಟ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…',online:'ಆನ್‌ಲೈನ್',poweredBy:'ಚಾಲಿತ',
+      askAnything:'ಏನಾದರೂ ಕೇಳಿ…',voiceLanguage:'ಧ್ವನಿ ಭಾಷೆ',send:'ಕಳುಹಿಸು',close:'ಮುಚ್ಚು',
+      somethingWrong:'ಏನೋ ತಪ್ಪಾಗಿದೆ',failedGetResp:'ಪ್ರತಿಕ್ರಿಯೆ ಸಿಗಲಿಲ್ಲ.',
+      noAgentUrl:'URL ನಲ್ಲಿ ಏಜೆಂಟ್ ನಿರ್ದಿಷ್ಟಪಡಿಸಿಲ್ಲ.',agentNotFound:'ಏಜೆಂಟ್ ಸಿಗಲಿಲ್ಲ',
+      failedLoad:'ಏಜೆಂಟ್ ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.',tryAgain:'ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+      addToCart:'🛒 ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿ',inCart:'✓ ಕಾರ್ಟ್‌ನಲ್ಲಿ ಇದೆ',inCartLabel:'ಕಾರ್ಟ್‌ನಲ್ಲಿ ಇದೆ',
+      yourCart:'🛒 ನಿಮ್ಮ ಕಾರ್ಟ್',cartEmpty:'ನಿಮ್ಮ ಕಾರ್ಟ್ ಖಾಲಿ ಇದೆ',items:'ಐಟಂಗಳು',
+      delivery:'ಡೆಲಿವರಿ',free:'ಉಚಿತ',total:'ಒಟ್ಟು',checkout:'ಚೆಕ್‌ಔಟ್',
+      paySecurely:'ಸುರಕ್ಷಿತವಾಗಿ ಪಾವತಿಸಿ →',voiceLangDD:'ಧ್ವನಿ ಭಾಷೆ',
+      sorryError:'ಕ್ಷಮಿಸಿ, ದೋಷ ಉಂಟಾಯಿತು. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+      paymentFailed:'❌ ಪಾವತಿ ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+      checkoutFailed:'❌ ಚೆಕ್‌ಔಟ್ ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+      noSpeech:'💬 ಮಾತು ಪತ್ತೆಯಾಗಲಿಲ್ಲ — ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',each:'ಒಂದೊಂದು',
+      addedToCart:"ಆಯ್ಕೆ ಮಾಡಿದ ವಸ್ತುವನ್ನು ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿದ್ದೇನೆ. ಪಾವತಿಗೆ ಮುಂದುವರಿಯಿರಿ.",
+      addedToCartMany:"ಆಯ್ಕೆ ಮಾಡಿದ ವಸ್ತುಗಳನ್ನು ಕಾರ್ಟ್‌ಗೆ ಸೇರಿಸಿದ್ದೇನೆ. ಪಾವತಿಗೆ ಮುಂದುವರಿಯಿರಿ.",
+      defaultWelcome:"ನಮಸ್ಕಾರ! ನಾನು {name}. ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
+    },
+    ml: {
+      loadingAgent:'ഏജന്റ് ലോഡ് ചെയ്യുന്നു…',online:'ഓൺലൈൻ',poweredBy:'പ്രവർത്തിക്കുന്നത്',
+      askAnything:'എന്തും ചോദിക്കൂ…',voiceLanguage:'ശബ്ദ ഭാഷ',send:'അയക്കൂ',close:'അടയ്ക്കൂ',
+      somethingWrong:'എന്തോ തെറ്റ് സംഭവിച്ചു',failedGetResp:'പ്രതികരണം ലഭിച്ചില്ല.',
+      noAgentUrl:'URL-ൽ ഏജന്റ് നിർദ്ദിഷ്ടമല്ല.',agentNotFound:'ഏജന്റ് കണ്ടെത്തിയില്ല',
+      failedLoad:'ഏജന്റ് ലോഡ് ചെയ്യുന്നതിൽ പരാജയം.',tryAgain:'ദയവായി വീണ്ടും ശ്രമിക്കൂ.',
+      addToCart:'🛒 കാർട്ടിലേക്ക് ചേർക്കൂ',inCart:'✓ കാർട്ടിലുണ്ട്',inCartLabel:'കാർട്ടിലുണ്ട്',
+      yourCart:'🛒 നിങ്ങളുടെ കാർട്ട്',cartEmpty:'നിങ്ങളുടെ കാർട്ട് ഒഴിഞ്ഞിരിക്കുന്നു',items:'ഇനങ്ങൾ',
+      delivery:'ഡെലിവറി',free:'സൗജന്യം',total:'ആകെ',checkout:'ചെക്കൗട്ട്',
+      paySecurely:'സുരക്ഷിതമായി പണം നൽകൂ →',voiceLangDD:'ശബ്ദ ഭാഷ',
+      sorryError:'ക്ഷമിക്കൂ, ഒരു പിശക് ഉണ്ടായി. വീണ്ടും ശ്രമിക്കൂ.',
+      paymentFailed:'❌ പണമടയ്ക്കൽ പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കൂ.',
+      checkoutFailed:'❌ ചെക്കൗട്ട് പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കൂ.',
+      noSpeech:'💬 ശബ്ദം കണ്ടെത്തിയില്ല — വീണ്ടും ശ്രമിക്കൂ',each:'ഒന്നിന്',
+      addedToCart:"തിരഞ്ഞെടുത്ത ഉൽപ്പന്നം കാർട്ടിൽ ചേർത്തു. പണമടയ്ക്കൽ തുടരൂ.",
+      addedToCartMany:"തിരഞ്ഞെടുത്ത ഉൽപ്പന്നങ്ങൾ കാർട്ടിൽ ചേർത്തു. പണമടയ്ക്കൽ തുടരൂ.",
+      defaultWelcome:"നമസ്കാരം! ഞാൻ {name}. എങ്ങനെ സഹായിക്കാം?",
+    },
+    hi: {
+      loadingAgent:'एजेंट लोड हो रहा है…',online:'ऑनलाइन',poweredBy:'संचालित',
+      askAnything:'कुछ भी पूछें…',voiceLanguage:'आवाज़ भाषा',send:'भेजें',close:'बंद करें',
+      somethingWrong:'कुछ गलत हो गया',failedGetResp:'प्रतिक्रिया नहीं मिली।',
+      noAgentUrl:'URL में एजेंट निर्दिष्ट नहीं है।',agentNotFound:'एजेंट नहीं मिला',
+      failedLoad:'एजेंट लोड करने में विफल।',tryAgain:'कृपया पुनः प्रयास करें।',
+      addToCart:'🛒 कार्ट में जोड़ें',inCart:'✓ कार्ट में है',inCartLabel:'कार्ट में है',
+      yourCart:'🛒 आपका कार्ट',cartEmpty:'आपका कार्ट खाली है',items:'आइटम',
+      delivery:'डिलीवरी',free:'मुफ़्त',total:'कुल',checkout:'चेकआउट',
+      paySecurely:'सुरक्षित भुगतान करें →',voiceLangDD:'आवाज़ भाषा',
+      sorryError:'माफ़ करें, कोई त्रुटि हुई। पुनः प्रयास करें।',
+      paymentFailed:'❌ भुगतान विफल। पुनः प्रयास करें।',
+      checkoutFailed:'❌ चेकआउट विफल। पुनः प्रयास करें।',
+      noSpeech:'💬 आवाज़ नहीं मिली — फिर से कोशिश करें',each:'प्रति',
+      addedToCart:"चुना गया उत्पाद कार्ट में जोड़ा गया। भुगतान के लिए आगे बढ़ें।",
+      addedToCartMany:"चुने गए उत्पाद कार्ट में जोड़े गए। भुगतान के लिए आगे बढ़ें।",
+      defaultWelcome:"नमस्ते! मैं {name} हूँ। मैं आपकी कैसे मदद कर सकता हूँ?",
+    },
+  }
+
+  const _SUPPORTED_LANGS = new Set(Object.keys(CHAT_STRINGS))
+  let chatLang = 'en'
+  function _resolveLang(agentUiLang) {
+    const candidates = [new URLSearchParams(location.search).get('lang'), agentUiLang, navigator.language?.split('-')[0]]
+    for (const c of candidates) { if (c && _SUPPORTED_LANGS.has(c)) return c }
+    return 'en'
+  }
+  function ct(key) { return (CHAT_STRINGS[chatLang]?.[key]) || CHAT_STRINGS['en'][key] || key }
+
   const API      = 'https://fypouhme3gqldqk6sk75b75udy0ltonb.lambda-url.ap-southeast-2.on.aws'
   const params   = new URLSearchParams(location.search)
   const AGENT_ID = params.get('agent') || ''
 
+  // ══════════════════════════════════════════════════════════════════════
+  // BULLETPROOF SESSION IDENTITY
+  // SESSION_ID  — per-tab UUID (sessionStorage), keyed by agent.
+  //               Resets when tab is closed → each new tab = fresh convo.
+  // VISITOR_ID  — per-browser UUID (localStorage).
+  //               Persists forever → same person across multiple sessions.
+  // Both are generated BEFORE init() and sent with EVERY request.
+  // ══════════════════════════════════════════════════════════════════════
+  const SESSION_ID = (function () {
+    const key = 'sg_sid_' + AGENT_ID
+    let sid = sessionStorage.getItem(key)
+    if (!sid) {
+      sid = (typeof crypto !== 'undefined' && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'sid_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 9)
+      sessionStorage.setItem(key, sid)
+    }
+    return sid
+  }())
+
+  const VISITOR_ID = (function () {
+    const key = 'sg_vid'
+    let vid = localStorage.getItem(key)
+    if (!vid) {
+      vid = (typeof crypto !== 'undefined' && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'vid_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 9)
+      localStorage.setItem(key, vid)
+    }
+    return vid
+  }())
+
+  // Other state (sessionId removed — replaced by SESSION_ID const above)
   let agent      = null
   let allProds   = []
   let prodMap    = {}
   let cart       = []
   let msgHistory = []
-  let sessionId  = null
   let isTyping   = false
   let agentType  = 'general'
 
@@ -700,19 +772,29 @@
     }
     error(msg) {
       if (this._rafId) cancelAnimationFrame(this._rafId)
-      this.bubble.innerHTML = `<p style="color:var(--red);margin:0;font-size:13.5px;">⚠️ ${msg||'Failed to get response.'}</p>`
+      this.bubble.innerHTML = `<p style="color:var(--red);margin:0;font-size:13.5px;">⚠️ ${msg||ct('failedGetResp')}</p>`
       this.bubble.classList.remove('msg-bubble-streaming')
     }
   }
 
   // ── INIT ────────────────────────────────────────────────────────────────
   async function init() {
-    if (!AGENT_ID) { showError('No agent specified in URL.'); return }
+    if (!AGENT_ID) { showError(ct('noAgentUrl')); return }
     try {
       const res = await fetch(`${API}/chat/${AGENT_ID}/config`)
-      if (!res.ok) throw new Error(`Agent not found (${res.status})`)
+      if (!res.ok) throw new Error(`${ct('agentNotFound')} (${res.status})`)
       agent     = await res.json()
       agentType = agent.agent_type || 'general'
+      chatLang  = _resolveLang(agent.ui_lang)
+
+      document.documentElement.lang = chatLang
+      document.getElementById('loading-label') && (document.getElementById('loading-label').textContent = ct('loadingAgent'))
+      document.getElementById('agent-status-text') && (document.getElementById('agent-status-text').textContent = ct('online'))
+      document.getElementById('powered-by-text') && (document.getElementById('powered-by-text').textContent = ct('poweredBy'))
+      const inp = document.getElementById('chat-input')
+      if (inp) inp.placeholder = ct('askAnything')
+      const cartTitle = document.getElementById('cart-sheet-title')
+      if (cartTitle) cartTitle.textContent = ct('yourCart')
 
       setupColors(agent); setupHeader(agent)
       document.getElementById('loading-screen').style.display  = 'none'
@@ -722,7 +804,7 @@
       document.title = (agent.name || 'Chat') + ' — SupportGent'
 
       addDateSeparator()
-      addWelcomeMsg(agent.welcome_message || `Hi! I'm ${agent.name || 'your assistant'}. How can I help you today?`)
+      addWelcomeMsg(agent.welcome_message || ct('defaultWelcome').replace('{name}', agent.name || 'your assistant'))
       if (agent.cached_topics?.length) renderTopics(agent.cached_topics)
 
       if (agent.shopping_enabled || agentType === 'sales') await loadProducts()
@@ -737,7 +819,7 @@
       initVoice()
     } catch(e) {
       console.error('init error', e)
-      showError('Failed to load agent. ' + (e.message || 'Please try again.'))
+      showError(ct('failedLoad') + ' ' + (e.message || ct('tryAgain')))
     }
   }
 
@@ -819,129 +901,81 @@
   }
 
   // ── PRODUCT DETAIL MODAL ────────────────────────────────────────────────
-  /*
-    UX rules for the action area:
-    • qty in cart === 0  →  full-width "Add to Cart" button
-    • qty in cart >= 1   →  full-width stepper  [−] [qty] [+]
-      - tapping −  decreases qty immediately (removes from cart if reaches 0 → reverts to "Add to Cart")
-      - tapping +  increases qty immediately
-      No separate "Update Cart" click required.
-  */
   let _modalProductId = null
 
   function openProductModal(productId) {
     const p = prodMap[productId]
     if (!p) return
     _modalProductId = String(productId)
-    _renderProductModal()
-    document.getElementById('product-modal-overlay').classList.add('open')
-  }
-
-  function _renderProductModal() {
-    const p = prodMap[_modalProductId]
-    if (!p) return
     const sym    = p.currency === 'USD' ? '$' : '₹'
     const sheet  = document.getElementById('product-modal-sheet')
     const inCart = cart.find(i => i._id === _modalProductId)
+    let modalQty = inCart ? inCart.qty : 1
 
-    sheet.innerHTML = `
-      <div class="pm-img-wrap">
-        ${p.image_url
-          ? `<img class="pm-img" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.parentElement.innerHTML='<div class=\\'pm-img-placeholder\\'>📦</div>'">`
-          : `<div class="pm-img-placeholder">📦</div>`}
-        <button class="pm-close" id="pm-close-btn" title="Close">✕</button>
-        ${p.category ? `<div class="pm-cat-badge">${esc(p.category)}</div>` : ''}
-      </div>
-      <div class="pm-body">
-        <div class="pm-name">${esc(p.name)}</div>
-        <div class="pm-price">${sym}${Number(p.price).toLocaleString()}</div>
-        ${p.description ? `<div class="pm-desc-label">Description</div><div class="pm-desc">${esc(p.description)}</div>` : ''}
-        <div class="pm-meta">
-          ${p.category  ? `<div class="pm-meta-chip"><span>🏷</span>${esc(p.category)}</div>` : ''}
-          ${p.sku       ? `<div class="pm-meta-chip"><span>🔖</span>SKU: ${esc(p.sku)}</div>` : ''}
-          ${p.stock_qty != null ? `<div class="pm-meta-chip"><span>${p.stock_qty > 10 ? '✅' : p.stock_qty > 0 ? '⚠️' : '❌'}</span>${p.stock_qty > 0 ? `${p.stock_qty} in stock` : 'Out of stock'}</div>` : ''}
+    function renderSheet() {
+      const inCart  = cart.find(i => i._id === _modalProductId)
+      const btnText = inCart ? `✓ ${ct('inCartLabel')} (${inCart.qty})` : ct('addToCart')
+      const btnCls  = inCart ? 'pm-add-btn in-cart' : 'pm-add-btn'
+      sheet.innerHTML = `
+        <div class="pm-img-wrap">
+          ${p.image_url
+            ? `<img class="pm-img" src="${esc(p.image_url)}" alt="${esc(p.name)}" onerror="this.parentElement.innerHTML='<div class=\\'pm-img-placeholder\\'>📦</div>'">`
+            : `<div class="pm-img-placeholder">📦</div>`}
+          <button class="pm-close" id="pm-close-btn" title="Close">✕</button>
+          ${p.category ? `<div class="pm-cat-badge">${esc(p.category)}</div>` : ''}
         </div>
-        <div class="pm-divider"></div>
-        <div class="pm-action-wrap" id="pm-action-wrap"></div>
-      </div>`
+        <div class="pm-body">
+          <div class="pm-handle"></div>
+          <div class="pm-name">${esc(p.name)}</div>
+          <div class="pm-price">${sym}${Number(p.price).toLocaleString()}</div>
+          ${p.description ? `<div class="pm-desc-label">Description</div><div class="pm-desc">${esc(p.description)}</div>` : ''}
+          <div class="pm-meta">
+            ${p.category ? `<div class="pm-meta-chip"><span>🏷</span>${esc(p.category)}</div>` : ''}
+            ${p.sku      ? `<div class="pm-meta-chip"><span>🔖</span>SKU: ${esc(p.sku)}</div>` : ''}
+            ${p.stock_qty != null ? `<div class="pm-meta-chip"><span>${p.stock_qty > 10 ? '✅' : p.stock_qty > 0 ? '⚠️' : '❌'}</span>${p.stock_qty > 0 ? `${p.stock_qty} in stock` : 'Out of stock'}</div>` : ''}
+          </div>
+          <div class="pm-divider"></div>
+          <div class="pm-action-wrap" id="pm-action-wrap">
+            <div class="pm-qty-control">
+              <button class="pm-qty-btn" id="pm-minus">−</button>
+              <span class="pm-qty-num" id="pm-qty-num">${modalQty}</span>
+              <button class="pm-qty-btn" id="pm-plus">+</button>
+            </div>
+            <button class="${btnCls}" id="pm-add-btn">${btnText}</button>
+          </div>
+        </div>`
 
-    sheet.querySelector('#pm-close-btn').addEventListener('click', closeProductModal)
-    _refreshModalAction()
-  }
-
-  function _refreshModalAction() {
-    const actionWrap = document.getElementById('pm-action-wrap')
-    if (!actionWrap || !_modalProductId) return
-    const inCart = cart.find(i => i._id === _modalProductId)
-
-    if (!inCart) {
-      /* ── No items in cart: show "Add to Cart" button ── */
-      actionWrap.innerHTML = ''
-      const btn = document.createElement('button')
-      btn.className = 'pm-add-btn'
-      btn.innerHTML = '🛒 Add to Cart'
-      btn.addEventListener('click', e => {
+      sheet.querySelector('#pm-close-btn').addEventListener('click', closeProductModal)
+      sheet.querySelector('#pm-minus').addEventListener('click', e => {
         e.stopPropagation()
-        const p = prodMap[_modalProductId]; if (!p) return
-        addToCart({ _id: _modalProductId, name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency })
-        _refreshModalAction()
+        if (modalQty > 1) { modalQty--; sheet.querySelector('#pm-qty-num').textContent = modalQty }
+      })
+      sheet.querySelector('#pm-plus').addEventListener('click', e => {
+        e.stopPropagation()
+        modalQty++; sheet.querySelector('#pm-qty-num').textContent = modalQty
+      })
+      sheet.querySelector('#pm-add-btn').addEventListener('click', e => {
+        e.stopPropagation()
+        const existing = cart.find(i => i._id === _modalProductId)
+        if (existing) {
+          existing.qty = modalQty
+          if (existing.qty <= 0) cart.splice(cart.indexOf(existing), 1)
+        } else {
+          for (let i = 0; i < modalQty; i++) {
+            addToCart({ _id: _modalProductId, name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency }, true)
+          }
+        }
+        updateCartBar()
         _refreshAllCardActions(_modalProductId)
+        const btn = sheet.querySelector('#pm-add-btn')
+        const cartItem = cart.find(i => i._id === _modalProductId)
+        if (btn && cartItem) { btn.textContent = `✓ ${ct('inCartLabel')} (${cartItem.qty})`; btn.className = 'pm-add-btn in-cart' }
+        showToast(`${p.name} added to cart 🛒`)
       })
-      actionWrap.appendChild(btn)
-    } else {
-      /* ── Item already in cart: show full-width stepper ── */
-      actionWrap.innerHTML = ''
-      const stepper = document.createElement('div')
-      stepper.className = 'pm-qty-stepper'
-
-      const minusBtn = document.createElement('button')
-      minusBtn.className = 'pm-qty-btn pm-remove-btn'
-      minusBtn.textContent = inCart.qty === 1 ? '🗑' : '−'
-      minusBtn.title = inCart.qty === 1 ? 'Remove from cart' : 'Decrease quantity'
-      minusBtn.addEventListener('click', e => {
-        e.stopPropagation()
-        _modalQtyDelta(-1)
-      })
-
-      const numEl = document.createElement('div')
-      numEl.className = 'pm-qty-num'
-      numEl.textContent = inCart.qty
-
-      const plusBtn = document.createElement('button')
-      plusBtn.className = 'pm-qty-btn'
-      plusBtn.textContent = '+'
-      plusBtn.title = 'Increase quantity'
-      plusBtn.addEventListener('click', e => {
-        e.stopPropagation()
-        _modalQtyDelta(+1)
-      })
-
-      stepper.appendChild(minusBtn)
-      stepper.appendChild(numEl)
-      stepper.appendChild(plusBtn)
-      actionWrap.appendChild(stepper)
     }
-  }
 
-  function _modalQtyDelta(delta) {
-    if (!_modalProductId) return
-    const p = prodMap[_modalProductId]; if (!p) return
-    const existing = cart.find(i => i._id === _modalProductId)
-    if (existing) {
-      existing.qty += delta
-      if (existing.qty <= 0) {
-        cart.splice(cart.indexOf(existing), 1)
-        showToast(`${p.name} removed from cart`)
-      } else {
-        showToast(delta > 0 ? `${p.name} qty updated to ${existing.qty}` : `${p.name} qty updated to ${existing.qty}`)
-      }
-    } else if (delta > 0) {
-      cart.push({ _id: _modalProductId, name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency, qty: 1 })
-      showToast(`${p.name} added to cart 🛒`)
-    }
-    updateCartBar()
-    _refreshModalAction()
-    _refreshAllCardActions(_modalProductId)
+    renderSheet()
+    document.getElementById('product-modal-overlay').classList.add('open')
   }
 
   function closeProductModal() {
@@ -977,8 +1011,8 @@
       const checkoutCard = document.createElement('div'); checkoutCard.className = 'checkout-action-card'
       checkoutCard.innerHTML = `
         <div class="checkout-action-card-title">🛒 Ready to checkout?</div>
-        <p>I've added your selected item${toCheckout.length > 1 ? 's' : ''} to cart. Proceed to secure payment when you're ready.</p>
-        <button class="checkout-action-btn" onclick="triggerCheckout(${JSON.stringify(toCheckout.map(p => p._id))})">Pay Securely →</button>`
+        <p>${toCheckout.length > 1 ? ct('addedToCartMany') : ct('addedToCart')}</p>
+        <button class="checkout-action-btn" onclick="triggerCheckout(${JSON.stringify(toCheckout.map(p => p._id))})">${ct('paySecurely')}</button>`
       salesGroup.appendChild(checkoutCard)
     }
     const timeEl = document.createElement('div'); timeEl.className = 'msg-time'; timeEl.textContent = getTime()
@@ -1027,7 +1061,7 @@
               <button onclick="cardQty('${p._id}',1,event)" style="width:24px;height:24px;border-radius:6px;border:1.5px solid var(--border2);background:var(--surface-solid);cursor:pointer;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--text2);font-family:var(--font);">+</button>
             </div>`
         } else {
-          actionArea.innerHTML = `<button class="product-btn" onclick="cardAdd('${p._id}',event)">Add to Cart</button>`
+          actionArea.innerHTML = `<button class="product-btn" onclick="cardAdd('${p._id}',event)">${ct('addToCart')}</button>`
         }
       }
       actionArea._refresh = refreshAction
@@ -1043,7 +1077,6 @@
     if (event) event.stopPropagation()
     const p = prodMap[productId]; if (!p) return
     addToCart({ _id: String(p._id), name: p.name, price: p.price, image_url: p.image_url || '', currency: p.currency })
-    _refreshAllCardActions(String(p._id))
   }
   function cardQty(productId, delta, event) {
     if (event) event.stopPropagation()
@@ -1053,8 +1086,14 @@
     if (existing.qty <= 0) cart.splice(cart.indexOf(existing), 1)
     updateCartBar()
     _refreshAllCardActions(productId)
-    /* also sync the modal if it's open for this product */
-    if (_modalProductId === String(productId)) _refreshModalAction()
+    if (_modalProductId === String(productId)) {
+      const btn = document.querySelector('#pm-add-btn')
+      if (btn) {
+        const ci = cart.find(i => i._id === String(productId))
+        if (ci) { btn.textContent = `✓ ${ct('inCartLabel')} (${ci.qty})`; btn.className = 'pm-add-btn in-cart' }
+        else { btn.textContent = ct('addToCart'); btn.className = 'pm-add-btn' }
+      }
+    }
   }
   function _refreshAllCardActions(productId) {
     document.querySelectorAll(`[data-pid="${productId}"]`).forEach(el => { if (el._refresh) el._refresh() })
@@ -1107,7 +1146,9 @@
     document.getElementById('chat-input').focus()
   }
 
-  // ── SSE STREAMING ───────────────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════
+  // SSE STREAMING — always sends SESSION_ID + VISITOR_ID
+  // ══════════════════════════════════════════════════════════════════════
   async function streamResponse(question, suggestedPrompt) {
     let typingEl=null,group=null,renderer=null,salesGroup=null,salesTextBubble=null,salesRawText=''
     if (agentType === 'sales') { typingEl = showTyping() }
@@ -1116,8 +1157,15 @@
     let res
     try {
       res = await fetch(`${API}/chat/${AGENT_ID}/stream`, {
-        method:'POST', headers:{'Content-Type':'application/json','Accept':'text/event-stream'},
-        body:JSON.stringify({ question, history:buildHistoryForServer(), session_id:sessionId||undefined, suggested_prompt:suggestedPrompt||undefined })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
+        body: JSON.stringify({
+          question,
+          history:          buildHistoryForServer(),
+          session_id:       SESSION_ID,          // ← always set, never undefined
+          visitor_id:       VISITOR_ID,          // ← persistent browser identity
+          suggested_prompt: suggestedPrompt || undefined,
+        }),
       })
     } catch(e) {
       if (renderer) renderer.error('Network error.')
@@ -1159,7 +1207,11 @@
               if (clientFirstChunkTime===null) clientFirstChunkTime=Date.now()
               renderer.push(evt.html)
             }
-            if (evt.type==='done') { if (evt.session_id) sessionId=evt.session_id; finalAnswer=evt.answer||''; gotDone=true; serverTiming=evt.timing||null; tokenCount=evt.tokens||null }
+            if (evt.type==='done') {
+              // NOTE: we do NOT overwrite SESSION_ID here — it's a const
+              // evt.session_id from server is ignored; we own our identity
+              finalAnswer=evt.answer||''; gotDone=true; serverTiming=evt.timing||null; tokenCount=evt.tokens||null
+            }
             if (evt.type==='sales_response') { salesData=evt; gotDone=true; serverTiming=evt.timing||null; tokenCount=evt.tokens||null; if (clientFirstChunkTime===null) clientFirstChunkTime=Date.now() }
             if (evt.type==='error') {
               if (renderer) renderer.error(evt.message)
@@ -1190,13 +1242,22 @@
     return true
   }
 
-  // ── NON-STREAMING FALLBACK ──────────────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════════
+  // NON-STREAMING FALLBACK — also sends SESSION_ID + VISITOR_ID
+  // ══════════════════════════════════════════════════════════════════════
   async function nonStreamResponse(question, suggestedPrompt) {
     const typEl = showTyping()
     try {
       const res = await fetch(`${API}/chat/${AGENT_ID}`, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({question, history:buildHistoryForServer(), session_id:sessionId||undefined, suggested_prompt:suggestedPrompt||undefined})
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question,
+          history:          buildHistoryForServer(),
+          session_id:       SESSION_ID,          // ← always set
+          visitor_id:       VISITOR_ID,          // ← always set
+          suggested_prompt: suggestedPrompt || undefined,
+        }),
       })
       const d = await res.json(); typEl.remove()
       if (d.type==='sales_response') {
@@ -1214,7 +1275,7 @@
     } catch(e) {
       typEl.remove()
       const {bubble}=createAgentBubble()
-      bubble.innerHTML=`<p style="color:var(--red);margin:0;">Sorry, I encountered an error. Please try again.</p>`
+      bubble.innerHTML=`<p style="color:var(--red);margin:0;">${ct('sorryError')}</p>`
       bubble.classList.remove('msg-bubble-streaming')
     }
   }
@@ -1256,11 +1317,10 @@
   }
 
   function openCart() {
-    const itemsEl = document.getElementById('cart-items')
+    const itemsEl   = document.getElementById('cart-items')
     const summaryEl = document.getElementById('cart-summary-block')
-
     if (!cart.length) {
-      itemsEl.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div class="cart-empty-text">Your cart is empty</div></div>`
+      itemsEl.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div class="cart-empty-text">${ct('cartEmpty')}</div></div>`
       summaryEl.innerHTML = ''
     } else {
       itemsEl.innerHTML = cart.map((item,i) => {
@@ -1269,7 +1329,7 @@
           <div class="cart-item-thumb">${item.image_url?`<img src="${item.image_url}" alt="">`:'📦'}</div>
           <div style="flex:1;min-width:0;">
             <div class="cart-item-name">${esc(item.name)}</div>
-            <div class="cart-item-unit">${sym}${item.price} each</div>
+            <div class="cart-item-unit">${sym}${item.price} ${ct('each')}</div>
             <div class="cart-qty">
               <button class="qty-btn" onclick="changeQty(${i},-1)">−</button>
               <span class="qty-label">${item.qty}</span>
@@ -1279,16 +1339,15 @@
           <div class="cart-item-total">${sym}${(item.price*item.qty).toFixed(2)}</div>
         </div>`
       }).join('')
-
       const subtotal = cart.reduce((a,i)=>a+(i.price*i.qty),0)
       const sym = currSym()
       summaryEl.innerHTML = `
         <div class="cart-summary">
-          <div class="cart-summary-row"><span>Items (${cart.reduce((a,i)=>a+i.qty,0)})</span><span>${sym}${subtotal.toFixed(2)}</span></div>
-          <div class="cart-summary-row"><span>Delivery</span><span style="color:var(--green);font-weight:700;">Free</span></div>
-          <div class="cart-summary-row total"><span>Total</span><span>${sym}${subtotal.toFixed(2)}</span></div>
+          <div class="cart-summary-row"><span>${ct('items')} (${cart.reduce((a,i)=>a+i.qty,0)})</span><span>${sym}${subtotal.toFixed(2)}</span></div>
+          <div class="cart-summary-row"><span>${ct('delivery')}</span><span style="color:var(--green);font-weight:700;">${ct('free')}</span></div>
+          <div class="cart-summary-row total"><span>${ct('total')}</span><span>${sym}${subtotal.toFixed(2)}</span></div>
         </div>
-        <button class="checkout-btn" onclick="checkout()">Checkout</button>`
+        <button class="checkout-btn" onclick="checkout()">${ct('checkout')}</button>`
     }
     document.getElementById('cart-overlay').classList.add('open')
   }
@@ -1350,8 +1409,8 @@
           modal:{ondismiss:()=>{ checkout._running=false; showChatMsg('Payment was cancelled. Your cart is saved — tap Cart to try again.') }}
         })
         rz.open()
-      } else { checkout._running=false; showChatMsg(d.message||'❌ Unable to process payment. Please try again.') }
-    } catch(e) { prep.remove(); checkout._running=false; showChatMsg('❌ Checkout failed. Please try again.'); console.error('[checkout]',e) }
+      } else { checkout._running=false; showChatMsg(d.message||ct('paymentFailed')) }
+    } catch(e) { prep.remove(); checkout._running=false; showChatMsg(ct('checkoutFailed')); console.error('[checkout]',e) }
   }
 
   // ── NOTIFICATIONS ───────────────────────────────────────────────────────
@@ -1370,7 +1429,7 @@
     document.getElementById('loading-screen').innerHTML=`
     <div style="text-align:center;padding:40px 24px;">
       <div style="font-size:44px;margin-bottom:16px;">⚠️</div>
-      <div style="font-size:14.5px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em;">Something went wrong</div>
+      <div style="font-size:14.5px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em;">${ct('somethingWrong')}</div>
       <div style="font-size:12.5px;color:var(--text3);line-height:1.65;">${msg}</div>
     </div>`
   }
@@ -1398,7 +1457,7 @@
     }
     const dd=document.getElementById('langDropdown')
     if (dd) {
-      dd.innerHTML = `<div class="lang-dd-head">Voice Language</div>` +
+      dd.innerHTML = `<div class="lang-dd-head">${ct('voiceLangDD')}</div>` +
         VOICE_LANGS.map(l=>l.sep
           ?`<div class="lang-dd-sep"></div>`
           :`<div class="lang-dd-item ${l.code===_voiceLang?'active':''}" onclick="selectVoiceLang('${l.code}',this)"><span class="dd-flag">${l.flag}</span><span class="dd-name">${l.label}</span><span class="dd-check">✓</span></div>`
@@ -1437,7 +1496,7 @@
       if (_recActive&&!_finalText.trim()) {
         _stopVoice(false)
         const i=document.getElementById('chat-input')
-        if (i) { i.placeholder='💬 No speech detected — try again'; setTimeout(()=>{i.placeholder='Ask anything…'},3000) }
+        if (i) { i.placeholder=ct('noSpeech'); setTimeout(()=>{i.placeholder=ct('askAnything')},3000) }
       }
     },11000)
     _spawnRec()
@@ -1478,7 +1537,7 @@
     const row=document.getElementById('input-row'),inp=document.getElementById('chat-input'),box=document.getElementById('voice-interim')
     _interimText=''
     if (row) row.classList.remove('listening'); if (box) box.classList.remove('show')
-    if (inp) { inp.placeholder='Ask anything…'; inp.value=_finalText.trim(); autoResize(inp) }
+    if (inp) { inp.placeholder=ct('askAnything'); inp.value=_finalText.trim(); autoResize(inp) }
     _setMicUI(false)
     if (andSend&&_finalText.trim()) setTimeout(sendMessage,100)
   }
